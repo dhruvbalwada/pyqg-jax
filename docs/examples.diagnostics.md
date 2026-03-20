@@ -183,7 +183,7 @@ def compute_ke_spec_vals(state, model):
 @jax.jit
 def vectorized_ke_spec(traj, model):
     traj_ke_spec_vals = powerpax.chunked_vmap(
-        functools.partial(compute_ke_spec_vals, model=stepped_model.model),
+        functools.partial(compute_ke_spec_vals, model=model),
         chunk_size=100,
     )(traj)
     ke_spec_vals = jnp.mean(traj_ke_spec_vals, axis=0)
@@ -228,7 +228,7 @@ def compute_ens_spec_vals(state, model):
 @jax.jit
 def vectorized_ens_spec(traj, model):
     traj_ens_spec_vals = powerpax.chunked_vmap(
-        functools.partial(compute_ens_spec_vals, model=stepped_model.model),
+        functools.partial(compute_ens_spec_vals, model=model),
         chunk_size=100,
     )(traj)
     ens_spec_vals = jnp.mean(traj_ens_spec_vals, axis=0)
