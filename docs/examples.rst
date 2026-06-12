@@ -18,3 +18,4 @@ complexity.
    examples.sqg
    examples.barotropic
    examples.callies
+   examples.layered
