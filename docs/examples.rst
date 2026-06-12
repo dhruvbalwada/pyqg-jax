@@ -19,3 +19,4 @@ complexity.
    examples.barotropic
    examples.callies
    examples.layered
+   examples.particles

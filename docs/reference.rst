@@ -11,4 +11,5 @@ API Reference
    reference.models
    reference.parameterizations
    reference.steppers
+   reference.particles
    reference.diagnostics

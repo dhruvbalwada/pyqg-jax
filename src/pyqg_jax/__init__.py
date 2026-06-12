@@ -36,6 +36,7 @@ __all__ = [
     "callies_model",
     "layered_model",
     "steppers",
+    "particles",
     "parameterizations",
     "diagnostics",
 ]
@@ -49,6 +50,7 @@ from . import (
     callies_model,
     layered_model,
     steppers,
+    particles,
     parameterizations,
     diagnostics,
 )
