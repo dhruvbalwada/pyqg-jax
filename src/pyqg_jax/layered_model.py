@@ -21,6 +21,8 @@ class LayeredModel(_model.Model):
 
     See also :class:`pyqg.LayeredModel`.
 
+    .. versionadded:: 0.9.0
+
     The potential vorticity anomalies :math:`q_i` relate to the
     streamfunctions :math:`\psi_i` through a tridiagonal stretching
     matrix :math:`\mathsf{S}`,

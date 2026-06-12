@@ -29,6 +29,8 @@ class CalliesTwoEady(_model.Model):
 
     See also :class:`pyqg.CalliesTwoEady`.
 
+    .. versionadded:: 0.9.0
+
     Parameters
     ----------
     nx : int, optional

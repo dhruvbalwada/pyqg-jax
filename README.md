@@ -17,6 +17,27 @@ batching, automatic differentiation, etc.
 ⚠️ **Warning:** this is a partial, early stage port. There may be bugs
 and other numerical issues. The API may evolve as work continues.
 
+## Additions in this fork
+
+This fork ([dhruvbalwada/pyqg-jax](https://github.com/dhruvbalwada/pyqg-jax))
+extends the upstream port with:
+
+- **`CalliesTwoEady`** (`pyqg_jax.callies_model`) — the two-Eady
+  mixed-layer-instability model of [Callies, Flierl, Ferrari &
+  Fox-Kemper (2016)](https://doi.org/10.1017/jfm.2015.700), with a
+  closed-form three-sheet PV inversion.
+- **`LayeredModel`** (`pyqg_jax.layered_model`) — layered QG with an
+  arbitrary number of layers; the PV inversion is solved with a
+  vectorized tridiagonal sweep.
+- **Lagrangian particles** (`pyqg_jax.particles`) — gridded particle
+  advection matching PyQG's scheme, steppable alongside a model inside
+  a single `jax.lax.scan` (differentiable and `vmap`-compatible).
+
+With these, all PyQG model classes are available in JAX. Each addition
+is validated against mainline [PyQG](https://github.com/pyqg/pyqg) in
+float64 (trajectory agreement at roundoff), and each has a worked
+example in the documentation.
+
 ## Installation
 Install from [PyPI][pypi] using pip:
 ```console

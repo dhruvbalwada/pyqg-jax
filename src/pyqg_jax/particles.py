@@ -16,6 +16,8 @@ with the same two-time-level Runge-Kutta scheme used by PyQG.
 Everything here is written in pure JAX, so the advection is
 differentiable, :func:`jax.jit`-compatible, and can be mapped over
 ensembles of particle sets with :func:`jax.vmap`.
+
+.. versionadded:: 0.9.0
 """
 
 __all__ = ["ParticleState", "GriddedParticleStepper"]

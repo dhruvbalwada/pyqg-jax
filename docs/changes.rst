@@ -9,6 +9,21 @@ available on the `GitHub releases page
 v0.9.0 (Unreleased)
 -------------------
 
+* Add implementation of
+  :class:`~pyqg_jax.callies_model.CalliesTwoEady` from PyQG, the
+  two-Eady mixed-layer-instability model of Callies et al. (2016),
+  with a closed-form three-sheet PV inversion (see the associated
+  :doc:`example <examples.callies>`)
+* Add implementation of :class:`~pyqg_jax.layered_model.LayeredModel`
+  from PyQG, supporting an arbitrary number of layers with the PV
+  inversion solved by a vectorized tridiagonal sweep (see the
+  associated :doc:`example <examples.layered>`)
+* Add :mod:`pyqg_jax.particles` module for Lagrangian particle
+  advection with gridded velocities
+  (:class:`~pyqg_jax.particles.GriddedParticleStepper`), matching
+  PyQG's gridded particle stepping and usable inside
+  :func:`jax.lax.scan` alongside a model (see the associated
+  :doc:`example <examples.particles>`)
 * Add enstrophy spectrum calculation
   :func:`~pyqg_jax.diagnostics.ens_spec_vals`
 * Improve some error messages (include additional details)
