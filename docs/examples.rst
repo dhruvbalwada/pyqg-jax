@@ -17,3 +17,4 @@ complexity.
    examples.diagnostics
    examples.sqg
    examples.barotropic
+   examples.callies
