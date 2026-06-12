@@ -265,18 +265,35 @@ class LayeredModel(_model.Model):
                 ),
             )
             return ph.astype(self.precision.dtype_complex)
-        # general nz: invert (S - wv2 I) per wavenumber. The inverse
-        # cannot constant-fold (S is a traced pytree child), so this is
-        # a per-step batched solve; it stays differentiable in S.
-        eye = jnp.eye(self.nz, dtype=jnp.float64)
-        # M[l, k] = S - wv2[l, k] * I, shape (nl, nk, nz, nz)
-        M = S - f64_wv2[..., jnp.newaxis, jnp.newaxis] * eye
-        # the mean mode (wv2 == 0) gives a singular S; replace with I and
-        # zero the result there
-        singular = (f64_wv2 == 0)[..., jnp.newaxis, jnp.newaxis]
-        M = jnp.where(singular, eye, M)
-        a = jnp.linalg.inv(M)
-        a = jnp.where(singular, 0.0, a)
-        # ph[i] = sum_j a[i, j] qh[j]
-        ph = jnp.einsum("lkij,jlk->ilk", a, qh)
+        # general nz: solve (S - wv2 I) ph = qh per wavenumber. S is
+        # tridiagonal, so use a Thomas sweep, unrolled over the (static)
+        # nz layers and vectorized over wavenumbers: O(nz) per mode
+        # rather than the O(nz^3) of a batched matrix inverse, and it
+        # stays differentiable in S. The matrix is strictly diagonally
+        # dominant for wv2 > 0 (|S_ii| + wv2 > |S_i,i-1| + |S_i,i+1|),
+        # so no pivoting is needed. The mean mode (wv2 == 0, where S
+        # alone is singular) is computed with a placeholder wv2 of 1 and
+        # zeroed afterward.
+        nz = self.nz
+        wv2_safe = jnp.where(f64_wv2 == 0, 1.0, f64_wv2)
+        diag = [S[i, i] - wv2_safe for i in range(nz)]
+        upper = [S[i, i + 1] for i in range(nz - 1)]
+        lower = [S[i + 1, i] for i in range(nz - 1)]
+        # forward elimination
+        cp = [None] * (nz - 1)
+        rp = [None] * nz
+        cp[0] = upper[0] / diag[0]
+        rp[0] = qh[0] / diag[0]
+        for i in range(1, nz):
+            denom = diag[i] - lower[i - 1] * cp[i - 1]
+            if i < nz - 1:
+                cp[i] = upper[i] / denom
+            rp[i] = (qh[i] - lower[i - 1] * rp[i - 1]) / denom
+        # back substitution
+        sol = [None] * nz
+        sol[nz - 1] = rp[nz - 1]
+        for i in range(nz - 2, -1, -1):
+            sol[i] = rp[i] - cp[i] * sol[i + 1]
+        ph = jnp.stack(sol)
+        ph = jnp.where(f64_wv2 == 0, 0.0, ph)
         return ph.astype(self.precision.dtype_complex)
