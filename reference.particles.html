@@ -1,0 +1,315 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lagrangian Particles &mdash; pyqg-jax 0.9.0.dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/pyqg-jax-fix-theme.css?v=ead5a064" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5b4e8bf0"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Diagnostics" href="reference.diagnostics.html" />
+    <link rel="prev" title="Time-Steppers" href="reference.steppers.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyqg-jax
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="reference.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="reference.state.html">States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.models.html">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.parameterizations.html">Parameterizations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.steppers.html">Time-Steppers</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Lagrangian Particles</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyqg_jax.particles.GriddedParticleStepper"><code class="docutils literal notranslate"><span class="pre">GriddedParticleStepper</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.particles.GriddedParticleStepper.initialize_state"><code class="docutils literal notranslate"><span class="pre">GriddedParticleStepper.initialize_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.particles.GriddedParticleStepper.interpolate"><code class="docutils literal notranslate"><span class="pre">GriddedParticleStepper.interpolate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.particles.GriddedParticleStepper.step"><code class="docutils literal notranslate"><span class="pre">GriddedParticleStepper.step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyqg_jax.particles.ParticleState"><code class="docutils literal notranslate"><span class="pre">ParticleState</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.particles.ParticleState.x"><code class="docutils literal notranslate"><span class="pre">ParticleState.x</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.particles.ParticleState.y"><code class="docutils literal notranslate"><span class="pre">ParticleState.y</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.particles.ParticleState.update"><code class="docutils literal notranslate"><span class="pre">ParticleState.update()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reference.diagnostics.html">Diagnostics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.xarray_output.html">xarray Output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyqg-jax</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="reference.html">API Reference</a></li>
+      <li class="breadcrumb-item active">Lagrangian Particles</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/reference.particles.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyqg_jax.particles">
+<span id="lagrangian-particles"></span><h1>Lagrangian Particles<a class="headerlink" href="#module-pyqg_jax.particles" title="Link to this heading"></a></h1>
+<p>Lagrangian particle advection on the model grid.</p>
+<p>This module provides tools to advect passive Lagrangian particles
+using a gridded velocity field, as in <a class="reference external" href="https://pyqg.readthedocs.io/en/latest/api.html#pyqg.LagrangianParticleArray2D" title="(in pyqg v0.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyqg.LagrangianParticleArray2D</span></code></a>
+and <a class="reference external" href="https://pyqg.readthedocs.io/en/latest/api.html#pyqg.GriddedLagrangianParticleArray2D" title="(in pyqg v0.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyqg.GriddedLagrangianParticleArray2D</span></code></a>.</p>
+<p>The velocities are assumed to live at cell centers (an Arakawa “A”
+grid), matching the real-space velocities produced by the models in
+this package. Interpolation is bilinear and the particles are advanced
+with the same two-time-level Runge-Kutta scheme used by PyQG.</p>
+<p>Everything here is written in pure JAX, so the advection is
+differentiable, <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.jit.html#jax.jit" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.jit()</span></code></a>-compatible, and can be mapped over
+ensembles of particle sets with <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.vmap.html#jax.vmap" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.vmap()</span></code></a>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.9.0.</span></p>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyqg_jax.particles.GriddedParticleStepper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyqg_jax.particles.</span></span><span class="sig-name descname"><span class="pre">GriddedParticleStepper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">W</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periodic_in_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periodic_in_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/particles.py#L77-L255"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.particles.GriddedParticleStepper" title="Link to this definition"></a></dt>
+<dd><p>Advect Lagrangian particles using a gridded velocity field.</p>
+<p>The velocity fields are assumed to be defined at cell centers on a
+regular grid spanning <span class="math notranslate nohighlight">\([0, L) \times [0, W)\)</span>, matching the
+real-space velocities of the models in this package. Interpolation
+to the particle positions is bilinear.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>L</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Domain length in the <cite>x</cite> direction. Units: <span class="math notranslate nohighlight">\(\mathrm{m}\)</span>.</p></li>
+<li><p><strong>W</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Domain length in the <cite>y</cite> direction. Defaults to <cite>L</cite>.
+Units: <span class="math notranslate nohighlight">\(\mathrm{m}\)</span>.</p></li>
+<li><p><strong>periodic_in_x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether the domain wraps in the <cite>x</cite> direction. Defaults to
+<code class="code highlight pycode python docutils literal highlight-python"><span class="kc">True</span></code>.</p></li>
+<li><p><strong>periodic_in_y</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether the domain wraps in the <cite>y</cite> direction. Defaults to
+<code class="code highlight pycode python docutils literal highlight-python"><span class="kc">True</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">L,</span> <span class="pre">W</span></span></dt>
+<dd><p>Domain lengths.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.particles.GriddedParticleStepper.initialize_state">
+<span class="sig-name descname"><span class="pre">initialize_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/particles.py#L118-L135"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.particles.GriddedParticleStepper.initialize_state" title="Link to this definition"></a></dt>
+<dd><p>Wrap initial particle positions in a <a class="reference internal" href="#pyqg_jax.particles.ParticleState" title="pyqg_jax.particles.ParticleState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParticleState</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x0</strong> (<em>array-like</em>) – Two arrays (broadcast to the same shape) of initial
+particle positions.</p></li>
+<li><p><strong>y0</strong> (<em>array-like</em>) – Two arrays (broadcast to the same shape) of initial
+particle positions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The new particle state.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyqg_jax.particles.ParticleState" title="pyqg_jax.particles.ParticleState">ParticleState</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.particles.GriddedParticleStepper.interpolate">
+<span class="sig-name descname"><span class="pre">interpolate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/particles.py#L147-L165"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.particles.GriddedParticleStepper.interpolate" title="Link to this definition"></a></dt>
+<dd><p>Bilinearly interpolate a gridded <cite>field</cite> to the particles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>field</strong> (<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)"><em>jax.Array</em></a>) – A real-space field with its final two axes corresponding to
+the <cite>y</cite> and <cite>x</cite> grid axes (shape <code class="code highlight pycode python docutils literal highlight-python"><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">)</span></code>).</p></li>
+<li><p><strong>state</strong> (<a class="reference internal" href="#pyqg_jax.particles.ParticleState" title="pyqg_jax.particles.ParticleState"><em>ParticleState</em></a>) – The particle positions at which to sample <cite>field</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The interpolated values, of shape
+<code class="code highlight pycode python docutils literal highlight-python"><span class="n">field</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">state</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.particles.GriddedParticleStepper.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/particles.py#L204-L252"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.particles.GriddedParticleStepper.step" title="Link to this definition"></a></dt>
+<dd><p>Advance particles one step with a two-time-level RK4 scheme.</p>
+<p>This matches the time stepping of
+<a class="reference external" href="https://pyqg.readthedocs.io/en/latest/api.html#pyqg.GriddedLagrangianParticleArray2D.step_forward_with_gridded_uv" title="(in pyqg v0.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pyqg.GriddedLagrangianParticleArray2D.step_forward_with_gridded_uv()</span></code></a>:
+the first Runge-Kutta stage uses the velocity at the current
+time, and the remaining three stages use the velocity at the
+next time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<a class="reference internal" href="#pyqg_jax.particles.ParticleState" title="pyqg_jax.particles.ParticleState"><em>ParticleState</em></a>) – The current particle positions.</p></li>
+<li><p><strong>u0</strong> (<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)"><em>jax.Array</em></a>) – Gridded velocity components at the current time, shape
+<code class="code highlight pycode python docutils literal highlight-python"><span class="p">(</span><span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">)</span></code>.</p></li>
+<li><p><strong>v0</strong> (<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)"><em>jax.Array</em></a>) – Gridded velocity components at the current time, shape
+<code class="code highlight pycode python docutils literal highlight-python"><span class="p">(</span><span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">)</span></code>.</p></li>
+<li><p><strong>u1</strong> (<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)"><em>jax.Array</em></a>) – Gridded velocity components at the next time (a step <cite>dt</cite>
+later), shape <code class="code highlight pycode python docutils literal highlight-python"><span class="p">(</span><span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">)</span></code>.</p></li>
+<li><p><strong>v1</strong> (<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)"><em>jax.Array</em></a>) – Gridded velocity components at the next time (a step <cite>dt</cite>
+later), shape <code class="code highlight pycode python docutils literal highlight-python"><span class="p">(</span><span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">)</span></code>.</p></li>
+<li><p><strong>dt</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Time step. Units: <span class="math notranslate nohighlight">\(\mathrm{sec}\)</span>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The advected particle positions, a new object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyqg_jax.particles.ParticleState" title="pyqg_jax.particles.ParticleState">ParticleState</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyqg_jax.particles.ParticleState">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyqg_jax.particles.</span></span><span class="sig-name descname"><span class="pre">ParticleState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/particles.py#L32-L74"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.particles.ParticleState" title="Link to this definition"></a></dt>
+<dd><p>The positions of a set of Lagrangian particles.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>You should not usually construct this class yourself. Instead
+obtain instances from <a class="reference internal" href="#pyqg_jax.particles.GriddedParticleStepper.initialize_state" title="pyqg_jax.particles.GriddedParticleStepper.initialize_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">GriddedParticleStepper.initialize_state()</span></code></a>.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.particles.ParticleState.x">
+<span class="sig-name descname"><span class="pre">x</span></span><a class="headerlink" href="#pyqg_jax.particles.ParticleState.x" title="Link to this definition"></a></dt>
+<dd><p>Particle positions along the <cite>x</cite> axis. Units: <span class="math notranslate nohighlight">\(\mathrm{m}\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.particles.ParticleState.y">
+<span class="sig-name descname"><span class="pre">y</span></span><a class="headerlink" href="#pyqg_jax.particles.ParticleState.y" title="Link to this definition"></a></dt>
+<dd><p>Particle positions along the <cite>y</cite> axis. Units: <span class="math notranslate nohighlight">\(\mathrm{m}\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.particles.ParticleState.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/particles.py#L54-L69"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.particles.ParticleState.update" title="Link to this definition"></a></dt>
+<dd><p>Produce a <em>new</em> state with the specified values replaced.</p>
+<p>The keyword arguments may be <cite>x</cite> or <cite>y</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A copy of this object with the specified values replaced.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#pyqg_jax.particles.ParticleState" title="pyqg_jax.particles.ParticleState">ParticleState</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="reference.steppers.html" class="btn btn-neutral float-left" title="Time-Steppers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="reference.diagnostics.html" class="btn btn-neutral float-right" title="Diagnostics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Karl Otness.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,320 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Surface Quasi-Geostrophic Model &mdash; pyqg-jax 0.9.0.dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/pyqg-jax-fix-theme.css?v=ead5a064" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5b4e8bf0"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Two-Eady Mixed-Layer-Instability Model" href="reference.models.callies_model.html" />
+    <link rel="prev" title="Single-Layer (Barotropic) Model" href="reference.models.bt_model.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyqg-jax
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="reference.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="reference.state.html">States</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="reference.models.html">Models</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="reference.models.qg_model.html">Two-Layer QG Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference.models.bt_model.html">Single-Layer (Barotropic) Model</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Surface Quasi-Geostrophic Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.sqg_model.SQGModel"><code class="docutils literal notranslate"><span class="pre">SQGModel</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="reference.models.callies_model.html">Two-Eady Mixed-Layer-Instability Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference.models.layered_model.html">Layered QG Model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reference.parameterizations.html">Parameterizations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.steppers.html">Time-Steppers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.particles.html">Lagrangian Particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.diagnostics.html">Diagnostics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.xarray_output.html">xarray Output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyqg-jax</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="reference.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="reference.models.html">Models</a></li>
+      <li class="breadcrumb-item active">Surface Quasi-Geostrophic Model</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/reference.models.sqg_model.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyqg_jax.sqg_model">
+<span id="surface-quasi-geostrophic-model"></span><h1>Surface Quasi-Geostrophic Model<a class="headerlink" href="#module-pyqg_jax.sqg_model" title="Link to this heading"></a></h1>
+<p>An implementation of <a class="reference external" href="https://pyqg.readthedocs.io/en/latest/api.html#pyqg.SQGModel" title="(in pyqg v0.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyqg.SQGModel</span></code></a>.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyqg_jax.sqg_model.SQGModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyqg_jax.sqg_model.</span></span><span class="sig-name descname"><span class="pre">SQGModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">nx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ny</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">W</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rek</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.787e-07</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filterfac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">23.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9.81</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">H</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Precision.SINGLE</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/sqg_model.py#L15-L164"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.sqg_model.SQGModel" title="Link to this definition"></a></dt>
+<dd><p>Surface quasigeostrophic model.</p>
+<p>See also <a class="reference external" href="https://pyqg.readthedocs.io/en/latest/api.html#pyqg.SQGModel" title="(in pyqg v0.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyqg.SQGModel</span></code></a>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.7.0.</span></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Number of grid points in the <cite>x</cite> direction.</p></li>
+<li><p><strong>ny</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Number of grid points in the <cite>y</cite> direction. Defaults to <cite>nx</cite>.</p></li>
+<li><p><strong>L</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Domain length in the <cite>x</cite> direction. Units: <span class="math notranslate nohighlight">\(\mathrm{m}\)</span>.</p></li>
+<li><p><strong>W</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Domain length in the <cite>y</cite> direction. Defaults to <cite>L</cite>.
+Units: <span class="math notranslate nohighlight">\(\mathrm{m}\)</span>.</p></li>
+<li><p><strong>rek</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Linear drag in lower layer. Units: <span class="math notranslate nohighlight">\(\mathrm{sec}^{-1}\)</span>.</p></li>
+<li><p><strong>filterfac</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Amplitude of the spectral spherical filter.</p></li>
+<li><p><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>)</p></li>
+<li><p><strong>g</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>)</p></li>
+<li><p><strong>beta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Gradient of coriolis parameter. Units:
+<span class="math notranslate nohighlight">\(\mathrm{m}^{-1}\ \mathrm{sec}^{-1}\)</span>.</p></li>
+<li><p><strong>Nb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Buoyancy frequency. Units: <span class="math notranslate nohighlight">\(\mathrm{sec}^{-1}\)</span></p></li>
+<li><p><strong>f_0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>)</p></li>
+<li><p><strong>H</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>)</p></li>
+<li><p><strong>U</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Background zonal flow. Units: <span class="math notranslate nohighlight">\(\mathrm{m}\ \mathrm{sec}^{-1}\)</span>.</p></li>
+<li><p><strong>precision</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.Precision" title="pyqg_jax.state.Precision"><em>Precision</em></a><em>, </em><em>optional</em>) – Precision of model computation. Selects dtype of state values.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.sqg_model.SQGModel.Ubg">
+<span class="sig-name descname"><span class="pre">Ubg</span></span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/sqg_model.py#L159-L161"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.sqg_model.SQGModel.Ubg" title="Link to this definition"></a></dt>
+<dd><p>The background velocity for this model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.sqg_model.SQGModel.create_initial_state">
+<span class="sig-name descname"><span class="pre">create_initial_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/sqg_model.py#L115-L139"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.sqg_model.SQGModel.create_initial_state" title="Link to this definition"></a></dt>
+<dd><p>Create a new initial state with random initialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<em>jax.random.key</em>) – The PRNG state used as the random key for initialization.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The new state with random initialization.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="reference.state.html#pyqg_jax.state.PseudoSpectralState" title="pyqg_jax.state.PseudoSpectralState">PseudoSpectralState</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.sqg_model.SQGModel.get_full_state">
+<span class="sig-name descname"><span class="pre">get_full_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/_model.py#L60-L77"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.sqg_model.SQGModel.get_full_state" title="Link to this definition"></a></dt>
+<dd><p>Expand a partial state into a full state with all computed values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.PseudoSpectralState" title="pyqg_jax.state.PseudoSpectralState"><em>PseudoSpectralState</em></a>) – The partial state to be expanded.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>New state object with all computed fields derived from <cite>state</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="reference.state.html#pyqg_jax.state.FullPseudoSpectralState" title="pyqg_jax.state.FullPseudoSpectralState">FullPseudoSpectralState</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.sqg_model.SQGModel.get_grid">
+<span class="sig-name descname"><span class="pre">get_grid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/_model.py#L79-L97"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.sqg_model.SQGModel.get_grid" title="Link to this definition"></a></dt>
+<dd><p>Retrieve information on the model grid.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.8.0.</span></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A grid instance with attributes giving information on the
+spatial and spectral model grids.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="reference.state.html#pyqg_jax.state.Grid" title="pyqg_jax.state.Grid">Grid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.sqg_model.SQGModel.get_updates">
+<span class="sig-name descname"><span class="pre">get_updates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/_kernel.py#L63-L91"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.sqg_model.SQGModel.get_updates" title="Link to this definition"></a></dt>
+<dd><p>Get updates for time-stepping <cite>state</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.PseudoSpectralState" title="pyqg_jax.state.PseudoSpectralState"><em>PseudoSpectralState</em></a>) – The state which will be time stepped using the computed updates.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new state object where each field corresponds to a
+time-stepping <em>update</em> to be applied.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="reference.state.html#pyqg_jax.state.PseudoSpectralState" title="pyqg_jax.state.PseudoSpectralState">PseudoSpectralState</a></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The object returned by this function has the same type of
+<cite>state</cite>, but contains <em>updates</em>. This is so the time-stepping
+can be done by mapping over the states and updates as JAX
+pytrees with the same structure.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.sqg_model.SQGModel.postprocess_state">
+<span class="sig-name descname"><span class="pre">postprocess_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/_kernel.py#L93-L113"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.sqg_model.SQGModel.postprocess_state" title="Link to this definition"></a></dt>
+<dd><p>Apply fixed filtering to <cite>state</cite>.</p>
+<p>This function should be called once on each new state after each time step.</p>
+<p><a class="reference internal" href="reference.steppers.html#pyqg_jax.steppers.SteppedModel" title="pyqg_jax.steppers.SteppedModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SteppedModel</span></code></a> handles
+this internally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.PseudoSpectralState" title="pyqg_jax.state.PseudoSpectralState"><em>PseudoSpectralState</em></a>) – The state to be filtered.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The filtered state.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="reference.state.html#pyqg_jax.state.PseudoSpectralState" title="pyqg_jax.state.PseudoSpectralState">PseudoSpectralState</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.sqg_model.SQGModel.stability_analysis">
+<span class="sig-name descname"><span class="pre">stability_analysis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/_model.py#L104-L173"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.sqg_model.SQGModel.stability_analysis" title="Link to this definition"></a></dt>
+<dd><p>Linear stability analysis of the background state.</p>
+<p>Solves, at every wavenumber, the eigenvalue problem for normal
+modes <span class="math notranslate nohighlight">\(\hat\theta \propto e^{-\mathrm{i}\omega t}\)</span> of the
+linearized dynamics,</p>
+<div class="math notranslate nohighlight">
+\[k\,(\mathsf{U} + \mathsf{Q}_y\,\mathsf{a})\,\tilde\theta
+= \omega\,\tilde\theta,\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathsf{U} = \mathrm{diag}(\mathtt{Ubg})\)</span>,
+<span class="math notranslate nohighlight">\(\mathsf{Q}_y = \mathrm{diag}(\mathtt{Qy})\)</span>, and
+<span class="math notranslate nohighlight">\(\mathsf{a}\)</span> is the model’s inversion matrix
+(<span class="math notranslate nohighlight">\(\hat\psi = \mathsf{a}\,\hat q\)</span>). The growth rate at each
+wavenumber is <span class="math notranslate nohighlight">\(\mathrm{Im}(\omega)\)</span>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.9.0.</span></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>omega</strong> (<em>jax.Array</em>) – The eigenvalue with the largest growth rate (imaginary part)
+at each wavenumber, shape <code class="code highlight pycode python docutils literal highlight-python"><span class="p">(</span><span class="n">nl</span><span class="p">,</span> <span class="n">nk</span><span class="p">)</span></code>. The growth rate
+is <code class="code highlight pycode python docutils literal highlight-python"><span class="n">omega</span><span class="o">.</span><span class="n">imag</span></code> and the phase speed is
+<code class="code highlight pycode python docutils literal highlight-python"><span class="n">omega</span><span class="o">.</span><span class="n">real</span> <span class="o">/</span> <span class="n">k</span></code>.</p></li>
+<li><p><strong>evec</strong> (<em>jax.Array</em>) – The corresponding eigenvector (the vertical structure of the
+most unstable mode) at each wavenumber, shape
+<code class="code highlight pycode python docutils literal highlight-python"><span class="p">(</span><span class="n">nz</span><span class="p">,</span> <span class="n">nl</span><span class="p">,</span> <span class="n">nk</span><span class="p">)</span></code>.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The eigenvalue problem is solved on the host with NumPy, so this
+is a host-side diagnostic (not differentiable or jit-compatible).
+It works regardless of the active JAX platform.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="reference.models.bt_model.html" class="btn btn-neutral float-left" title="Single-Layer (Barotropic) Model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="reference.models.callies_model.html" class="btn btn-neutral float-right" title="Two-Eady Mixed-Layer-Instability Model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Karl Otness.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

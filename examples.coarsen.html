@@ -1,0 +1,376 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coarsening States &mdash; pyqg-jax 0.9.0.dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/pyqg-jax-fix-theme.css?v=ead5a064" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5b4e8bf0"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Implementing a Parameterization" href="examples.implparam.html" />
+    <link rel="prev" title="Batches of Trajectories" href="examples.batchstep.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyqg-jax
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="examples.basicstep.html">Basic Time Stepping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.batchstep.html">Batches of Trajectories</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Coarsening States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.implparam.html">Implementing a Parameterization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.onlinetrain.html">Online Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.diagnostics.html">Diagnostics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.sqg.html">Surface Quasi-Geostrophic (SQG) Vortex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.barotropic.html">Barotropic Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.callies.html">Two-Eady Mixed-Layer Instability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.layered.html">Layered Baroclinic Turbulence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.particles.html">Lagrangian Particles (Drifters)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.dataassim.html">Variational Data Assimilation from SSH</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyqg-jax</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="examples.html">Examples</a></li>
+      <li class="breadcrumb-item active">Coarsening States</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/examples.coarsen.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="coarsening-states">
+<h1>Coarsening States<a class="headerlink" href="#coarsening-states" title="Link to this heading"></a></h1>
+<p>In using this model to design subgrid parameterizations you will need
+to coarse grain and filter states from a ground truth high resolution
+simulation. Here we present implementations of “Operator 1” and
+“Operator 2” as described in “<a class="reference external" href="https://doi.org/10.1029/2022MS003258">Benchmarking of Machine Learning Ocean
+Subgrid Parameterizations in an Idealized
+Model</a>.” The original NumPy
+implementation of these operators is available on
+<a class="reference external" href="https://github.com/m2lines/pyqg_parameterization_benchmarks/blob/6395fb4b446a4c0228b4a4bd0fc4843ccc69daea/src/pyqg_parameterization_benchmarks/coarsening_ops.py">GitHub</a>
+and <a class="reference external" href="https://doi.org/10.5281/zenodo.6612447">Zenodo</a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">env</span> JAX_ENABLE_X64=True
+<span class="kn">import</span><span class="w"> </span><span class="nn">abc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.gridspec</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gridspec</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cmocean.cm</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cmo</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyqg_jax</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>env: JAX_ENABLE_X64=True
+</pre></div>
+</div>
+</div>
+</div>
+<p>In order to reduce the resolution of our base model we will want to
+construct an identical copy while overriding its <code class="docutils literal notranslate"><span class="pre">nx</span></code> and <code class="docutils literal notranslate"><span class="pre">ny</span></code>
+parameters. To do this we write a function to extract the constructor
+arguments from an existing model object.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">model_to_args</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="n">arg</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">))</span><span class="o">.</span><span class="n">parameters</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>With this function in place we can then replace the two resolution
+parameters with a smaller size to produce a coarsened copy of a large
+model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">coarsen_model</span><span class="p">(</span><span class="n">big_model</span><span class="p">,</span> <span class="n">small_nx</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">big_model</span><span class="o">.</span><span class="n">nx</span> <span class="o">!=</span> <span class="n">big_model</span><span class="o">.</span><span class="n">ny</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;coarsening tested only for square shapes&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">small_nx</span> <span class="o">&gt;=</span> <span class="n">big_model</span><span class="o">.</span><span class="n">nx</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;coarsening output is not strictly smaller (got </span><span class="si">{</span><span class="n">big_model</span><span class="o">.</span><span class="n">nx</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">small_nx</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">small_nx</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;coarsening output should be even-valued, requested </span><span class="si">{</span><span class="n">small_nx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">model_args</span> <span class="o">=</span> <span class="n">model_to_args</span><span class="p">(</span><span class="n">big_model</span><span class="p">)</span>
+    <span class="n">model_args</span><span class="p">[</span><span class="s2">&quot;nx&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">small_nx</span>
+    <span class="n">model_args</span><span class="p">[</span><span class="s2">&quot;ny&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">small_nx</span>
+    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">big_model</span><span class="p">)(</span><span class="o">**</span><span class="n">model_args</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We use this as a building block to create an abstract
+<code class="docutils literal notranslate"><span class="pre">SpectralCoarsener</span></code> class. This class provides two methods:
+<code class="docutils literal notranslate"><span class="pre">coarsen_state</span></code> which produces a state object with reduced resolution,
+and <code class="docutils literal notranslate"><span class="pre">compute_q_total_forcing</span></code> which computes a subgrid forcing based
+on the high resolution state input, an additive correction to the
+low-resolution updates.</p>
+<p>We also add methods which are used to decompose this object so that
+subclasses can be registered as JAX PyTrees. Subclasses need only
+define the property <code class="docutils literal notranslate"><span class="pre">spectral_filter</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">SpectralCoarsener</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">big_model</span><span class="p">,</span> <span class="n">small_nx</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">big_model</span> <span class="o">=</span> <span class="n">big_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">small_nx</span> <span class="o">=</span> <span class="n">small_nx</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">small_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">coarsen_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">big_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">small_nx</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">big_model</span><span class="o">.</span><span class="n">nx</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">small_nx</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">coarsen_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">jax</span><span class="o">.</span><span class="n">eval_shape</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">q</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">big_model</span><span class="o">.</span><span class="n">nz</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">big_model</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">big_model</span><span class="o">.</span><span class="n">nx</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;incorrect input size </span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">qh</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">out_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">small_model</span><span class="o">.</span><span class="n">create_initial_state</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">nk</span> <span class="o">=</span> <span class="n">out_state</span><span class="o">.</span><span class="n">qh</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="n">trunc</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">state</span><span class="o">.</span><span class="n">qh</span><span class="p">[:,</span> <span class="p">:</span><span class="n">nk</span><span class="p">,</span> <span class="p">:</span> <span class="n">nk</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                <span class="n">state</span><span class="o">.</span><span class="n">qh</span><span class="p">[:,</span> <span class="o">-</span><span class="n">nk</span><span class="p">:,</span> <span class="p">:</span> <span class="n">nk</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="p">],</span>
+            <span class="n">axis</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">filtered</span> <span class="o">=</span> <span class="n">trunc</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectral_filter</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratio</span><span class="o">**</span><span class="mi">2</span>
+        <span class="k">return</span> <span class="n">out_state</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">qh</span><span class="o">=</span><span class="n">filtered</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_q_total_forcing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="n">coarsened_deriv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coarsen_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">big_model</span><span class="o">.</span><span class="n">get_updates</span><span class="p">(</span><span class="n">state</span><span class="p">))</span>
+        <span class="n">small_deriv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">small_model</span><span class="o">.</span><span class="n">get_updates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coarsen_state</span><span class="p">(</span><span class="n">state</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">coarsened_deriv</span><span class="o">.</span><span class="n">q</span> <span class="o">-</span> <span class="n">small_deriv</span><span class="o">.</span><span class="n">q</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">spectral_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">tree_flatten_with_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[(</span><span class="n">jax</span><span class="o">.</span><span class="n">tree_util</span><span class="o">.</span><span class="n">GetAttrKey</span><span class="p">(</span><span class="s2">&quot;big_model&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">big_model</span><span class="p">)],</span> <span class="bp">self</span><span class="o">.</span><span class="n">small_nx</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tree_unflatten</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">aux_data</span><span class="p">,</span> <span class="n">children</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">big_model</span><span class="o">=</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">small_nx</span><span class="o">=</span><span class="n">aux_data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>From the above base class we define two subclasses implementing our
+two sample coarsening and filtering operators.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@jax</span><span class="o">.</span><span class="n">tree_util</span><span class="o">.</span><span class="n">register_pytree_with_keys_class</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Operator1</span><span class="p">(</span><span class="n">SpectralCoarsener</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">spectral_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">small_model</span><span class="o">.</span><span class="n">filtr</span>
+
+<span class="nd">@jax</span><span class="o">.</span><span class="n">tree_util</span><span class="o">.</span><span class="n">register_pytree_with_keys_class</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Operator2</span><span class="p">(</span><span class="n">SpectralCoarsener</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">spectral_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">small_model</span><span class="o">.</span><span class="n">wv</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">small_model</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mi">24</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next, a of using these two operators to produce states of size 32 from
+high resolution states of size 64. We first roll out a trajectory at
+size 64, keeping only the last state.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">LARGE_SIZE</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="n">SMALL_SIZE</span> <span class="o">=</span> <span class="mi">32</span>
+
+<span class="n">base_model</span> <span class="o">=</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">qg_model</span><span class="o">.</span><span class="n">QGModel</span><span class="p">(</span>
+    <span class="n">nx</span><span class="o">=</span><span class="n">LARGE_SIZE</span><span class="p">,</span>
+    <span class="n">ny</span><span class="o">=</span><span class="n">LARGE_SIZE</span><span class="p">,</span>
+    <span class="n">precision</span><span class="o">=</span><span class="n">pyqg_jax</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">Precision</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">steppers</span><span class="o">.</span><span class="n">SteppedModel</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">base_model</span><span class="p">,</span>
+    <span class="n">stepper</span><span class="o">=</span><span class="n">pyqg_jax</span><span class="o">.</span><span class="n">steppers</span><span class="o">.</span><span class="n">AB3Stepper</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">14400.0</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="nd">@functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;num_steps&quot;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">roll_out_state</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">loop_fn</span><span class="p">(</span><span class="n">carry</span><span class="p">,</span> <span class="n">_x</span><span class="p">):</span>
+        <span class="n">next_state</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">step_model</span><span class="p">(</span><span class="n">carry</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">next_state</span><span class="p">,</span> <span class="kc">None</span>
+
+    <span class="n">final_state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span>
+        <span class="n">loop_fn</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">num_steps</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">final_state</span>
+
+<span class="n">final_step</span> <span class="o">=</span> <span class="n">roll_out_state</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">create_initial_state</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <span class="n">num_steps</span><span class="o">=</span><span class="mi">7500</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Using the base model from above we construct our one of each of our
+two operators. Because these have been registered as PyTrees they can
+pass through JAX transformations, such as <code class="docutils literal notranslate"><span class="pre">jax.jit</span></code> just like the
+arrays and model states.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">op1</span> <span class="o">=</span> <span class="n">Operator1</span><span class="p">(</span><span class="n">base_model</span><span class="p">,</span> <span class="n">SMALL_SIZE</span><span class="p">)</span>
+<span class="n">op2</span> <span class="o">=</span> <span class="n">Operator2</span><span class="p">(</span><span class="n">base_model</span><span class="p">,</span> <span class="n">SMALL_SIZE</span><span class="p">)</span>
+
+<span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_small</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">coarsen_state</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> <span class="n">op</span><span class="o">.</span><span class="n">compute_q_total_forcing</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We use our JIT-compiled function to produce smaller states and compute
+the associated forcing with each of the two operators.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">big_state</span> <span class="o">=</span> <span class="n">final_step</span><span class="o">.</span><span class="n">state</span>
+<span class="n">op1_state</span><span class="p">,</span> <span class="n">op1_forcing</span> <span class="o">=</span> <span class="n">compute_small</span><span class="p">(</span><span class="n">op1</span><span class="p">,</span> <span class="n">big_state</span><span class="p">)</span>
+<span class="n">op2_state</span><span class="p">,</span> <span class="n">op2_forcing</span> <span class="o">=</span> <span class="n">compute_small</span><span class="p">(</span><span class="n">op2</span><span class="p">,</span> <span class="n">big_state</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Finally, we show the low-resolution states and forcing values next to
+the original high-resolution state.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">q_vmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">[</span><span class="n">big_state</span><span class="p">,</span> <span class="n">op1_state</span><span class="p">,</span> <span class="n">op2_state</span><span class="p">])</span>
+<span class="n">f_vmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="p">[</span><span class="n">op1_forcing</span><span class="p">,</span> <span class="n">op2_forcing</span><span class="p">])</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+<span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># Plot large image</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">big_state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmo</span><span class="o">.</span><span class="n">balance</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="n">q_vmax</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">q_vmax</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;High Resolution State&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">forcing</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+    <span class="p">[(</span><span class="n">op1_state</span><span class="p">,</span> <span class="n">op1_forcing</span><span class="p">),</span> <span class="p">(</span><span class="n">op2_state</span><span class="p">,</span> <span class="n">op2_forcing</span><span class="p">)]</span>
+<span class="p">):</span>
+    <span class="n">ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmo</span><span class="o">.</span><span class="n">balance</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="n">q_vmax</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">q_vmax</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Operator</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2"> State&quot;</span><span class="p">)</span>
+
+    <span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">forcing</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmo</span><span class="o">.</span><span class="n">curl</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="n">f_vmax</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">f_vmax</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Operator</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2"> Forcing&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/82c42d759ef7a47bbf6b9c38a604d16e8cdb1c10af237990ae823175a16d7690.png" src="_images/82c42d759ef7a47bbf6b9c38a604d16e8cdb1c10af237990ae823175a16d7690.png" />
+</div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="examples.batchstep.html" class="btn btn-neutral float-left" title="Batches of Trajectories" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="examples.implparam.html" class="btn btn-neutral float-right" title="Implementing a Parameterization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Karl Otness.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

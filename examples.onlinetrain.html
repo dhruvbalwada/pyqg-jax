@@ -1,0 +1,387 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Online Training &mdash; pyqg-jax 0.9.0.dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/pyqg-jax-fix-theme.css?v=ead5a064" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5b4e8bf0"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Diagnostics" href="examples.diagnostics.html" />
+    <link rel="prev" title="Implementing a Parameterization" href="examples.implparam.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyqg-jax
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="examples.basicstep.html">Basic Time Stepping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.batchstep.html">Batches of Trajectories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.coarsen.html">Coarsening States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.implparam.html">Implementing a Parameterization</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Online Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.diagnostics.html">Diagnostics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.sqg.html">Surface Quasi-Geostrophic (SQG) Vortex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.barotropic.html">Barotropic Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.callies.html">Two-Eady Mixed-Layer Instability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.layered.html">Layered Baroclinic Turbulence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.particles.html">Lagrangian Particles (Drifters)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.dataassim.html">Variational Data Assimilation from SSH</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyqg-jax</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="examples.html">Examples</a></li>
+      <li class="breadcrumb-item active">Online Training</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/examples.onlinetrain.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="online-training">
+<h1>Online Training<a class="headerlink" href="#online-training" title="Link to this heading"></a></h1>
+<p>Other examples have illustrated some of the capabilities that are
+available with the implemented in JAX. One additional JAX
+transformation that has not yet been used is <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.grad.html#jax.grad" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.grad()</span></code></a>. Because
+the base models are implemented in JAX, we can take gradients through
+multiple simulation time steps, training a parameterization <em>online</em>
+through a live simulation, as opposed to training on static snapshots.</p>
+<p>Some <a class="reference external" href="https://doi.org/10.1029/2022MS003124">existing work</a> has
+explored the impact of this training approach with QG models
+implemented in PyTorch. Here we provide a sketch of an online training
+setup using <a class="reference external" href="https://github.com/patrick-kidger/equinox">Equinox</a> for
+neural networks and <a class="reference external" href="https://github.com/deepmind/optax">Optax</a> for
+optimizers.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">env</span> JAX_ENABLE_X64=True
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">equinox</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">eqx</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">optax</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyqg_jax</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>env: JAX_ENABLE_X64=True
+</pre></div>
+</div>
+</div>
+</div>
+<p>To carry out our training we will make use of several elements
+demonstrated in other examples. In particular:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Operator1</span></code> from “<a class="reference internal" href="examples.coarsen.html"><span class="doc">Coarsening States</span></a>”</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NNParam</span></code> and <code class="docutils literal notranslate"><span class="pre">module_to_single</span></code> from “<a class="reference internal" href="examples.implparam.html"><span class="doc">Implementing a Parameterization</span></a>”</p></li>
+</ul>
+<p>In addition to the high-resolution stepped model (size 128), the
+network, and the coarsening operator we also configure an <a class="reference external" href="https://optax.readthedocs.io/en/latest/api/generated/optax.adam.html#optax.adam" title="(in Optax)"><code class="xref py py-func docutils literal notranslate"><span class="pre">Adam</span> <span class="pre">optimizer</span></code></a> to train our network. For more information on combining
+these optimizers with Equinox, consult the <a class="reference external" href="https://docs.kidger.site/equinox/">Equinox
+documentation</a> and the <a class="reference external" href="https://optax.readthedocs.io/en/latest/">Optax
+documentation</a>. Note that
+Optax provides a separate object, here <code class="docutils literal notranslate"><span class="pre">optim_state</span></code>, representing the
+state of the optimizer that must be updated as a part of training.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DT</span> <span class="o">=</span> <span class="mf">3600.0</span>
+<span class="n">LEARNING_RATE</span> <span class="o">=</span> <span class="mf">5e-4</span>
+
+<span class="n">big_model</span> <span class="o">=</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">steppers</span><span class="o">.</span><span class="n">SteppedModel</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">pyqg_jax</span><span class="o">.</span><span class="n">qg_model</span><span class="o">.</span><span class="n">QGModel</span><span class="p">(</span>
+        <span class="n">nx</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+        <span class="n">ny</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+        <span class="n">precision</span><span class="o">=</span><span class="n">pyqg_jax</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">Precision</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">stepper</span><span class="o">=</span><span class="n">pyqg_jax</span><span class="o">.</span><span class="n">steppers</span><span class="o">.</span><span class="n">AB3Stepper</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="n">DT</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">coarse_op</span> <span class="o">=</span> <span class="n">Operator1</span><span class="p">(</span><span class="n">big_model</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+
+<span class="c1"># Ensure that all module weights are float32</span>
+<span class="n">net</span> <span class="o">=</span> <span class="n">module_to_single</span><span class="p">(</span><span class="n">NNParam</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">123</span><span class="p">)))</span>
+
+<span class="n">optim</span> <span class="o">=</span> <span class="n">optax</span><span class="o">.</span><span class="n">adam</span><span class="p">(</span><span class="n">LEARNING_RATE</span><span class="p">)</span>
+<span class="n">optim_state</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">eqx</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">eqx</span><span class="o">.</span><span class="n">is_array</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>With our network and optimizer initialized we generate several sample
+states to represent training data. These states are generated at the
+high resolution of size 128, and coarsened to the low resolution of
+size 32. These small states form our training targets, <code class="docutils literal notranslate"><span class="pre">target_q</span></code>. In
+a real application, these reference trajectories would likely be
+pre-computed and loaded from disk.</p>
+<p>Note that we do not generate any explicit forcing targets here since
+we will be supervising on the states directly.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;num_steps&quot;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_train_data</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="n">carry</span><span class="p">,</span> <span class="n">_x</span><span class="p">):</span>
+        <span class="n">next_state</span> <span class="o">=</span> <span class="n">big_model</span><span class="o">.</span><span class="n">step_model</span><span class="p">(</span><span class="n">carry</span><span class="p">)</span>
+        <span class="n">small_state</span> <span class="o">=</span> <span class="n">coarse_op</span><span class="o">.</span><span class="n">coarsen_state</span><span class="p">(</span><span class="n">carry</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">next_state</span><span class="p">,</span> <span class="n">small_state</span><span class="o">.</span><span class="n">q</span>
+
+    <span class="n">_final_big_state</span><span class="p">,</span> <span class="n">target_q</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span>
+        <span class="n">step</span><span class="p">,</span> <span class="n">big_model</span><span class="o">.</span><span class="n">create_initial_state</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="n">seed</span><span class="p">)),</span> <span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">num_steps</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">target_q</span>
+
+<span class="n">target_q</span> <span class="o">=</span> <span class="n">generate_train_data</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="n">num_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next we provide a function to roll out a trajectory starting from some
+initial state. In this case we provide the state as a bare <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)"><code class="xref py py-class docutils literal notranslate"><span class="pre">JAX</span> <span class="pre">array</span></code></a> and have to package it into a model state. Another
+example of this process is included in “<a class="reference internal" href="examples.basicstep.html"><span class="doc">Basic Time Stepping</span></a>.”
+See “<a class="reference internal" href="examples.implparam.html"><span class="doc">Implementing a Parameterization</span></a>” for another example of using a neural
+network parameterization.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">roll_out_with_net</span><span class="p">(</span><span class="n">init_q</span><span class="p">,</span> <span class="n">net</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">):</span>
+
+    <span class="nd">@pyqg_jax</span><span class="o">.</span><span class="n">parameterizations</span><span class="o">.</span><span class="n">q_parameterization</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">net_parameterization</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">param_aux</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">param_aux</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">q</span>
+        <span class="c1"># Scale states to improve stability</span>
+        <span class="c1"># This 1e-6 is for illustration only</span>
+        <span class="n">q_in</span> <span class="o">=</span> <span class="p">(</span><span class="n">q</span> <span class="o">/</span> <span class="mf">1e-6</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">q_param</span> <span class="o">=</span> <span class="n">net</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+        <span class="k">return</span> <span class="mf">1e-6</span> <span class="o">*</span> <span class="n">q_param</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span> <span class="kc">None</span>
+
+    <span class="c1"># Extrace the small model from the coarsener</span>
+    <span class="c1"># Then wrap it in the network parameterization and stepper</span>
+    <span class="c1"># Make sure to match time steps</span>
+    <span class="n">small_model</span> <span class="o">=</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">steppers</span><span class="o">.</span><span class="n">SteppedModel</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">pyqg_jax</span><span class="o">.</span><span class="n">parameterizations</span><span class="o">.</span><span class="n">ParameterizedModel</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">coarse_op</span><span class="o">.</span><span class="n">small_model</span><span class="p">,</span>
+            <span class="n">param_func</span><span class="o">=</span><span class="n">net_parameterization</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">stepper</span><span class="o">=</span><span class="n">pyqg_jax</span><span class="o">.</span><span class="n">steppers</span><span class="o">.</span><span class="n">AB3Stepper</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="n">DT</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="c1"># Package our state</span>
+    <span class="c1"># First, package it for the base model</span>
+    <span class="n">base_state</span> <span class="o">=</span> <span class="n">small_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">create_initial_state</span><span class="p">(</span>
+        <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">init_q</span><span class="p">)</span>
+    <span class="c1"># Next, wrap it for the parameterization and stepper</span>
+    <span class="n">init_state</span> <span class="o">=</span> <span class="n">small_model</span><span class="o">.</span><span class="n">initialize_stepper_state</span><span class="p">(</span>
+        <span class="n">small_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">initialize_param_state</span><span class="p">(</span><span class="n">base_state</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="n">carry</span><span class="p">,</span> <span class="n">_x</span><span class="p">):</span>
+        <span class="n">next_state</span> <span class="o">=</span> <span class="n">small_model</span><span class="o">.</span><span class="n">step_model</span><span class="p">(</span><span class="n">carry</span><span class="p">)</span>
+        <span class="c1"># NOTE: Be careful! We output the *old* state for the trajectory</span>
+        <span class="c1"># Otherwise the initial step would be skipped</span>
+        <span class="k">return</span> <span class="n">next_state</span><span class="p">,</span> <span class="n">carry</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">model_state</span><span class="o">.</span><span class="n">q</span>
+
+    <span class="c1"># Roll out the state</span>
+    <span class="n">_final_step</span><span class="p">,</span> <span class="n">traj</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span>
+        <span class="n">step</span><span class="p">,</span> <span class="n">init_state</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">num_steps</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">traj</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We provide a function using the above to roll out a trajectory at the
+low resolution and compute errors against the reference trajectory
+<code class="docutils literal notranslate"><span class="pre">target_q</span></code>. In this case we use a simple MSE loss for training. We
+also use Equinox’s “filtered” transforms (<a class="reference external" href="https://docs.kidger.site/equinox/api/transformations/#equinox.filter_jit" title="(in Equinox v0.0.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">equinox.filter_jit()</span></code></a>,
+<a class="reference external" href="https://docs.kidger.site/equinox/api/transformations/#equinox.filter_value_and_grad" title="(in Equinox v0.0.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">equinox.filter_value_and_grad()</span></code></a>) since these interact more naturally with the
+Equinox neural network modules.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Online training with long rollouts may lead to out-of-memory errors.
+One solution is to use <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.checkpoint.html#jax.checkpoint" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.checkpoint()</span></code></a> inside the <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.lax.scan.html#jax.lax.scan" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scan</span></code></a> to save memory through recomputation.</p>
+<p>An implementation of this is available in
+<a class="reference external" href="https://powerpax.readthedocs.io/en/latest/reference.html#powerpax.checkpoint_chunked_scan" title="(in powerpax v0.2.2.dev)"><code class="xref py py-func docutils literal notranslate"><span class="pre">powerpax.checkpoint_chunked_scan()</span></code></a>, or see this
+<a class="reference external" href="https://github.com/google/jax/issues/2139#issuecomment-1189382794">sample code</a>
+for a starting point.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">compute_traj_errors</span><span class="p">(</span><span class="n">target_q</span><span class="p">,</span> <span class="n">net</span><span class="p">):</span>
+    <span class="n">rolled_out</span> <span class="o">=</span> <span class="n">roll_out_with_net</span><span class="p">(</span>
+        <span class="n">init_q</span><span class="o">=</span><span class="n">target_q</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">net</span><span class="o">=</span><span class="n">net</span><span class="p">,</span>
+        <span class="n">num_steps</span><span class="o">=</span><span class="n">target_q</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">rolled_out</span> <span class="o">-</span> <span class="n">target_q</span>
+    <span class="k">return</span> <span class="n">err</span>
+
+<span class="nd">@eqx</span><span class="o">.</span><span class="n">filter_jit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">train_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">net</span><span class="p">,</span> <span class="n">optim_state</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">loss_fn</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">compute_traj_errors</span><span class="p">,</span> <span class="n">net</span><span class="o">=</span><span class="n">net</span><span class="p">))(</span><span class="n">batch</span><span class="p">)</span>
+        <span class="n">mse</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">err</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mse</span>
+
+    <span class="c1"># Compute loss value and gradients</span>
+    <span class="n">loss</span><span class="p">,</span> <span class="n">grads</span> <span class="o">=</span> <span class="n">eqx</span><span class="o">.</span><span class="n">filter_value_and_grad</span><span class="p">(</span><span class="n">loss_fn</span><span class="p">)(</span><span class="n">net</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>
+    <span class="c1"># Update the network weights</span>
+    <span class="n">updates</span><span class="p">,</span> <span class="n">new_optim_state</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">grads</span><span class="p">,</span> <span class="n">optim_state</span><span class="p">,</span> <span class="n">net</span><span class="p">)</span>
+    <span class="n">new_net</span> <span class="o">=</span> <span class="n">eqx</span><span class="o">.</span><span class="n">apply_updates</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">updates</span><span class="p">)</span>
+    <span class="c1"># Return the loss, updated net, updated optimizer state</span>
+    <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">new_net</span><span class="p">,</span> <span class="n">new_optim_state</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We use the components we have to run a short training loop and report
+the loss after each step. The training steps are all JIT compiled.</p>
+<p>For the training function above, <code class="docutils literal notranslate"><span class="pre">batch</span></code> has shape <code class="docutils literal notranslate"><span class="pre">(batch_size,</span> <span class="pre">num_time_steps,</span> <span class="pre">nz,</span> <span class="pre">ny,</span> <span class="pre">nx)</span></code>. Each batch should have at least two time
+steps otherwise the parameterization will not be evaluated in the
+resulting trajectory because in the sample here the evaluated
+trajectory includes the unmodified initial step.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BATCH_SIZE</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">BATCH_STEPS</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="k">assert</span> <span class="n">BATCH_STEPS</span> <span class="o">&gt;=</span> <span class="mi">2</span>
+
+<span class="n">np_rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">456</span><span class="p">)</span>
+<span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">batch_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">):</span>
+    <span class="c1"># Rudimentary shuffling in lieu of real data loader</span>
+    <span class="n">batch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">target_q</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">start</span><span class="o">+</span><span class="n">BATCH_STEPS</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="n">np_rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span>
+                <span class="mi">0</span><span class="p">,</span> <span class="n">target_q</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">BATCH_STEPS</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">BATCH_SIZE</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">loss</span><span class="p">,</span> <span class="n">net</span><span class="p">,</span> <span class="n">optim_state</span> <span class="o">=</span> <span class="n">train_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">net</span><span class="p">,</span> <span class="n">optim_state</span><span class="p">)</span>
+    <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">batch_i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Step </span><span class="si">{</span><span class="n">batch_i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">:</span><span class="s2">02</span><span class="si">}</span><span class="s2">: loss=</span><span class="si">{</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.4E</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Step 05: loss=4.3754E-07
+Step 10: loss=1.9382E-07
+Step 15: loss=5.2962E-08
+Step 20: loss=4.5459E-09
+Step 25: loss=3.7812E-09
+Step 30: loss=1.5082E-08
+Step 35: loss=1.5976E-08
+Step 40: loss=9.1506E-09
+Step 45: loss=2.3292E-09
+Step 50: loss=8.1020E-11
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">losses</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">losses</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Step&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Step Loss&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/6dd33c323f194de5a702fa2bdba144c7e7466b724e670f6f204dcc9ef90909f9.png" src="_images/6dd33c323f194de5a702fa2bdba144c7e7466b724e670f6f204dcc9ef90909f9.png" />
+</div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="examples.implparam.html" class="btn btn-neutral float-left" title="Implementing a Parameterization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="examples.diagnostics.html" class="btn btn-neutral float-right" title="Diagnostics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Karl Otness.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

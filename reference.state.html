@@ -1,0 +1,698 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>States &mdash; pyqg-jax 0.9.0.dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/pyqg-jax-fix-theme.css?v=ead5a064" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5b4e8bf0"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Models" href="reference.models.html" />
+    <link rel="prev" title="API Reference" href="reference.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyqg-jax
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="reference.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">States</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyqg_jax.state.PseudoSpectralState"><code class="docutils literal notranslate"><span class="pre">PseudoSpectralState</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.PseudoSpectralState.q"><code class="docutils literal notranslate"><span class="pre">PseudoSpectralState.q</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.PseudoSpectralState.qh"><code class="docutils literal notranslate"><span class="pre">PseudoSpectralState.qh</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.PseudoSpectralState.update"><code class="docutils literal notranslate"><span class="pre">PseudoSpectralState.update()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState"><code class="docutils literal notranslate"><span class="pre">FullPseudoSpectralState</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.state"><code class="docutils literal notranslate"><span class="pre">FullPseudoSpectralState.state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.q"><code class="docutils literal notranslate"><span class="pre">FullPseudoSpectralState.q</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.qh"><code class="docutils literal notranslate"><span class="pre">FullPseudoSpectralState.qh</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.p"><code class="docutils literal notranslate"><span class="pre">FullPseudoSpectralState.p</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.ph"><code class="docutils literal notranslate"><span class="pre">FullPseudoSpectralState.ph</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.u"><code class="docutils literal notranslate"><span class="pre">FullPseudoSpectralState.u</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.uh"><code class="docutils literal notranslate"><span class="pre">FullPseudoSpectralState.uh</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.v"><code class="docutils literal notranslate"><span class="pre">FullPseudoSpectralState.v</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.vh"><code class="docutils literal notranslate"><span class="pre">FullPseudoSpectralState.vh</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.dqhdt"><code class="docutils literal notranslate"><span class="pre">FullPseudoSpectralState.dqhdt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.dqdt"><code class="docutils literal notranslate"><span class="pre">FullPseudoSpectralState.dqdt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.update"><code class="docutils literal notranslate"><span class="pre">FullPseudoSpectralState.update()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyqg_jax.state.Precision"><code class="docutils literal notranslate"><span class="pre">Precision</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.Precision.SINGLE"><code class="docutils literal notranslate"><span class="pre">Precision.SINGLE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.Precision.DOUBLE"><code class="docutils literal notranslate"><span class="pre">Precision.DOUBLE</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyqg_jax.state.Grid"><code class="docutils literal notranslate"><span class="pre">Grid</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.Grid.real_state_shape"><code class="docutils literal notranslate"><span class="pre">Grid.real_state_shape</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.Grid.spectral_state_shape"><code class="docutils literal notranslate"><span class="pre">Grid.spectral_state_shape</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.Grid.nx"><code class="docutils literal notranslate"><span class="pre">Grid.nx</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.Grid.ny"><code class="docutils literal notranslate"><span class="pre">Grid.ny</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.Grid.nz"><code class="docutils literal notranslate"><span class="pre">Grid.nz</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.Grid.L"><code class="docutils literal notranslate"><span class="pre">Grid.L</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.Grid.W"><code class="docutils literal notranslate"><span class="pre">Grid.W</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.Grid.H"><code class="docutils literal notranslate"><span class="pre">Grid.H</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.Grid.Hi"><code class="docutils literal notranslate"><span class="pre">Grid.Hi</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.Grid.nk"><code class="docutils literal notranslate"><span class="pre">Grid.nk</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.Grid.nl"><code class="docutils literal notranslate"><span class="pre">Grid.nl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.Grid.dx"><code class="docutils literal notranslate"><span class="pre">Grid.dx</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.Grid.dy"><code class="docutils literal notranslate"><span class="pre">Grid.dy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.Grid.dk"><code class="docutils literal notranslate"><span class="pre">Grid.dk</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.Grid.dl"><code class="docutils literal notranslate"><span class="pre">Grid.dl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.state.Grid.get_kappa"><code class="docutils literal notranslate"><span class="pre">Grid.get_kappa()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reference.models.html">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.parameterizations.html">Parameterizations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.steppers.html">Time-Steppers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.particles.html">Lagrangian Particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.diagnostics.html">Diagnostics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.xarray_output.html">xarray Output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyqg-jax</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="reference.html">API Reference</a></li>
+      <li class="breadcrumb-item active">States</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/reference.state.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyqg_jax.state">
+<span id="states"></span><h1>States<a class="headerlink" href="#module-pyqg_jax.state" title="Link to this heading"></a></h1>
+<p>Base model state objects.</p>
+<p>In <cite>pyqg-jax</cite> model states are separated into immutable objects to
+more closely match the rest of JAX.</p>
+<p>Models manipulate instances of <a class="reference internal" href="#pyqg_jax.state.PseudoSpectralState" title="pyqg_jax.state.PseudoSpectralState"><code class="xref py py-class docutils literal notranslate"><span class="pre">PseudoSpectralState</span></code></a> which
+stores only the <cite>q</cite> component from which other model variables are
+derived.</p>
+<p>To access these variables, the states can be expanded into a
+<a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState" title="pyqg_jax.state.FullPseudoSpectralState"><code class="xref py py-class docutils literal notranslate"><span class="pre">FullPseudoSpectralState</span></code></a> with the remaining attributes.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When time-stepping in JAX (in particular with
+<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.lax.scan.html#jax.lax.scan" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.lax.scan()</span></code></a>), the state objects will have leading time
+dimensions in addition the their normal spatial dimensions. JAX
+will store these in “<a class="reference external" href="https://en.wikipedia.org/wiki/AoS_and_SoA">structure-of-arrays</a>” style.</p>
+<p>To slice into states, consider combining
+<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.tree.map.html#jax.tree.map" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.tree.map()</span></code></a> with a <a class="reference external" href="https://docs.python.org/3/glossary.html#term-lambda" title="(in Python v3.14)"><span>lambda</span></a> or a combination
+of <a class="reference external" href="https://docs.python.org/3/library/operator.html#operator.itemgetter" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">operator.itemgetter()</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">slice</span></code></a>.</p>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyqg_jax.state.PseudoSpectralState">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyqg_jax.state.</span></span><span class="sig-name descname"><span class="pre">PseudoSpectralState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">qh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_q_shape</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L97-L206"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.PseudoSpectralState" title="Link to this definition"></a></dt>
+<dd><p>Core state evolved by a model instance.</p>
+<p>This is the innermost state type evolved by the models. This state
+can be expanded into a <a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState" title="pyqg_jax.state.FullPseudoSpectralState"><code class="xref py py-class docutils literal notranslate"><span class="pre">FullPseudoSpectralState</span></code></a> by calling
+methods on the models.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>You should not construct this class yourself. Instead, you should
+retrieve instances from a model and if desired <a class="reference internal" href="#pyqg_jax.state.PseudoSpectralState.update" title="pyqg_jax.state.PseudoSpectralState.update"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update()</span></code></a>
+their attributes.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.PseudoSpectralState.q">
+<span class="sig-name descname"><span class="pre">q</span></span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L130-L132"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.PseudoSpectralState.q" title="Link to this definition"></a></dt>
+<dd><p>Potential vorticity in real space.</p>
+<p>This entry has shape <code class="code highlight pycode python docutils literal highlight-python"><span class="p">(</span><span class="n">nz</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">)</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.PseudoSpectralState.qh">
+<span class="sig-name descname"><span class="pre">qh</span></span><a class="headerlink" href="#pyqg_jax.state.PseudoSpectralState.qh" title="Link to this definition"></a></dt>
+<dd><p>Potential vorticity in spectral space.</p>
+<p>This is the spectral form of <a class="reference internal" href="#pyqg_jax.state.PseudoSpectralState.q" title="pyqg_jax.state.PseudoSpectralState.q"><code class="xref py py-attr docutils literal notranslate"><span class="pre">q</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.state.PseudoSpectralState.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L143-L202"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.PseudoSpectralState.update" title="Link to this definition"></a></dt>
+<dd><p>Replace the value stored in this state.</p>
+<p>This function produces a <em>new</em> state object, containing the
+replacement value.</p>
+<p>The keyword arguments may be either <cite>q</cite> or <cite>qh</cite> (not both),
+allowing the replacement value to be provided in spectral form
+if desired.</p>
+<p>The object this method is called on is not modified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>q</strong> (<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)"><em>jax.Array</em></a>) – Replacement value for <a class="reference internal" href="#pyqg_jax.state.PseudoSpectralState.q" title="pyqg_jax.state.PseudoSpectralState.q"><code class="xref py py-attr docutils literal notranslate"><span class="pre">q</span></code></a></p></li>
+<li><p><strong>qh</strong> (<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)"><em>jax.Array</em></a>) – Replacement value for <a class="reference internal" href="#pyqg_jax.state.PseudoSpectralState.qh" title="pyqg_jax.state.PseudoSpectralState.qh"><code class="xref py py-attr docutils literal notranslate"><span class="pre">qh</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A copy of this object with the specified values replaced.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyqg_jax.state.PseudoSpectralState" title="pyqg_jax.state.PseudoSpectralState">PseudoSpectralState</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the shape of the replacement does not match the
+    existing shape or if duplicate updates are specified.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.14)"><strong>TypeError</strong></a> – If the dtype of the replacement does not match the existing type.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyqg_jax.state.FullPseudoSpectralState">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyqg_jax.state.</span></span><span class="sig-name descname"><span class="pre">FullPseudoSpectralState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dqhdt</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L209-L415"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.FullPseudoSpectralState" title="Link to this definition"></a></dt>
+<dd><p>Full state including calculated values expanded by a model.</p>
+<p>This is an expanded form of <a class="reference internal" href="#pyqg_jax.state.PseudoSpectralState" title="pyqg_jax.state.PseudoSpectralState"><code class="xref py py-class docutils literal notranslate"><span class="pre">PseudoSpectralState</span></code></a> which
+includes additional attributes calculated as part of running one
+of the models.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>You should not construct this class yourself. Instead, you should
+retrieve instances from a model and if desired <a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.update" title="pyqg_jax.state.FullPseudoSpectralState.update"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update()</span></code></a>
+their attributes.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.FullPseudoSpectralState.state">
+<span class="sig-name descname"><span class="pre">state</span></span><a class="headerlink" href="#pyqg_jax.state.FullPseudoSpectralState.state" title="Link to this definition"></a></dt>
+<dd><p>Inner, partial state providing values for <a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.q" title="pyqg_jax.state.FullPseudoSpectralState.q"><code class="xref py py-attr docutils literal notranslate"><span class="pre">q</span></code></a> and
+<a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.qh" title="pyqg_jax.state.FullPseudoSpectralState.qh"><code class="xref py py-attr docutils literal notranslate"><span class="pre">qh</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyqg_jax.state.PseudoSpectralState" title="pyqg_jax.state.PseudoSpectralState">PseudoSpectralState</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.FullPseudoSpectralState.q">
+<span class="sig-name descname"><span class="pre">q</span></span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L283-L285"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.FullPseudoSpectralState.q" title="Link to this definition"></a></dt>
+<dd><p>Potential vorticity in real space.</p>
+<p>Pass-through accessor for <a class="reference internal" href="#pyqg_jax.state.PseudoSpectralState.q" title="pyqg_jax.state.PseudoSpectralState.q"><code class="xref py py-attr docutils literal notranslate"><span class="pre">state.q</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.FullPseudoSpectralState.qh">
+<span class="sig-name descname"><span class="pre">qh</span></span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L279-L281"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.FullPseudoSpectralState.qh" title="Link to this definition"></a></dt>
+<dd><p>Potential vorticity in spectral space.</p>
+<p>Pass-through accessor for <a class="reference internal" href="#pyqg_jax.state.PseudoSpectralState.qh" title="pyqg_jax.state.PseudoSpectralState.qh"><code class="xref py py-attr docutils literal notranslate"><span class="pre">state.qh</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.FullPseudoSpectralState.p">
+<span class="sig-name descname"><span class="pre">p</span></span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L287-L289"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.FullPseudoSpectralState.p" title="Link to this definition"></a></dt>
+<dd><p>Streamfunction in real space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.FullPseudoSpectralState.ph">
+<span class="sig-name descname"><span class="pre">ph</span></span><a class="headerlink" href="#pyqg_jax.state.FullPseudoSpectralState.ph" title="Link to this definition"></a></dt>
+<dd><p>Streamfunction in spectral space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.FullPseudoSpectralState.u">
+<span class="sig-name descname"><span class="pre">u</span></span><a class="headerlink" href="#pyqg_jax.state.FullPseudoSpectralState.u" title="Link to this definition"></a></dt>
+<dd><p>Zonal velocity anomaly in real space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.FullPseudoSpectralState.uh">
+<span class="sig-name descname"><span class="pre">uh</span></span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L291-L293"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.FullPseudoSpectralState.uh" title="Link to this definition"></a></dt>
+<dd><p>Zonal velocity anomaly in spectral space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.FullPseudoSpectralState.v">
+<span class="sig-name descname"><span class="pre">v</span></span><a class="headerlink" href="#pyqg_jax.state.FullPseudoSpectralState.v" title="Link to this definition"></a></dt>
+<dd><p>Meridional velocity anomaly in real space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.FullPseudoSpectralState.vh">
+<span class="sig-name descname"><span class="pre">vh</span></span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L295-L297"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.FullPseudoSpectralState.vh" title="Link to this definition"></a></dt>
+<dd><p>Meridional velocity anomaly in spectral space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.FullPseudoSpectralState.dqhdt">
+<span class="sig-name descname"><span class="pre">dqhdt</span></span><a class="headerlink" href="#pyqg_jax.state.FullPseudoSpectralState.dqhdt" title="Link to this definition"></a></dt>
+<dd><p>Spectral derivative with respect to time for <a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.qh" title="pyqg_jax.state.FullPseudoSpectralState.qh"><code class="xref py py-attr docutils literal notranslate"><span class="pre">qh</span></code></a>.</p>
+<p>This value is the update applied to the model when time
+stepping.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.FullPseudoSpectralState.dqdt">
+<span class="sig-name descname"><span class="pre">dqdt</span></span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L299-L301"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.FullPseudoSpectralState.dqdt" title="Link to this definition"></a></dt>
+<dd><p>Real space version of <a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.dqhdt" title="pyqg_jax.state.FullPseudoSpectralState.dqhdt"><code class="xref py py-attr docutils literal notranslate"><span class="pre">dqhdt</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.7.0: </span>Removed attributes <cite>uq</cite>, <cite>vq</cite>, <cite>uqh</cite>, and <cite>vqh</cite>.</p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.state.FullPseudoSpectralState.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L303-L412"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.FullPseudoSpectralState.update" title="Link to this definition"></a></dt>
+<dd><p>Replace values stored in this state.</p>
+<p>This function produces a <em>new</em> state object, with specified
+attributes replaced.</p>
+<p>The keyword arguments may specify any of this class’s
+attributes <em>except</em> <a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.state" title="pyqg_jax.state.FullPseudoSpectralState.state"><code class="xref py py-attr docutils literal notranslate"><span class="pre">state</span></code></a>, but must not apply multiple
+updates to the same attribute. That is, modifying both the
+spectral and real space values at the same time is not
+allowed.</p>
+<p>The object this method is called on is not modified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>q</strong> (<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)"><em>jax.Array</em></a>) – Replacement value for <a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.q" title="pyqg_jax.state.FullPseudoSpectralState.q"><code class="xref py py-attr docutils literal notranslate"><span class="pre">q</span></code></a>. This also updates <a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.state" title="pyqg_jax.state.FullPseudoSpectralState.state"><code class="xref py py-attr docutils literal notranslate"><span class="pre">state</span></code></a>.</p></li>
+<li><p><strong>qh</strong> (<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)"><em>jax.Array</em></a>) – Replacement value for <a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.qh" title="pyqg_jax.state.FullPseudoSpectralState.qh"><code class="xref py py-attr docutils literal notranslate"><span class="pre">qh</span></code></a>. This also updates <a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.state" title="pyqg_jax.state.FullPseudoSpectralState.state"><code class="xref py py-attr docutils literal notranslate"><span class="pre">state</span></code></a>.</p></li>
+<li><p><strong>p</strong> (<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)"><em>jax.Array</em></a>) – Replacement value for <a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.p" title="pyqg_jax.state.FullPseudoSpectralState.p"><code class="xref py py-attr docutils literal notranslate"><span class="pre">p</span></code></a>.</p></li>
+<li><p><strong>ph</strong> (<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)"><em>jax.Array</em></a>) – Replacement value for <a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.ph" title="pyqg_jax.state.FullPseudoSpectralState.ph"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ph</span></code></a>.</p></li>
+<li><p><strong>u</strong> (<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)"><em>jax.Array</em></a>) – Replacement value for <a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.u" title="pyqg_jax.state.FullPseudoSpectralState.u"><code class="xref py py-attr docutils literal notranslate"><span class="pre">u</span></code></a>.</p></li>
+<li><p><strong>uh</strong> (<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)"><em>jax.Array</em></a>) – Replacement value for <a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.uh" title="pyqg_jax.state.FullPseudoSpectralState.uh"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uh</span></code></a>.</p></li>
+<li><p><strong>v</strong> (<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)"><em>jax.Array</em></a>) – Replacement value for <a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.v" title="pyqg_jax.state.FullPseudoSpectralState.v"><code class="xref py py-attr docutils literal notranslate"><span class="pre">v</span></code></a>.</p></li>
+<li><p><strong>vh</strong> (<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)"><em>jax.Array</em></a>) – Replacement value for <a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.vh" title="pyqg_jax.state.FullPseudoSpectralState.vh"><code class="xref py py-attr docutils literal notranslate"><span class="pre">vh</span></code></a>.</p></li>
+<li><p><strong>dqhdt</strong> (<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)"><em>jax.Array</em></a>) – Replacement value for <a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.dqhdt" title="pyqg_jax.state.FullPseudoSpectralState.dqhdt"><code class="xref py py-attr docutils literal notranslate"><span class="pre">dqhdt</span></code></a>.</p></li>
+<li><p><strong>dqdt</strong> (<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)"><em>jax.Array</em></a>) – Replacement value for <a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState.dqdt" title="pyqg_jax.state.FullPseudoSpectralState.dqdt"><code class="xref py py-attr docutils literal notranslate"><span class="pre">dqdt</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A copy of this object with the specified values replaced.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyqg_jax.state.FullPseudoSpectralState" title="pyqg_jax.state.FullPseudoSpectralState">FullPseudoSpectralState</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the shape of the replacement does not match the
+    existing shape or if duplicate updates are specified.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.14)"><strong>TypeError</strong></a> – If the dtype of the replacement does not match the existing type.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p>Model instances can have their data-type precision selected as a
+constructor argument. The enumeration <a class="reference internal" href="#pyqg_jax.state.Precision" title="pyqg_jax.state.Precision"><code class="xref py py-class docutils literal notranslate"><span class="pre">Precision</span></code></a> gives
+available options.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyqg_jax.state.Precision">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyqg_jax.state.</span></span><span class="sig-name descname"><span class="pre">Precision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L40-L86"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.Precision" title="Link to this definition"></a></dt>
+<dd><p>Enumeration for model precision levels.</p>
+<p>When constructing a base model, use values of this enumeration to
+select the numerical precision which should be used for the states
+and internal calculations.</p>
+<p>Double precision may be significantly slower, for example on GPUs.</p>
+<p>Members of this enum have attributes <code class="code highlight pycode python docutils literal highlight-python"><span class="n">dtype_real</span></code> and
+<code class="code highlight pycode python docutils literal highlight-python"><span class="n">dtype_complex</span></code> providing the <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.numpy.dtype.html#jax.numpy.dtype" title="(in JAX)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code></a>
+objects used at each precision level.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.Precision.SINGLE">
+<span class="sig-name descname"><span class="pre">SINGLE</span></span><a class="headerlink" href="#pyqg_jax.state.Precision.SINGLE" title="Link to this definition"></a></dt>
+<dd><p>Single precision.</p>
+<p>Models will use <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.numpy.float32.html#jax.numpy.float32" title="(in JAX)"><code class="xref py py-class docutils literal notranslate"><span class="pre">jax.numpy.float32</span></code></a> and <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.numpy.complex64.html#jax.numpy.complex64" title="(in JAX)"><code class="xref py py-class docutils literal notranslate"><span class="pre">jax.numpy.complex64</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.Precision.DOUBLE">
+<span class="sig-name descname"><span class="pre">DOUBLE</span></span><a class="headerlink" href="#pyqg_jax.state.Precision.DOUBLE" title="Link to this definition"></a></dt>
+<dd><p>Double precision</p>
+<p>Models will use <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.numpy.float64.html#jax.numpy.float64" title="(in JAX)"><code class="xref py py-class docutils literal notranslate"><span class="pre">jax.numpy.float64</span></code></a> and <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.numpy.complex128.html#jax.numpy.complex128" title="(in JAX)"><code class="xref py py-class docutils literal notranslate"><span class="pre">jax.numpy.complex128</span></code></a>.</p>
+<p>Ensure that JAX has <a class="reference external" href="https://docs.jax.dev/en/latest/notebooks/Common_Gotchas_in_JAX.html#double-64bit-precision">64-bit precision enabled</a>.</p>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.9.0: </span>Added <code class="code highlight pycode python docutils literal highlight-python"><span class="n">dtype_real</span></code> and <code class="code highlight pycode python docutils literal highlight-python"><span class="n">dtype_complex</span></code>
+attributes.</p>
+</div>
+</dd></dl>
+
+<p>Models also expose information about the grid on which values are
+computed.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyqg_jax.state.Grid">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyqg_jax.state.</span></span><span class="sig-name descname"><span class="pre">Grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">nz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ny</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">W</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Hi</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L424-L590"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.Grid" title="Link to this definition"></a></dt>
+<dd><p>Information on the spatial grid used by a model.</p>
+<p>The models in this package use an <a class="reference external" href="https://en.wikipedia.org/wiki/Arakawa_grids#Arakawa_A-grid">Arakawa A-grid</a>
+for real space grids. This class also provides information on the
+shapes of arrays storing real and spectral values and the
+distances along each grid edge.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.8.0.</span></p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>You should not construct this class yourself. Instead, you should
+retrieve instances from a model.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.Grid.real_state_shape">
+<span class="sig-name descname"><span class="pre">real_state_shape</span></span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L523-L525"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.Grid.real_state_shape" title="Link to this definition"></a></dt>
+<dd><p>Tuple specifying the shape of arrays for real space variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.Grid.spectral_state_shape">
+<span class="sig-name descname"><span class="pre">spectral_state_shape</span></span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L527-L529"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.Grid.spectral_state_shape" title="Link to this definition"></a></dt>
+<dd><p>Tuple specifying the shape of arrays for spectral variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.Grid.nx">
+<span class="sig-name descname"><span class="pre">nx</span></span><a class="headerlink" href="#pyqg_jax.state.Grid.nx" title="Link to this definition"></a></dt>
+<dd><p>Number of grid points in the x direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.Grid.ny">
+<span class="sig-name descname"><span class="pre">ny</span></span><a class="headerlink" href="#pyqg_jax.state.Grid.ny" title="Link to this definition"></a></dt>
+<dd><p>Number of grid points in the y direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.Grid.nz">
+<span class="sig-name descname"><span class="pre">nz</span></span><a class="headerlink" href="#pyqg_jax.state.Grid.nz" title="Link to this definition"></a></dt>
+<dd><p>Number of grid points in the z direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.Grid.L">
+<span class="sig-name descname"><span class="pre">L</span></span><a class="headerlink" href="#pyqg_jax.state.Grid.L" title="Link to this definition"></a></dt>
+<dd><p>Domain length in the x direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.Grid.W">
+<span class="sig-name descname"><span class="pre">W</span></span><a class="headerlink" href="#pyqg_jax.state.Grid.W" title="Link to this definition"></a></dt>
+<dd><p>Domain length in the y direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.Grid.H">
+<span class="sig-name descname"><span class="pre">H</span></span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L531-L533"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.Grid.H" title="Link to this definition"></a></dt>
+<dd><p>Domain length in the z direction.</p>
+<p>In most cases this may actually be a JAX float scalar or
+tracer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.Grid.Hi">
+<span class="sig-name descname"><span class="pre">Hi</span></span><a class="headerlink" href="#pyqg_jax.state.Grid.Hi" title="Link to this definition"></a></dt>
+<dd><p>The length of each layer in the z direction.</p>
+<p>This is a vector of length <a class="reference internal" href="#pyqg_jax.state.Grid.nz" title="pyqg_jax.state.Grid.nz"><code class="xref py py-attr docutils literal notranslate"><span class="pre">nz</span></code></a> and whose entries sum to
+<a class="reference internal" href="#pyqg_jax.state.Grid.H" title="pyqg_jax.state.Grid.H"><code class="xref py py-attr docutils literal notranslate"><span class="pre">H</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.Grid.nk">
+<span class="sig-name descname"><span class="pre">nk</span></span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L539-L541"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.Grid.nk" title="Link to this definition"></a></dt>
+<dd><p>Number of spectral grid points in the k direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.Grid.nl">
+<span class="sig-name descname"><span class="pre">nl</span></span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L535-L537"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.Grid.nl" title="Link to this definition"></a></dt>
+<dd><p>Number of spectral grid points in the l direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.Grid.dx">
+<span class="sig-name descname"><span class="pre">dx</span></span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L543-L545"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.Grid.dx" title="Link to this definition"></a></dt>
+<dd><p>Space between grid points in the x direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.Grid.dy">
+<span class="sig-name descname"><span class="pre">dy</span></span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L547-L549"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.Grid.dy" title="Link to this definition"></a></dt>
+<dd><p>Space between grid points in the y direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.Grid.dk">
+<span class="sig-name descname"><span class="pre">dk</span></span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L555-L557"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.Grid.dk" title="Link to this definition"></a></dt>
+<dd><p>Spectral spacing in the k direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.state.Grid.dl">
+<span class="sig-name descname"><span class="pre">dl</span></span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L551-L553"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.Grid.dl" title="Link to this definition"></a></dt>
+<dd><p>Spectral spacing in the l direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.state.Grid.get_kappa">
+<span class="sig-name descname"><span class="pre">get_kappa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Precision.SINGLE</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/state.py#L559-L587"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.state.Grid.get_kappa" title="Link to this definition"></a></dt>
+<dd><p>Information on the wavenumber at each spectral grid point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>precision</strong> (<a class="reference internal" href="#pyqg_jax.state.Precision" title="pyqg_jax.state.Precision"><em>Precision</em></a><em>, </em><em>optional</em>) – Precision for the wavenumber calculations.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A two-dimensional grid of wavenumber values at the
+specified precision.</p>
+<p>These values have the shape of a spectral state (see
+<a class="reference internal" href="#pyqg_jax.state.Grid.spectral_state_shape" title="pyqg_jax.state.Grid.spectral_state_shape"><code class="xref py py-attr docutils literal notranslate"><span class="pre">spectral_state_shape</span></code></a>) without the leading
+<a class="reference internal" href="#pyqg_jax.state.Grid.nz" title="pyqg_jax.state.Grid.nz"><code class="xref py py-attr docutils literal notranslate"><span class="pre">nz</span></code></a> dimension.</p>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="reference.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="reference.models.html" class="btn btn-neutral float-right" title="Models" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Karl Otness.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

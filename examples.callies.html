@@ -1,0 +1,366 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Two-Eady Mixed-Layer Instability &mdash; pyqg-jax 0.9.0.dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/pyqg-jax-fix-theme.css?v=ead5a064" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5b4e8bf0"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Layered Baroclinic Turbulence" href="examples.layered.html" />
+    <link rel="prev" title="Barotropic Model" href="examples.barotropic.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyqg-jax
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="examples.basicstep.html">Basic Time Stepping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.batchstep.html">Batches of Trajectories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.coarsen.html">Coarsening States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.implparam.html">Implementing a Parameterization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.onlinetrain.html">Online Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.diagnostics.html">Diagnostics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.sqg.html">Surface Quasi-Geostrophic (SQG) Vortex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.barotropic.html">Barotropic Model</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Two-Eady Mixed-Layer Instability</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#construct-the-model">Construct the Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configure-initial-condition">Configure Initial Condition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-the-model">Run the Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sea-surface-height">Sea-Surface Height</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples.layered.html">Layered Baroclinic Turbulence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.particles.html">Lagrangian Particles (Drifters)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.dataassim.html">Variational Data Assimilation from SSH</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyqg-jax</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="examples.html">Examples</a></li>
+      <li class="breadcrumb-item active">Two-Eady Mixed-Layer Instability</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/examples.callies.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="two-eady-mixed-layer-instability">
+<h1>Two-Eady Mixed-Layer Instability<a class="headerlink" href="#two-eady-mixed-layer-instability" title="Link to this heading"></a></h1>
+<p>This example runs the <a class="reference internal" href="reference.models.callies_model.html#pyqg_jax.callies_model.CalliesTwoEady" title="pyqg_jax.callies_model.CalliesTwoEady"><code class="xref py py-class docutils literal notranslate"><span class="pre">CalliesTwoEady</span></code></a>
+model, a three-PV-sheet representation of mixed-layer instability (MLI)
+from “<a class="reference external" href="https://doi.org/10.1017/jfm.2015.700">The role of mixed-layer instabilities in submesoscale
+turbulence</a>” by Callies, Flierl,
+Ferrari, and Fox-Kemper (2016).</p>
+<p>A weakly stratified surface mixed layer sitting on a strongly
+stratified thermocline is baroclinically unstable. Because both layers
+have zero interior potential vorticity, the full dynamics is carried by
+three “PV sheets” — at the surface, the mixed-layer/thermocline
+interface, and the base of the thermocline. The instability injects
+energy at the small mixed-layer deformation radius (a few km), so it is
+a clean testbed for submesoscale variability and for the sea-surface
+height (SSH) signal observed by SWOT.</p>
+<p>This model carries out part of its computation in 64-bit precision
+regardless of the selected <a class="reference internal" href="reference.state.html#pyqg_jax.state.Precision" title="pyqg_jax.state.Precision"><code class="xref py py-class docutils literal notranslate"><span class="pre">Precision</span></code></a> (the
+hyperviscous filter underflows in 32-bit arithmetic), so we enable
+JAX’s 64-bit support before constructing it.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
+<span class="n">jax</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s2">&quot;jax_enable_x64&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyqg_jax</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="construct-the-model">
+<h2>Construct the Model<a class="headerlink" href="#construct-the-model" title="Link to this heading"></a></h2>
+<p>We keep the stratification from Callies et al. (2016) — a 100 m mixed
+layer (<span class="math notranslate nohighlight">\(N_m = 2\times10^{-3}\ \mathrm{s}^{-1}\)</span>) over a 400 m thermocline
+(<span class="math notranslate nohighlight">\(N_t = 8\times10^{-3}\ \mathrm{s}^{-1}\)</span>) — but shrink the domain to
+120 km. The most unstable MLI wavelength is set by the physics (roughly
+<span class="math notranslate nohighlight">\(2\pi N_m H_m / f \approx 10\)</span> km) and does <strong>not</strong> depend on the domain
+size, so a small box resolves it comfortably at modest grid sizes: here
+<span class="math notranslate nohighlight">\(\Delta x \approx 0.9\)</span> km, about ten grid points per MLI wavelength. The
+default hyperviscosity rescales with the grid spacing, so no manual
+tuning is needed.</p>
+<p>The dissipation filter is built from <code class="docutils literal notranslate"><span class="pre">dt</span></code> at construction time, so the
+model takes a <code class="docutils literal notranslate"><span class="pre">dt</span></code> argument that <strong>must</strong> match the stepper’s <code class="docutils literal notranslate"><span class="pre">dt</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DT</span> <span class="o">=</span> <span class="mf">300.0</span>
+<span class="n">T_MAX</span> <span class="o">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="mf">86400.0</span>  <span class="c1"># 60 days</span>
+<span class="n">SNAP_INTERVAL</span> <span class="o">=</span> <span class="mi">12</span> <span class="o">*</span> <span class="mf">86400.0</span>  <span class="c1"># snapshot every 12 days</span>
+
+<span class="n">stepped_model</span> <span class="o">=</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">steppers</span><span class="o">.</span><span class="n">SteppedModel</span><span class="p">(</span>
+    <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">callies_model</span><span class="o">.</span><span class="n">CalliesTwoEady</span><span class="p">(</span>
+        <span class="n">nx</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+        <span class="n">L</span><span class="o">=</span><span class="mf">120e3</span><span class="p">,</span>
+        <span class="n">dt</span><span class="o">=</span><span class="n">DT</span><span class="p">,</span>
+        <span class="n">precision</span><span class="o">=</span><span class="n">pyqg_jax</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">Precision</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">steppers</span><span class="o">.</span><span class="n">AB3Stepper</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="n">DT</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">stepped_model</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>SteppedModel(
+  model=CalliesTwoEady(
+    nx=128,
+    ny=128,
+    L=120000.0,
+    W=120000.0,
+    rek=0.0,
+    filterfac=23.6,
+    f=0.0001,
+    g=9.81,
+    Nm=0.002,
+    Nt=0.008,
+    Hm=100.0,
+    Ht=400.0,
+    Sm=0.0001,
+    St=0.0001,
+    nu=1.1050060846985186e+46,
+    nun=10,
+    hypodiff=1e-16,
+    dt=300.0,
+    use_dealias_filter=True,
+    precision=&lt;Precision.DOUBLE: 2&gt;,
+  ),
+  stepper=AB3Stepper(dt=300.0),
+)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="configure-initial-condition">
+<h2>Configure Initial Condition<a class="headerlink" href="#configure-initial-condition" title="Link to this heading"></a></h2>
+<p>The default initial condition is small, zero-mean white noise in each
+PV sheet, following the paper. The unstable modes grow out of this
+noise.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">init_state</span> <span class="o">=</span> <span class="n">stepped_model</span><span class="o">.</span><span class="n">create_initial_state</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">init_state</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AB3State(
+  t=f32[],
+  tc=u32[],
+  state=PseudoSpectralState(qh=c128[3,128,65]),
+)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="run-the-model">
+<h2>Run the Model<a class="headerlink" href="#run-the-model" title="Link to this heading"></a></h2>
+<p>We roll the state out to <code class="docutils literal notranslate"><span class="pre">T_MAX</span></code>, keeping a snapshot every
+<code class="docutils literal notranslate"><span class="pre">SNAP_INTERVAL</span></code>. The whole rollout is JIT-compiled and uses
+<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.lax.scan.html#jax.lax.scan" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.lax.scan()</span></code></a>, so it runs as a single fused kernel.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;num_steps&quot;</span><span class="p">,</span> <span class="s2">&quot;subsample&quot;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">roll_out_state</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">subsample</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">loop_fn</span><span class="p">(</span><span class="n">carry</span><span class="p">,</span> <span class="n">_x</span><span class="p">):</span>
+        <span class="n">current_state</span> <span class="o">=</span> <span class="n">carry</span>
+        <span class="n">next_state</span> <span class="o">=</span> <span class="n">stepped_model</span><span class="o">.</span><span class="n">step_model</span><span class="p">(</span><span class="n">current_state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">next_state</span><span class="p">,</span> <span class="n">current_state</span>
+
+    <span class="n">_final_carry</span><span class="p">,</span> <span class="n">traj_steps</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span>
+        <span class="n">loop_fn</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">num_steps</span>
+    <span class="p">)</span>
+    <span class="c1"># keep every `subsample`-th snapshot</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">subsample</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">leaf</span><span class="p">:</span> <span class="n">leaf</span><span class="p">[</span><span class="n">keep</span><span class="p">],</span> <span class="n">traj_steps</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">num_steps</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">T_MAX</span> <span class="o">/</span> <span class="n">DT</span><span class="p">)</span>
+<span class="n">snap_subsample</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">SNAP_INTERVAL</span> <span class="o">/</span> <span class="n">DT</span><span class="p">)</span>
+
+<span class="n">traj</span> <span class="o">=</span> <span class="n">roll_out_state</span><span class="p">(</span><span class="n">init_state</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">snap_subsample</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="sea-surface-height">
+<h2>Sea-Surface Height<a class="headerlink" href="#sea-surface-height" title="Link to this heading"></a></h2>
+<p>The signal seen by an altimeter like SWOT is the surface dynamic
+height, <span class="math notranslate nohighlight">\(\eta = (f_0 / g)\,\psi_\text{surface}\)</span>, where the surface
+streamfunction comes from inverting the PV sheets. We expand each
+snapshot into a <a class="reference internal" href="reference.state.html#pyqg_jax.state.FullPseudoSpectralState" title="pyqg_jax.state.FullPseudoSpectralState"><code class="xref py py-class docutils literal notranslate"><span class="pre">full</span> <span class="pre">state</span></code></a> to recover the streamfunction
+<code class="docutils literal notranslate"><span class="pre">ph</span></code> in spectral space, then transform the surface layer back to real
+space.</p>
+<p>The field grows from noise into the elongated frontal filaments and
+roll-up eddies characteristic of mixed-layer instability, with an
+amplitude of order a centimeter.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">stepped_model</span><span class="o">.</span><span class="n">model</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">surface_ssh</span><span class="p">(</span><span class="n">snapshot</span><span class="p">):</span>
+    <span class="n">full</span> <span class="o">=</span> <span class="n">stepped_model</span><span class="o">.</span><span class="n">get_full_state</span><span class="p">(</span><span class="n">snapshot</span><span class="p">)</span>
+    <span class="n">psi_surface</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">irfftn</span><span class="p">(</span>
+        <span class="n">full</span><span class="o">.</span><span class="n">ph</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">nx</span><span class="p">),</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">f</span> <span class="o">/</span> <span class="n">model</span><span class="o">.</span><span class="n">g</span><span class="p">)</span> <span class="o">*</span> <span class="n">psi_surface</span> <span class="o">*</span> <span class="mi">100</span>  <span class="c1"># centimeters</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nframes</span> <span class="o">=</span> <span class="n">traj</span><span class="o">.</span><span class="n">tc</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">cols</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">rows</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">nframes</span> <span class="o">/</span> <span class="n">cols</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+    <span class="n">rows</span><span class="p">,</span>
+    <span class="n">cols</span><span class="p">,</span>
+    <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;constrained&quot;</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mf">2.6</span> <span class="o">*</span> <span class="n">rows</span><span class="p">),</span>
+    <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">km</span> <span class="o">=</span> <span class="mf">1e-3</span>
+<span class="n">extent</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">W</span> <span class="o">*</span> <span class="n">km</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">L</span> <span class="o">*</span> <span class="n">km</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">step_i</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axs</span><span class="o">.</span><span class="n">ravel</span><span class="p">()):</span>
+    <span class="k">if</span> <span class="n">step_i</span> <span class="o">&gt;=</span> <span class="n">nframes</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">delaxes</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+        <span class="k">continue</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="n">step_i</span><span class="p">),</span> <span class="n">traj</span><span class="p">)</span>
+    <span class="n">eta</span> <span class="o">=</span> <span class="n">surface_ssh</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+    <span class="n">amp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">eta</span><span class="p">),</span> <span class="mi">99</span><span class="p">))</span> <span class="ow">or</span> <span class="mf">1.0</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+        <span class="n">eta</span><span class="p">,</span>
+        <span class="n">vmin</span><span class="o">=-</span><span class="n">amp</span><span class="p">,</span>
+        <span class="n">vmax</span><span class="o">=</span><span class="n">amp</span><span class="p">,</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;RdBu_r&quot;</span><span class="p">,</span>
+        <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span>
+        <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;SSH [cm]&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time = </span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">86400</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> d&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">step_i</span> <span class="o">%</span> <span class="n">cols</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;y [km]&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">step_i</span> <span class="o">//</span> <span class="n">cols</span> <span class="o">==</span> <span class="n">rows</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x [km]&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/c5e081c7c24f3902fef880e60860731ff2c14692b11797985520183b3b92eb09.png" src="_images/c5e081c7c24f3902fef880e60860731ff2c14692b11797985520183b3b92eb09.png" />
+</div>
+</div>
+<p>With access to a GPU this model can be pushed to the paper’s
+configuration (a 500 km domain at <span class="math notranslate nohighlight">\(512^2\)</span>) and run to statistical
+equilibrium by adjusting <code class="docutils literal notranslate"><span class="pre">nx</span></code>, <code class="docutils literal notranslate"><span class="pre">L</span></code>, and <code class="docutils literal notranslate"><span class="pre">T_MAX</span></code> above.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="examples.barotropic.html" class="btn btn-neutral float-left" title="Barotropic Model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="examples.layered.html" class="btn btn-neutral float-right" title="Layered Baroclinic Turbulence" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Karl Otness.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,627 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Time-Steppers &mdash; pyqg-jax 0.9.0.dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/pyqg-jax-fix-theme.css?v=ead5a064" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5b4e8bf0"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Lagrangian Particles" href="reference.particles.html" />
+    <link rel="prev" title="No-Op" href="reference.parameterizations.noop.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyqg-jax
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="reference.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="reference.state.html">States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.models.html">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.parameterizations.html">Parameterizations</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Time-Steppers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#combined-models">Combined Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.steppers.SteppedModel"><code class="docutils literal notranslate"><span class="pre">SteppedModel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.steppers.StepperState"><code class="docutils literal notranslate"><span class="pre">StepperState</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#time-stepping-schemes">Time Stepping Schemes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.steppers.AB3Stepper"><code class="docutils literal notranslate"><span class="pre">AB3Stepper</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.steppers.RK4Stepper"><code class="docutils literal notranslate"><span class="pre">RK4Stepper</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.steppers.EulerStepper"><code class="docutils literal notranslate"><span class="pre">EulerStepper</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#state-manipulation">State Manipulation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.steppers.NoStepValue"><code class="docutils literal notranslate"><span class="pre">NoStepValue</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reference.particles.html">Lagrangian Particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.diagnostics.html">Diagnostics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.xarray_output.html">xarray Output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyqg-jax</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="reference.html">API Reference</a></li>
+      <li class="breadcrumb-item active">Time-Steppers</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/reference.steppers.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyqg_jax.steppers">
+<span id="time-steppers"></span><h1>Time-Steppers<a class="headerlink" href="#module-pyqg_jax.steppers" title="Link to this heading"></a></h1>
+<p>Time-stepping schemes and utilities for using them to update model states.</p>
+<p>To step a model through time, use <a class="reference internal" href="#pyqg_jax.steppers.SteppedModel" title="pyqg_jax.steppers.SteppedModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SteppedModel</span></code></a> and combine it
+with a time-stepper.</p>
+<p>Available time-steppers included in this package are:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#pyqg_jax.steppers.AB3Stepper" title="pyqg_jax.steppers.AB3Stepper"><code class="xref py py-class docutils literal notranslate"><span class="pre">AB3Stepper</span></code></a> Third-order Adams-Bashforth stepper (the same
+method used in PyQG)</p></li>
+<li><p><a class="reference internal" href="#pyqg_jax.steppers.EulerStepper" title="pyqg_jax.steppers.EulerStepper"><code class="xref py py-class docutils literal notranslate"><span class="pre">EulerStepper</span></code></a> Forward Euler first-order method</p></li>
+</ul>
+<section id="combined-models">
+<h2>Combined Models<a class="headerlink" href="#combined-models" title="Link to this heading"></a></h2>
+<p>These utilities add time-stepping to base models.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.SteppedModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyqg_jax.steppers.</span></span><span class="sig-name descname"><span class="pre">SteppedModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepper</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/steppers.py#L155-L301"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.steppers.SteppedModel" title="Link to this definition"></a></dt>
+<dd><p>Combine an inner model with a time stepper.</p>
+<p>This class simplifies the process of stepping a base model through
+time by handling the interactions between the model and time
+stepper.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – The inner model to step through time.</p></li>
+<li><p><strong>stepper</strong> – The time stepper applying the updates to the model each step.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.SteppedModel.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#pyqg_jax.steppers.SteppedModel.model" title="Link to this definition"></a></dt>
+<dd><p>The inner model being stepped.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.SteppedModel.stepper">
+<span class="sig-name descname"><span class="pre">stepper</span></span><a class="headerlink" href="#pyqg_jax.steppers.SteppedModel.stepper" title="Link to this definition"></a></dt>
+<dd><p>The time stepper used to apply the updates.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.SteppedModel.create_initial_state">
+<span class="sig-name descname"><span class="pre">create_initial_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/steppers.py#L187-L214"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.steppers.SteppedModel.create_initial_state" title="Link to this definition"></a></dt>
+<dd><p>Create a new wrapped initial state with random
+initialization.</p>
+<p>This function defers to <a class="reference internal" href="#pyqg_jax.steppers.SteppedModel.model" title="pyqg_jax.steppers.SteppedModel.model"><code class="xref py py-attr docutils literal notranslate"><span class="pre">model</span></code></a> to initialize the inner
+state, passing it any additional arguments. Then wraps it by
+calling <cite>initialize_stepper_state</cite> on <a class="reference internal" href="#pyqg_jax.steppers.SteppedModel.stepper" title="pyqg_jax.steppers.SteppedModel.stepper"><code class="xref py py-attr docutils literal notranslate"><span class="pre">stepper</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>jax.random.key</em>) – The PRNG state used as the random key for initialization.</p></li>
+<li><p><strong>*args</strong> – Arbitrary additional arguments for the model’s
+initialization function.</p></li>
+<li><p><strong>**kwargs</strong> – Arbitrary additional arguments for the model’s
+initialization function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The new wrapped state with random initialization.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState">StepperState</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.SteppedModel.initialize_stepper_state">
+<span class="sig-name descname"><span class="pre">initialize_stepper_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/steppers.py#L216-L241"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.steppers.SteppedModel.initialize_stepper_state" title="Link to this definition"></a></dt>
+<dd><p>Wrap an existing state from <a class="reference internal" href="#pyqg_jax.steppers.SteppedModel.model" title="pyqg_jax.steppers.SteppedModel.model"><code class="xref py py-attr docutils literal notranslate"><span class="pre">model</span></code></a> in a
+<a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepperState</span></code></a>, preparing it for time stepping.</p>
+<p>This function takes an existing inner model state and wraps it
+so that it can be stepped through time by <a class="reference internal" href="#pyqg_jax.steppers.SteppedModel.stepper" title="pyqg_jax.steppers.SteppedModel.stepper"><code class="xref py py-attr docutils literal notranslate"><span class="pre">stepper</span></code></a>.</p>
+<p>This function defers to <a class="reference internal" href="#pyqg_jax.steppers.SteppedModel.stepper" title="pyqg_jax.steppers.SteppedModel.stepper"><code class="xref py py-attr docutils literal notranslate"><span class="pre">stepper</span></code></a> to perform the
+wrapping.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> – The inner model state to wrap. The type depends on
+<a class="reference internal" href="#pyqg_jax.steppers.SteppedModel.model" title="pyqg_jax.steppers.SteppedModel.model"><code class="xref py py-attr docutils literal notranslate"><span class="pre">model</span></code></a> but is likely to be
+<a class="reference internal" href="reference.state.html#pyqg_jax.state.PseudoSpectralState" title="pyqg_jax.state.PseudoSpectralState"><code class="xref py py-class docutils literal notranslate"><span class="pre">PseudoSpectralState</span></code></a> or
+<code class="xref py py-class docutils literal notranslate"><span class="pre">ParameterizedModelState</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A wrapped copy of <cite>state</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState">StepperState</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.SteppedModel.step_model">
+<span class="sig-name descname"><span class="pre">step_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stepper_state</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/steppers.py#L243-L276"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.steppers.SteppedModel.step_model" title="Link to this definition"></a></dt>
+<dd><p>Update a state by computing the next time step.</p>
+<p>This method handles the interaction between <a class="reference internal" href="#pyqg_jax.steppers.SteppedModel.model" title="pyqg_jax.steppers.SteppedModel.model"><code class="xref py py-attr docutils literal notranslate"><span class="pre">model</span></code></a> and
+<a class="reference internal" href="#pyqg_jax.steppers.SteppedModel.stepper" title="pyqg_jax.steppers.SteppedModel.stepper"><code class="xref py py-attr docutils literal notranslate"><span class="pre">stepper</span></code></a>, including post-processing/filtering.</p>
+<p>To take multiple steps over time combine this method with
+<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.lax.scan.html#jax.lax.scan" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.lax.scan()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stepper_state</strong> (<a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState"><em>StepperState</em></a>) – The wrapped state to step forward in time.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated wrapped state, a new object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState">StepperState</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.SteppedModel.get_full_state">
+<span class="sig-name descname"><span class="pre">get_full_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stepper_state</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/steppers.py#L278-L298"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.steppers.SteppedModel.get_full_state" title="Link to this definition"></a></dt>
+<dd><p>Expand a wrapped partial state into an <em>unwrapped</em> full
+state.</p>
+<p>This function defers to <a class="reference internal" href="#pyqg_jax.steppers.SteppedModel.model" title="pyqg_jax.steppers.SteppedModel.model"><code class="xref py py-attr docutils literal notranslate"><span class="pre">model</span></code></a> to compute the full
+state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stepper_state</strong> (<a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState"><em>StepperState</em></a>) – The wrapped state to be expanded.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The expanded state. The real type depends on
+<a class="reference internal" href="#pyqg_jax.steppers.SteppedModel.model" title="pyqg_jax.steppers.SteppedModel.model"><code class="xref py py-attr docutils literal notranslate"><span class="pre">model</span></code></a>, but is likely to be
+<a class="reference internal" href="reference.state.html#pyqg_jax.state.FullPseudoSpectralState" title="pyqg_jax.state.FullPseudoSpectralState"><code class="xref py py-class docutils literal notranslate"><span class="pre">FullPseudoSpectralState</span></code></a>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="reference.state.html#pyqg_jax.state.FullPseudoSpectralState" title="pyqg_jax.state.FullPseudoSpectralState">FullPseudoSpectralState</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.StepperState">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyqg_jax.steppers.</span></span><span class="sig-name descname"><span class="pre">StepperState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tc</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/steppers.py#L38-L114"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.steppers.StepperState" title="Link to this definition"></a></dt>
+<dd><p>Model state wrapped for time-stepping</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>You should not construct this class yourself. Instead, you should
+obtain instances from your chosen time stepper, or
+<a class="reference internal" href="#pyqg_jax.steppers.SteppedModel" title="pyqg_jax.steppers.SteppedModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SteppedModel</span></code></a>.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.StepperState.state">
+<span class="sig-name descname"><span class="pre">state</span></span><a class="headerlink" href="#pyqg_jax.steppers.StepperState.state" title="Link to this definition"></a></dt>
+<dd><p>The inner state from the model being stepped forward. The
+actual type of <cite>state</cite> depends on the model being stepped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="reference.state.html#pyqg_jax.state.PseudoSpectralState" title="pyqg_jax.state.PseudoSpectralState">PseudoSpectralState</a> or <a class="reference internal" href="reference.parameterizations.html#pyqg_jax.parameterizations.ParameterizedModelState" title="pyqg_jax.parameterizations.ParameterizedModelState">ParameterizedModelState</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.StepperState.t">
+<span class="sig-name descname"><span class="pre">t</span></span><a class="headerlink" href="#pyqg_jax.steppers.StepperState.t" title="Link to this definition"></a></dt>
+<dd><p>The current model time</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.numpy.float32.html#jax.numpy.float32" title="(in JAX)">jax.numpy.float32</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.StepperState.tc">
+<span class="sig-name descname"><span class="pre">tc</span></span><a class="headerlink" href="#pyqg_jax.steppers.StepperState.tc" title="Link to this definition"></a></dt>
+<dd><p>The current model timestep</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.numpy.uint32.html#jax.numpy.uint32" title="(in JAX)">jax.numpy.uint32</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.StepperState.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/steppers.py#L67-L102"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.steppers.StepperState.update" title="Link to this definition"></a></dt>
+<dd><p>Replace values stored in this state.</p>
+<p>This function produces a <em>new</em> state object, containing the
+replacement values.</p>
+<p>The keyword arguments may be any of <cite>state</cite>, <cite>t</cite>, or <cite>tc</cite>.</p>
+<p>The object this method is called on is not modified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.PseudoSpectralState" title="pyqg_jax.state.PseudoSpectralState"><em>PseudoSpectralState</em></a><em> or </em><a class="reference internal" href="reference.parameterizations.html#pyqg_jax.parameterizations.ParameterizedModelState" title="pyqg_jax.parameterizations.ParameterizedModelState"><em>ParameterizedModelState</em></a><em>, </em><em>optional</em>) – Replacement value for <a class="reference internal" href="#pyqg_jax.steppers.StepperState.state" title="pyqg_jax.steppers.StepperState.state"><code class="xref py py-attr docutils literal notranslate"><span class="pre">state</span></code></a>.</p></li>
+<li><p><strong>t</strong> (<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.numpy.float32.html#jax.numpy.float32" title="(in JAX)"><em>jax.numpy.float32</em></a><em>, </em><em>optional</em>) – Replacement value for <a class="reference internal" href="#pyqg_jax.steppers.StepperState.t" title="pyqg_jax.steppers.StepperState.t"><code class="xref py py-attr docutils literal notranslate"><span class="pre">t</span></code></a>.
+The current model time</p></li>
+<li><p><strong>tc</strong> (<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.numpy.uint32.html#jax.numpy.uint32" title="(in JAX)"><em>jax.numpy.uint32</em></a><em>, </em><em>optional</em>) – Replacement value for <a class="reference internal" href="#pyqg_jax.steppers.StepperState.tc" title="pyqg_jax.steppers.StepperState.tc"><code class="xref py py-attr docutils literal notranslate"><span class="pre">tc</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A copy of this object with the specified values replaced.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState">StepperState</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="time-stepping-schemes">
+<h2>Time Stepping Schemes<a class="headerlink" href="#time-stepping-schemes" title="Link to this heading"></a></h2>
+<p>Implemented time-stepping schemes.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.AB3Stepper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyqg_jax.steppers.</span></span><span class="sig-name descname"><span class="pre">AB3Stepper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/steppers.py#L419-L528"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.steppers.AB3Stepper" title="Link to this definition"></a></dt>
+<dd><p>Third-order Adams-Bashforth stepper.</p>
+<p>This is the same time stepping scheme as used in PyQG.</p>
+<p>This time-stepper bootstraps using lower order Adams-Bashforth
+schemes for the first two steps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dt</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Numerical time step</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.AB3Stepper.dt">
+<span class="sig-name descname"><span class="pre">dt</span></span><a class="headerlink" href="#pyqg_jax.steppers.AB3Stepper.dt" title="Link to this definition"></a></dt>
+<dd><p>Numerical time step</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.AB3Stepper.initialize_stepper_state">
+<span class="sig-name descname"><span class="pre">initialize_stepper_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/steppers.py#L440-L466"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.steppers.AB3Stepper.initialize_stepper_state" title="Link to this definition"></a></dt>
+<dd><p>Wrap an existing <cite>state</cite> from a model in a
+<a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepperState</span></code></a> to prepare it for time stepping.</p>
+<p>This initializes a new <a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepperState</span></code></a> from a time of
+<code class="code highlight pycode python docutils literal highlight-python"><span class="mi">0</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> – The model state to wrap.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The wrapped state. Note this will be a subclass of
+<a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepperState</span></code></a> appropriate for this time stepper.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState">StepperState</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.AB3Stepper.apply_updates">
+<span class="sig-name descname"><span class="pre">apply_updates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stepper_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updates</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/steppers.py#L468-L528"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.steppers.AB3Stepper.apply_updates" title="Link to this definition"></a></dt>
+<dd><p>Apply <cite>updates</cite> to the existing <cite>stepper_state</cite> producing
+the next step in time.</p>
+<p><cite>updates</cite> should be provided by the model that produced
+<a class="reference internal" href="#pyqg_jax.steppers.StepperState.state" title="pyqg_jax.steppers.StepperState.state"><code class="xref py py-attr docutils literal notranslate"><span class="pre">StepperState.state</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stepper_state</strong> (<a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState"><em>StepperState</em></a>) – The time-stepper wrapped state to be updated.</p></li>
+<li><p><strong>updates</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.PseudoSpectralState" title="pyqg_jax.state.PseudoSpectralState"><em>PseudoSpectralState</em></a><em> or </em><a class="reference internal" href="reference.parameterizations.html#pyqg_jax.parameterizations.ParameterizedModelState" title="pyqg_jax.parameterizations.ParameterizedModelState"><em>ParameterizedModelState</em></a>) – The <em>unwrapped</em> updates to apply. The actual type of
+<cite>updates</cite> depends on the model being stepped.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated, wrapped state at the next time step.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState">StepperState</a></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method does not apply post-processing to the updated
+state.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.RK4Stepper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyqg_jax.steppers.</span></span><span class="sig-name descname"><span class="pre">RK4Stepper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/steppers.py#L531-L621"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.steppers.RK4Stepper" title="Link to this definition"></a></dt>
+<dd><p>Classic fourth-order Runge-Kutta stepper.</p>
+<p>This is the time-stepping scheme used by some reference
+implementations of these models (for example Callies et al. 2016).
+Unlike <a class="reference internal" href="#pyqg_jax.steppers.AB3Stepper" title="pyqg_jax.steppers.AB3Stepper"><code class="xref py py-class docutils literal notranslate"><span class="pre">AB3Stepper</span></code></a>, RK4 evaluates the model tendency four
+times per step, but it has a substantially larger stability region,
+which allows larger time steps for strongly nonlinear flows.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.9.0.</span></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dt</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Numerical time step</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.RK4Stepper.dt">
+<span class="sig-name descname"><span class="pre">dt</span></span><a class="headerlink" href="#pyqg_jax.steppers.RK4Stepper.dt" title="Link to this definition"></a></dt>
+<dd><p>Numerical time step</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Auxiliary values shielded with <a class="reference internal" href="#pyqg_jax.steppers.NoStepValue" title="pyqg_jax.steppers.NoStepValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">NoStepValue</span></code></a> (such as the
+PRNG keys used by stochastic parameterizations) are held fixed
+across the step. For stochastic parameterizations use
+<a class="reference internal" href="#pyqg_jax.steppers.AB3Stepper" title="pyqg_jax.steppers.AB3Stepper"><code class="xref py py-class docutils literal notranslate"><span class="pre">AB3Stepper</span></code></a>.</p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.RK4Stepper.step_with_model">
+<span class="sig-name descname"><span class="pre">step_with_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stepper_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_updates</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/steppers.py#L562-L614"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.steppers.RK4Stepper.step_with_model" title="Link to this definition"></a></dt>
+<dd><p>Advance <cite>stepper_state</cite> one step using <cite>get_updates</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stepper_state</strong> (<a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState"><em>StepperState</em></a>) – The time-stepper wrapped state to be updated.</p></li>
+<li><p><strong>get_updates</strong> (<em>callable</em>) – A function mapping an <em>unwrapped</em> model state to the
+<em>unwrapped</em> time-stepping updates (the model tendency). This
+is <a class="reference internal" href="reference.models.qg_model.html#pyqg_jax.qg_model.QGModel.get_updates" title="pyqg_jax.qg_model.QGModel.get_updates"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_updates</span></code></a> from the model
+being stepped.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated, wrapped state at the next time step.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState">StepperState</a></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method does not apply post-processing to the updated
+state. <a class="reference internal" href="#pyqg_jax.steppers.SteppedModel" title="pyqg_jax.steppers.SteppedModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SteppedModel</span></code></a> handles that.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.RK4Stepper.initialize_stepper_state">
+<span class="sig-name descname"><span class="pre">initialize_stepper_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/steppers.py#L121-L143"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.steppers.RK4Stepper.initialize_stepper_state" title="Link to this definition"></a></dt>
+<dd><p>Wrap an existing <cite>state</cite> from a model in a
+<a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepperState</span></code></a> to prepare it for time stepping.</p>
+<p>This initializes a new <a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepperState</span></code></a> from a time of
+<code class="code highlight pycode python docutils literal highlight-python"><span class="mi">0</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> – The model state to wrap.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The wrapped state. Note this will be a subclass of
+<a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepperState</span></code></a> appropriate for this time stepper.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState">StepperState</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.EulerStepper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyqg_jax.steppers.</span></span><span class="sig-name descname"><span class="pre">EulerStepper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/steppers.py#L354-L409"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.steppers.EulerStepper" title="Link to this definition"></a></dt>
+<dd><p>Forward Euler (first-order) stepper.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.8.0.</span></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dt</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Numerical time step</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.EulerStepper.dt">
+<span class="sig-name descname"><span class="pre">dt</span></span><a class="headerlink" href="#pyqg_jax.steppers.EulerStepper.dt" title="Link to this definition"></a></dt>
+<dd><p>Numerical time step</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.EulerStepper.apply_updates">
+<span class="sig-name descname"><span class="pre">apply_updates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stepper_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updates</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/steppers.py#L372-L409"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.steppers.EulerStepper.apply_updates" title="Link to this definition"></a></dt>
+<dd><p>Apply <cite>updates</cite> to the existing <cite>stepper_state</cite> producing
+the next step in time.</p>
+<p><cite>updates</cite> should be provided by the model that produced
+<a class="reference internal" href="#pyqg_jax.steppers.StepperState.state" title="pyqg_jax.steppers.StepperState.state"><code class="xref py py-attr docutils literal notranslate"><span class="pre">StepperState.state</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stepper_state</strong> (<a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState"><em>StepperState</em></a>) – The time-stepper wrapped state to be updated.</p></li>
+<li><p><strong>updates</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.PseudoSpectralState" title="pyqg_jax.state.PseudoSpectralState"><em>PseudoSpectralState</em></a><em> or </em><a class="reference internal" href="reference.parameterizations.html#pyqg_jax.parameterizations.ParameterizedModelState" title="pyqg_jax.parameterizations.ParameterizedModelState"><em>ParameterizedModelState</em></a>) – The <em>unwrapped</em> updates to apply. The actual type of
+<cite>updates</cite> depends on the model being stepped.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated, wrapped state at the next time step.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState">StepperState</a></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method does not apply post-processing to the updated
+state.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.EulerStepper.initialize_stepper_state">
+<span class="sig-name descname"><span class="pre">initialize_stepper_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/steppers.py#L121-L143"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.steppers.EulerStepper.initialize_stepper_state" title="Link to this definition"></a></dt>
+<dd><p>Wrap an existing <cite>state</cite> from a model in a
+<a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepperState</span></code></a> to prepare it for time stepping.</p>
+<p>This initializes a new <a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepperState</span></code></a> from a time of
+<code class="code highlight pycode python docutils literal highlight-python"><span class="mi">0</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> – The model state to wrap.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The wrapped state. Note this will be a subclass of
+<a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepperState</span></code></a> appropriate for this time stepper.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyqg_jax.steppers.StepperState" title="pyqg_jax.steppers.StepperState">StepperState</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="state-manipulation">
+<h2>State Manipulation<a class="headerlink" href="#state-manipulation" title="Link to this heading"></a></h2>
+<p><a class="reference internal" href="#pyqg_jax.steppers.NoStepValue" title="pyqg_jax.steppers.NoStepValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">NoStepValue</span></code></a> makes it possible to shield values from
+time-stepping so they can be updated manually.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.NoStepValue">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pyqg_jax.steppers.</span></span><span class="sig-name descname"><span class="pre">NoStepValue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/steppers.py#L624-L664"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.steppers.NoStepValue" title="Link to this definition"></a></dt>
+<dd><p>Shields contents from the provided time-steppers.</p>
+<p>When a time-stepper encounters a value wrapped in this class, it
+will skip its normal stepping computations and directly use the
+value from the updates. This allows a user to manually update an
+auxiliary value outside the normal time-stepping.</p>
+<p>For example, <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.random.key.html#jax.random.key" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.random.key()</span></code></a> values should not be
+time-stepped normally. Wrapping them in this class and manually
+<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.random.split.html#jax.random.split" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">updating</span> <span class="pre">them</span></code></a> can accomplish this.</p>
+<p>This class is used as part of <a class="reference internal" href="reference.parameterizations.html#pyqg_jax.parameterizations.ParameterizedModelState" title="pyqg_jax.parameterizations.ParameterizedModelState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParameterizedModelState</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><em>object</em></a>) – The inner value to wrap. This can be an arbitrary JAX PyTree.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyqg_jax.steppers.NoStepValue.value">
+<span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#pyqg_jax.steppers.NoStepValue.value" title="Link to this definition"></a></dt>
+<dd><p>The internal, wrapped value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pyqg_jax.steppers.P</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="reference.parameterizations.noop.html" class="btn btn-neutral float-left" title="No-Op" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="reference.particles.html" class="btn btn-neutral float-right" title="Lagrangian Particles" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Karl Otness.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,655 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Barotropic Model &mdash; pyqg-jax 0.9.0.dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/pyqg-jax-fix-theme.css?v=ead5a064" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5b4e8bf0"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Two-Eady Mixed-Layer Instability" href="examples.callies.html" />
+    <link rel="prev" title="Surface Quasi-Geostrophic (SQG) Vortex" href="examples.sqg.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyqg-jax
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="examples.basicstep.html">Basic Time Stepping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.batchstep.html">Batches of Trajectories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.coarsen.html">Coarsening States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.implparam.html">Implementing a Parameterization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.onlinetrain.html">Online Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.diagnostics.html">Diagnostics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.sqg.html">Surface Quasi-Geostrophic (SQG) Vortex</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Barotropic Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#construct-the-model">Construct the Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configure-initial-condition">Configure Initial Condition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-the-model">Run the Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plot-states">Plot States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#diagnostics">Diagnostics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cfl">CFL</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#kinetic-energy">Kinetic Energy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#kinetic-energy-spectrum">Kinetic Energy Spectrum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#enstrophy-spectrum">Enstrophy Spectrum</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples.callies.html">Two-Eady Mixed-Layer Instability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.layered.html">Layered Baroclinic Turbulence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.particles.html">Lagrangian Particles (Drifters)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.dataassim.html">Variational Data Assimilation from SSH</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyqg-jax</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="examples.html">Examples</a></li>
+      <li class="breadcrumb-item active">Barotropic Model</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/examples.barotropic.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="barotropic-model">
+<h1>Barotropic Model<a class="headerlink" href="#barotropic-model" title="Link to this heading"></a></h1>
+<p>This example is reworked from the original <a class="reference external" href="https://pyqg.readthedocs.io/en/latest/examples/barotropic.html" title="(in pyqg v0.7)"><span class="xref std std-doc">PyQG Barotropic Model example</span></a>. We reproduce a plot from the paper
+“<a class="reference external" href="https://doi.org/10.1017/S0022112084001750">The emergence of isolated coherent vortices in turbulent
+flow</a>” and illustrate the
+use of the <a class="reference internal" href="reference.models.bt_model.html#pyqg_jax.bt_model.BTModel" title="pyqg_jax.bt_model.BTModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTModel</span></code></a> as well as some more
+advanced <a class="reference internal" href="examples.diagnostics.html"><span class="doc">diagnostics</span></a> computations.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">env</span> JAX_ENABLE_X64=True
+<span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">powerpax</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyqg_jax</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>env: JAX_ENABLE_X64=True
+</pre></div>
+</div>
+</div>
+</div>
+<section id="construct-the-model">
+<h2>Construct the Model<a class="headerlink" href="#construct-the-model" title="Link to this heading"></a></h2>
+<p>We will use a <a class="reference internal" href="reference.models.bt_model.html#pyqg_jax.bt_model.BTModel" title="pyqg_jax.bt_model.BTModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTModel</span></code></a> operating on a
+square <span class="math notranslate nohighlight">\(2\pi\times2\pi\)</span> periodic grid. We also configure the
+<a class="reference internal" href="reference.steppers.html#pyqg_jax.steppers.AB3Stepper" title="pyqg_jax.steppers.AB3Stepper"><code class="xref py py-class docutils literal notranslate"><span class="pre">AB3Stepper</span></code></a> to match the stepping used in
+PyQG.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DT</span> <span class="o">=</span> <span class="mf">0.001</span>
+<span class="n">T_MAX</span> <span class="o">=</span> <span class="mi">40</span>
+<span class="n">MEASURE_INTERVAL</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">SNAP_INTERVAL</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="n">stepped_model</span> <span class="o">=</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">steppers</span><span class="o">.</span><span class="n">SteppedModel</span><span class="p">(</span>
+    <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">bt_model</span><span class="o">.</span><span class="n">BTModel</span><span class="p">(</span>
+        <span class="n">L</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span>
+        <span class="n">nx</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">beta</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">H</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">rek</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">rd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">precision</span><span class="o">=</span><span class="n">pyqg_jax</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">Precision</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">steppers</span><span class="o">.</span><span class="n">AB3Stepper</span><span class="p">(</span><span class="n">DT</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">stepped_model</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>SteppedModel(
+  model=BTModel(
+    nx=256,
+    ny=256,
+    L=6.283185307179586,
+    W=6.283185307179586,
+    rek=0,
+    filterfac=23.6,
+    f=None,
+    g=9.81,
+    beta=0,
+    rd=0.0,
+    H=1,
+    U=0.0,
+    precision=&lt;Precision.SINGLE: 1&gt;,
+  ),
+  stepper=AB3Stepper(dt=0.001),
+)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="configure-initial-condition">
+<h2>Configure Initial Condition<a class="headerlink" href="#configure-initial-condition" title="Link to this heading"></a></h2>
+<p>The initial condition is randomized, we use a fixed seed for this example.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rng</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The initial condition is generated with spectrum</p>
+<div class="math notranslate nohighlight">
+\[ \big|\hat{\psi}\big|^2 = A\kappa^{-1}\bigg[1 + \Big(\frac{\kappa}{6}\Big)^4\bigg]^{-1}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\kappa\)</span> is the wave number magnitude. The constant <span class="math notranslate nohighlight">\(A\)</span> is
+chosen so the initial energy is <span class="math notranslate nohighlight">\(\text{KE} = 0.5\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute ckappa base</span>
+<span class="n">ckappa</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">reciprocal</span><span class="p">(</span>
+    <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+        <span class="n">stepped_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">wv2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">stepped_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">wv2</span> <span class="o">/</span> <span class="mi">36</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">ckappa</span> <span class="o">=</span> <span class="n">ckappa</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Split RNGs and initialize pi_hat with noise</span>
+<span class="n">rng</span><span class="p">,</span> <span class="n">rng1</span><span class="p">,</span> <span class="n">rng2</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">dummy_state</span> <span class="o">=</span> <span class="n">stepped_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">create_initial_state</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">pi_hat</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">rng1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">dummy_state</span><span class="o">.</span><span class="n">qh</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dummy_state</span><span class="o">.</span><span class="n">q</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span> <span class="o">*</span> <span class="n">ckappa</span>
+    <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">rng2</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">dummy_state</span><span class="o">.</span><span class="n">qh</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dummy_state</span><span class="o">.</span><span class="n">q</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span> <span class="o">*</span> <span class="n">ckappa</span>
+<span class="p">)</span>
+<span class="c1"># Normalize values (zero mean and adjust KE)</span>
+<span class="n">pi</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">irfftn</span><span class="p">(</span><span class="n">pi_hat</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">pi</span> <span class="o">=</span> <span class="n">pi</span> <span class="o">-</span> <span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+<span class="n">pi_hat</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">rfftn</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">ke_aux</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">var</span><span class="p">(</span>
+    <span class="n">jnp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">irfftn</span><span class="p">(</span><span class="n">stepped_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">wv</span> <span class="o">*</span> <span class="n">pi_hat</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+<span class="p">)</span>
+<span class="n">pih</span> <span class="o">=</span> <span class="n">pi_hat</span> <span class="o">/</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ke_aux</span><span class="p">)</span>
+<span class="n">qih</span> <span class="o">=</span> <span class="o">-</span><span class="n">stepped_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">wv2</span> <span class="o">*</span> <span class="n">pih</span>
+
+<span class="c1"># Package state for stepped_model</span>
+<span class="n">init_state</span> <span class="o">=</span> <span class="n">stepped_model</span><span class="o">.</span><span class="n">initialize_stepper_state</span><span class="p">(</span>
+    <span class="n">dummy_state</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">qh</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">qih</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="p">)</span>
+
+<span class="n">init_state</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AB3State(
+  t=f32[],
+  tc=u32[],
+  state=PseudoSpectralState(qh=c64[1,256,129]),
+)
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can examine the initial state</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vmax</span> <span class="o">=</span> <span class="mi">40</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+    <span class="n">init_state</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="n">vmin</span><span class="o">=-</span><span class="n">vmax</span><span class="p">,</span>
+    <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;RdBu_r&quot;</span><span class="p">,</span>
+    <span class="n">extent</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">stepped_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">W</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">stepped_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">L</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7f687014cd50&gt;
+</pre></div>
+</div>
+<img alt="_images/db81bad56c869e6bb41403d7e944103e88e086a67b95477572677f1912c1e626.png" src="_images/db81bad56c869e6bb41403d7e944103e88e086a67b95477572677f1912c1e626.png" />
+</div>
+</div>
+</section>
+<section id="run-the-model">
+<h2>Run the Model<a class="headerlink" href="#run-the-model" title="Link to this heading"></a></h2>
+<p>We follow the example from <a class="reference internal" href="examples.basicstep.html"><span class="doc">Basic Time Stepping</span></a> to roll out the
+trajectory using <a class="reference external" href="https://powerpax.readthedocs.io/en/latest/reference.html#powerpax.sliced_scan" title="(in powerpax v0.2.2.dev)"><code class="xref py py-func docutils literal notranslate"><span class="pre">powerpax.sliced_scan()</span></code></a> to skip steps according
+to <code class="docutils literal notranslate"><span class="pre">MEASURE_INTERVAL</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;num_steps&quot;</span><span class="p">,</span> <span class="s2">&quot;subsample&quot;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">roll_out_state</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">subsample</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">loop_fn</span><span class="p">(</span><span class="n">carry</span><span class="p">,</span> <span class="n">_x</span><span class="p">):</span>
+        <span class="n">current_state</span> <span class="o">=</span> <span class="n">carry</span>
+        <span class="n">next_state</span> <span class="o">=</span> <span class="n">stepped_model</span><span class="o">.</span><span class="n">step_model</span><span class="p">(</span><span class="n">current_state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">next_state</span><span class="p">,</span> <span class="n">current_state</span>
+
+    <span class="n">_final_carry</span><span class="p">,</span> <span class="n">traj_steps</span> <span class="o">=</span> <span class="n">powerpax</span><span class="o">.</span><span class="n">sliced_scan</span><span class="p">(</span>
+        <span class="n">loop_fn</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">num_steps</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">subsample</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">traj_steps</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Before running the model we calculate the total number of steps we
+need to run as well as the subsampling we should apply before
+calculating diagnostics.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">num_steps</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">T_MAX</span> <span class="o">/</span> <span class="n">DT</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="n">avg_subsample</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">MEASURE_INTERVAL</span> <span class="o">/</span> <span class="n">DT</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total steps to run: </span><span class="si">{</span><span class="n">num_steps</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subsample factor for diagnostics: </span><span class="si">{</span><span class="n">avg_subsample</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total steps to run: 40001
+Subsample factor for diagnostics: 1000
+</pre></div>
+</div>
+</div>
+</div>
+<p>Roll out the trajectory for the above number of steps. Note that after
+generating, we drop the first state since this is the initial
+condition and it will significantly impact the spectra we will plot
+later. We do this using <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.tree.map.html#jax.tree.map" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.tree.map()</span></code></a> and
+<a class="reference external" href="https://docs.python.org/3/library/operator.html#operator.itemgetter" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">operator.itemgetter()</span></code></a> with an appropriate <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">slice</span></code></a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">traj</span> <span class="o">=</span> <span class="n">roll_out_state</span><span class="p">(</span><span class="n">init_state</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">avg_subsample</span><span class="p">)</span>
+
+<span class="c1"># Skip the first (initial condition step)</span>
+<span class="c1"># This does a slice of [1:] on each array</span>
+<span class="n">traj</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)),</span> <span class="n">traj</span><span class="p">)</span>
+
+<span class="n">traj</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AB3State(
+  t=f32[40],
+  tc=u32[40],
+  state=PseudoSpectralState(qh=c64[40,1,256,129]),
+)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="plot-states">
+<h2>Plot States<a class="headerlink" href="#plot-states" title="Link to this heading"></a></h2>
+<p>We plot each snapshot, one for each <code class="docutils literal notranslate"><span class="pre">SNAP_INTERVAL</span></code> steps subsampled
+further from the diagnostic trajectory.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate the subsampling interval as well as how many rows, cols we need</span>
+<span class="n">plot_subsample_factor</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">SNAP_INTERVAL</span> <span class="o">/</span> <span class="n">MEASURE_INTERVAL</span><span class="p">)</span>
+<span class="n">cols</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">rows</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">traj</span><span class="o">.</span><span class="n">t</span><span class="p">[::</span><span class="n">plot_subsample_factor</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">cols</span><span class="p">)</span>
+<span class="n">vmax</span> <span class="o">=</span> <span class="mi">40</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+    <span class="n">rows</span><span class="p">,</span>
+    <span class="n">cols</span><span class="p">,</span>
+    <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;constrained&quot;</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mf">2.25</span> <span class="o">*</span> <span class="n">rows</span><span class="p">),</span>
+    <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">for</span> <span class="n">raw_step_i</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axs</span><span class="o">.</span><span class="n">ravel</span><span class="p">()):</span>
+    <span class="n">step_i</span> <span class="o">=</span> <span class="p">(</span><span class="n">raw_step_i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">plot_subsample_factor</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">step_i</span> <span class="o">&gt;=</span> <span class="n">traj</span><span class="o">.</span><span class="n">tc</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">delaxes</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+        <span class="k">continue</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="n">step_i</span><span class="p">),</span> <span class="n">traj</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+        <span class="n">step</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">vmin</span><span class="o">=-</span><span class="n">vmax</span><span class="p">,</span>
+        <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">,</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;RdBu_r&quot;</span><span class="p">,</span>
+        <span class="n">extent</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">stepped_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">W</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">stepped_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">L</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time = </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">item</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/ecb561257046b7b63770f0356413c70291099113a1aad1633400822571084f01.png" src="_images/ecb561257046b7b63770f0356413c70291099113a1aad1633400822571084f01.png" />
+</div>
+</div>
+</section>
+<section id="diagnostics">
+<h2>Diagnostics<a class="headerlink" href="#diagnostics" title="Link to this heading"></a></h2>
+<p>Next we compute several diagnostics over this trajectory these use
+functions from the <a class="reference internal" href="reference.diagnostics.html#module-pyqg_jax.diagnostics" title="pyqg_jax.diagnostics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">diagnostics</span></code></a> module and most of the
+below calculations are patterned after the <a class="reference internal" href="examples.diagnostics.html"><span class="doc">Diagnostics Example</span></a>. However, the KE spectrum calculations have
+been modified significantly to illustrate changes in the spectra over
+time.</p>
+<section id="cfl">
+<h3>CFL<a class="headerlink" href="#cfl" title="Link to this heading"></a></h3>
+<p>We begin by computing the CFL condition values. See
+<a class="reference internal" href="reference.diagnostics.html#pyqg_jax.diagnostics.cfl" title="pyqg_jax.diagnostics.cfl"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyqg_jax.diagnostics.cfl()</span></code></a>. We report the worst CFL value and
+the average over the sampled states.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">compute_cfl</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+    <span class="n">full_state</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_full_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+    <span class="n">cfl</span> <span class="o">=</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">diagnostics</span><span class="o">.</span><span class="n">cfl</span><span class="p">(</span>
+        <span class="n">full_state</span><span class="o">=</span><span class="n">full_state</span><span class="p">,</span>
+        <span class="n">grid</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">get_grid</span><span class="p">(),</span>
+        <span class="n">ubg</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">Ubg</span><span class="p">,</span>
+        <span class="n">dt</span><span class="o">=</span><span class="n">dt</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cfl</span><span class="p">)</span>
+
+<span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">vectorized_cfl</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="n">stepped_model</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">powerpax</span><span class="o">.</span><span class="n">chunked_vmap</span><span class="p">(</span>
+        <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+            <span class="n">compute_cfl</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">stepped_model</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">stepped_model</span><span class="o">.</span><span class="n">stepper</span><span class="o">.</span><span class="n">dt</span>
+        <span class="p">),</span>
+        <span class="n">chunk_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="p">)(</span><span class="n">traj</span><span class="p">)</span>
+
+<span class="n">traj_cfl</span> <span class="o">=</span> <span class="n">vectorized_cfl</span><span class="p">(</span><span class="n">traj</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">stepped_model</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Max CFL: </span><span class="si">{</span><span class="n">jnp</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">traj_cfl</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Avg CFL: </span><span class="si">{</span><span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">traj_cfl</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Max CFL: 0.19791264832019806
+Avg CFL: 0.14962179958820343
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="kinetic-energy">
+<h3>Kinetic Energy<a class="headerlink" href="#kinetic-energy" title="Link to this heading"></a></h3>
+<p>We calculate the total KE in each snapshot taken in the trajectory.
+See <a class="reference internal" href="reference.diagnostics.html#pyqg_jax.diagnostics.total_ke" title="pyqg_jax.diagnostics.total_ke"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyqg_jax.diagnostics.total_ke()</span></code></a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">compute_ke</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="n">full_state</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_full_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">diagnostics</span><span class="o">.</span><span class="n">total_ke</span><span class="p">(</span><span class="n">full_state</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">get_grid</span><span class="p">())</span>
+
+<span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">vectorized_ke</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">powerpax</span><span class="o">.</span><span class="n">chunked_vmap</span><span class="p">(</span>
+        <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">compute_ke</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">),</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">100</span>
+    <span class="p">)(</span><span class="n">traj</span><span class="p">)</span>
+
+<span class="n">traj_ke</span> <span class="o">=</span> <span class="n">vectorized_ke</span><span class="p">(</span><span class="n">traj</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">stepped_model</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Max KE: </span><span class="si">{</span><span class="n">jnp</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">traj_ke</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Min KE: </span><span class="si">{</span><span class="n">jnp</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">traj_ke</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Max KE: 0.49655744433403015
+Min KE: 0.4923986792564392
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note that kinetic energy is nearly conserved over the course of the
+run.</p>
+</section>
+<section id="kinetic-energy-spectrum">
+<h3>Kinetic Energy Spectrum<a class="headerlink" href="#kinetic-energy-spectrum" title="Link to this heading"></a></h3>
+<p>The KE spectrum calculations are the most heavily modified from the
+templates provided in the <a class="reference internal" href="examples.diagnostics.html"><span class="doc">Diagnostics Example</span></a> document. Instead of calculating one spectrum
+over the entire trajectory, we use additional JAX transforms to
+calculate multiple spectra over disjoint time intervals. This is
+relatively straightforward since in the JAX port, diagnostics are
+computed after the simulation run so the bins for averaging can be
+adjusted after the snapshots are gathered.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">chunked_ke_spec</span></code> function below divides the trajectory into
+chunks of <code class="docutils literal notranslate"><span class="pre">KE_SPEC_CHUNK_SIZE</span></code> <em>snapshots</em>. This is <em>in addition</em> to the
+subsampling done while generating the trajectory. That is, each chunk
+is over a <em>time</em> range of <code class="docutils literal notranslate"><span class="pre">KE_SPEC_CHUNK_SIZE</span> <span class="pre">*</span> <span class="pre">MEASURE_INTERVAL</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">KE_SPEC_CHUNK_SIZE</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_ke_spec_vals</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="n">full_state</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_full_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+    <span class="n">ke_spec_vals</span> <span class="o">=</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">diagnostics</span><span class="o">.</span><span class="n">ke_spec_vals</span><span class="p">(</span>
+        <span class="n">full_state</span><span class="o">=</span><span class="n">full_state</span><span class="p">,</span>
+        <span class="n">grid</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">get_grid</span><span class="p">(),</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ke_spec_vals</span>
+
+<span class="nd">@functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;chunk_size&quot;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">chunked_ke_spec</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">):</span>
+    <span class="c1"># If the trajectory is not evenly divisible by chunk_size</span>
+    <span class="c1"># we need to remove trailing elements</span>
+    <span class="n">chunk_size</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">chunk_size</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">chunk_size</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;chunk_size must be at least 1 (got </span><span class="si">{</span><span class="n">chunk_size</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="n">traj_len</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="n">traj</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">num_chunks</span> <span class="o">=</span> <span class="n">traj_len</span> <span class="o">//</span> <span class="n">chunk_size</span>
+    <span class="c1"># Remove any trailing steps to traj evenly splits into chunks</span>
+    <span class="n">traj</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+        <span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_chunks</span> <span class="o">*</span> <span class="n">chunk_size</span><span class="p">)),</span>
+        <span class="n">traj</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># Compute the ke_spec_vals over the trajectory as usual</span>
+    <span class="n">traj_ke_spec_vals</span> <span class="o">=</span> <span class="n">powerpax</span><span class="o">.</span><span class="n">chunked_vmap</span><span class="p">(</span>
+        <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">compute_ke_spec_vals</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">stepped_model</span><span class="o">.</span><span class="n">model</span><span class="p">),</span>
+        <span class="n">chunk_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="p">)(</span><span class="n">traj</span><span class="p">)</span>
+    <span class="c1"># Break the spectral values into chunks and average within each chunk</span>
+    <span class="n">traj_ke_spec_vals</span> <span class="o">=</span> <span class="n">traj_ke_spec_vals</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">num_chunks</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">)</span> <span class="o">+</span> <span class="n">traj_ke_spec_vals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="p">)</span>
+    <span class="n">ke_spec_vals</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">traj_ke_spec_vals</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># Compute the spectrum over each chunk separately</span>
+    <span class="c1"># Use in_axes to avoid vmapping over the model grid</span>
+    <span class="n">ispec</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">pyqg_jax</span><span class="o">.</span><span class="n">diagnostics</span><span class="o">.</span><span class="n">calc_ispec</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))(</span>
+        <span class="n">ke_spec_vals</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">get_grid</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="c1"># Each spectrum has the same ispec_grid, these are not vectorized</span>
+    <span class="n">kr</span><span class="p">,</span> <span class="n">keep</span> <span class="o">=</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">diagnostics</span><span class="o">.</span><span class="n">ispec_grid</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">get_grid</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">ispec</span><span class="p">,</span> <span class="n">kr</span><span class="p">,</span> <span class="n">keep</span>
+
+<span class="n">traj_ke_spec</span><span class="p">,</span> <span class="n">kr</span><span class="p">,</span> <span class="n">keep</span> <span class="o">=</span> <span class="n">chunked_ke_spec</span><span class="p">(</span><span class="n">traj</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">stepped_model</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">KE_SPEC_CHUNK_SIZE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We plot each spectrum separately on the same axes with two dotted
+trendlines.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tks</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">traj_ke_spec</span><span class="p">):</span>
+    <span class="n">min_time</span> <span class="o">=</span> <span class="n">KE_SPEC_CHUNK_SIZE</span> <span class="o">*</span> <span class="n">i</span> <span class="o">*</span> <span class="n">MEASURE_INTERVAL</span>
+    <span class="n">max_time</span> <span class="o">=</span> <span class="n">KE_SPEC_CHUNK_SIZE</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">MEASURE_INTERVAL</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">kr</span><span class="p">[:</span><span class="n">keep</span><span class="p">],</span> <span class="n">tks</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:</span><span class="n">keep</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">fr</span><span class="s2">&quot;$\text</span><span class="se">{{</span><span class="s2">time</span><span class="se">}}</span><span class="s2"> \in (</span><span class="si">{</span><span class="n">min_time</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">max_time</span><span class="si">}</span><span class="s2">]$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Wavenumber ($k$)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;KE&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mf">1e-10</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">ks</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">80.0</span><span class="p">])</span>
+<span class="n">mid_k</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">ks</span><span class="p">)))</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">y_off</span><span class="p">,</span> <span class="n">slope</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([(</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">)]):</span>
+    <span class="n">es</span> <span class="o">=</span> <span class="n">y_off</span> <span class="o">*</span> <span class="n">ks</span><span class="o">**</span><span class="n">slope</span>
+    <span class="n">midpt</span> <span class="o">=</span> <span class="n">y_off</span> <span class="o">*</span> <span class="n">mid_k</span><span class="o">**</span><span class="n">slope</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">es</span><span class="p">,</span> <span class="s2">&quot;k--&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+        <span class="n">mid_k</span><span class="p">,</span>
+        <span class="n">midpt</span><span class="p">,</span>
+        <span class="sa">fr</span><span class="s2">&quot;$k^</span><span class="se">{{</span><span class="si">{</span><span class="n">slope</span><span class="si">}</span><span class="se">}}</span><span class="s2">$&quot;</span><span class="p">,</span>
+        <span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;large&quot;</span><span class="p">,</span>
+        <span class="n">horizontalalignment</span><span class="o">=</span><span class="s2">&quot;left&quot;</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;right&quot;</span><span class="p">,</span>
+        <span class="n">verticalalignment</span><span class="o">=</span><span class="s2">&quot;bottom&quot;</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;top&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/4c65be1d19e3f2ab7ad0a8092a53a87455fffebd8625c254e6fdbc2e797cabdb.png" src="_images/4c65be1d19e3f2ab7ad0a8092a53a87455fffebd8625c254e6fdbc2e797cabdb.png" />
+</div>
+</div>
+<p>Note how—as in the McWilliams paper—the spectrum becomes steeper
+over time.</p>
+</section>
+<section id="enstrophy-spectrum">
+<h3>Enstrophy Spectrum<a class="headerlink" href="#enstrophy-spectrum" title="Link to this heading"></a></h3>
+<p>We calculate the enstrophy spectrum for the entire trajectory (see
+<a class="reference internal" href="reference.diagnostics.html#pyqg_jax.diagnostics.ens_spec_vals" title="pyqg_jax.diagnostics.ens_spec_vals"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyqg_jax.diagnostics.ens_spec_vals()</span></code></a>)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">compute_ens_spec_vals</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="n">full_state</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_full_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+    <span class="n">e_spec_vals</span> <span class="o">=</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">diagnostics</span><span class="o">.</span><span class="n">ens_spec_vals</span><span class="p">(</span>
+        <span class="n">full_state</span><span class="o">=</span><span class="n">full_state</span><span class="p">,</span>
+        <span class="n">grid</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">get_grid</span><span class="p">(),</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">e_spec_vals</span>
+
+<span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">vectorized_ens_spec</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="n">traj_ens_spec_vals</span> <span class="o">=</span> <span class="n">powerpax</span><span class="o">.</span><span class="n">chunked_vmap</span><span class="p">(</span>
+        <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">compute_ens_spec_vals</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">stepped_model</span><span class="o">.</span><span class="n">model</span><span class="p">),</span>
+        <span class="n">chunk_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="p">)(</span><span class="n">traj</span><span class="p">)</span>
+    <span class="n">ens_spec_vals</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">traj_ens_spec_vals</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ispec</span> <span class="o">=</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">diagnostics</span><span class="o">.</span><span class="n">calc_ispec</span><span class="p">(</span><span class="n">ens_spec_vals</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">get_grid</span><span class="p">())</span>
+    <span class="n">kr</span><span class="p">,</span> <span class="n">keep</span> <span class="o">=</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">diagnostics</span><span class="o">.</span><span class="n">ispec_grid</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">get_grid</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">ispec</span><span class="p">,</span> <span class="n">kr</span><span class="p">,</span> <span class="n">keep</span>
+
+<span class="n">traj_ens_spec</span><span class="p">,</span> <span class="n">kr</span><span class="p">,</span> <span class="n">keep</span> <span class="o">=</span> <span class="n">vectorized_ens_spec</span><span class="p">(</span><span class="n">traj</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">stepped_model</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>and plot it with a dashed trendline.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ks</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">80.0</span><span class="p">])</span>
+<span class="n">es</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">ks</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">kr</span><span class="p">[:</span><span class="n">keep</span><span class="p">],</span> <span class="n">traj_ens_spec</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:</span><span class="n">keep</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">es</span><span class="p">,</span> <span class="s2">&quot;k--&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">,</span> <span class="s2">&quot;$k^{-5/3}$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;large&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Wavenumber ($k$)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Enstrophy&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1.4e0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/a9861bbde4a056c622ff165781f4ce8d5eea171624b0ae02747a28a312492097.png" src="_images/a9861bbde4a056c622ff165781f4ce8d5eea171624b0ae02747a28a312492097.png" />
+</div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="examples.sqg.html" class="btn btn-neutral float-left" title="Surface Quasi-Geostrophic (SQG) Vortex" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="examples.callies.html" class="btn btn-neutral float-right" title="Two-Eady Mixed-Layer Instability" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Karl Otness.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

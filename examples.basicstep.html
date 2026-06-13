@@ -1,0 +1,519 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Basic Time Stepping &mdash; pyqg-jax 0.9.0.dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/pyqg-jax-fix-theme.css?v=ead5a064" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5b4e8bf0"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Batches of Trajectories" href="examples.batchstep.html" />
+    <link rel="prev" title="Examples" href="examples.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyqg-jax
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="examples.html">Examples</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Basic Time Stepping</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#constructing-a-model">Constructing a Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#initializing-states">Initializing States</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#wrapping-an-external-array">Wrapping an External Array</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#generate-full-trajectories">Generate Full Trajectories</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples.batchstep.html">Batches of Trajectories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.coarsen.html">Coarsening States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.implparam.html">Implementing a Parameterization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.onlinetrain.html">Online Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.diagnostics.html">Diagnostics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.sqg.html">Surface Quasi-Geostrophic (SQG) Vortex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.barotropic.html">Barotropic Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.callies.html">Two-Eady Mixed-Layer Instability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.layered.html">Layered Baroclinic Turbulence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.particles.html">Lagrangian Particles (Drifters)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.dataassim.html">Variational Data Assimilation from SSH</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyqg-jax</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="examples.html">Examples</a></li>
+      <li class="breadcrumb-item active">Basic Time Stepping</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/examples.basicstep.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="basic-time-stepping">
+<h1>Basic Time Stepping<a class="headerlink" href="#basic-time-stepping" title="Link to this heading"></a></h1>
+<p>In this example we demonstrate basic use of this package and how to
+initialize one of the models and step a simulation through time.</p>
+<p>For this example we will run some calculations using <code class="docutils literal notranslate"><span class="pre">float64</span></code>. We
+need to enable JAX’s double precision support. To do this we set an
+environment variable before importing anything.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">env</span> JAX_ENABLE_X64=True
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>env: JAX_ENABLE_X64=True
+</pre></div>
+</div>
+</div>
+</div>
+<p>With that done we can begin by importing JAX, and the <code class="docutils literal notranslate"><span class="pre">pyqg_jax</span></code>
+package.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cmocean.cm</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cmo</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyqg_jax</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="constructing-a-model">
+<h2>Constructing a Model<a class="headerlink" href="#constructing-a-model" title="Link to this heading"></a></h2>
+<p>In an effort to make this package as flexible as possible for use in
+research projects, there are several components that must be combined
+to produce a model which is ready for time stepping:</p>
+<ol class="arabic simple">
+<li><p>A base model determining the behavior of the simulation</p></li>
+<li><p>An (optional) parameterization</p></li>
+<li><p>A time stepper</p></li>
+</ol>
+<p>We will show how to combine these to produce a final
+<a class="reference internal" href="reference.steppers.html#pyqg_jax.steppers.SteppedModel" title="pyqg_jax.steppers.SteppedModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SteppedModel</span></code></a>.</p>
+<p>First we construct the base model. This includes setting the precision
+and shape of the state variables, as well as the physical parameters.
+In this example we will be using the <a class="reference internal" href="reference.models.qg_model.html#pyqg_jax.qg_model.QGModel" title="pyqg_jax.qg_model.QGModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">QGModel</span></code></a> which is a two-layer quasi-geostrophic
+model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">base_model</span> <span class="o">=</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">qg_model</span><span class="o">.</span><span class="n">QGModel</span><span class="p">(</span>
+    <span class="n">nx</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+    <span class="n">ny</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+    <span class="n">precision</span><span class="o">=</span><span class="n">pyqg_jax</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">Precision</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">base_model</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>QGModel(
+  nx=64,
+  ny=64,
+  L=1000000.0,
+  W=1000000.0,
+  rek=5.787e-07,
+  filterfac=23.6,
+  f=None,
+  g=9.81,
+  beta=1.5e-11,
+  rd=15000.0,
+  delta=0.25,
+  H1=500,
+  U1=0.025,
+  U2=0.0,
+  precision=&lt;Precision.DOUBLE: 2&gt;,
+)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Notice how the printed description of the model shows the current
+value of all parameters. These values are accessible as attributes on
+the <code class="docutils literal notranslate"><span class="pre">base_model</span></code> object.</p>
+<p>In this initial example we will apply a <a class="reference internal" href="reference.parameterizations.smagorinsky.html#module-pyqg_jax.parameterizations.smagorinsky" title="pyqg_jax.parameterizations.smagorinsky"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Smagorinsky</span></code></a> parameterization, but in
+your own use you can skip this step.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">param_model</span> <span class="o">=</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">parameterizations</span><span class="o">.</span><span class="n">smagorinsky</span><span class="o">.</span><span class="n">apply_parameterization</span><span class="p">(</span>
+    <span class="n">base_model</span><span class="p">,</span> <span class="n">constant</span><span class="o">=</span><span class="mf">0.08</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Finally, we can combine this model with a time stepper.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note that this time step was made larger for demonstration purposes</span>
+<span class="n">stepper</span> <span class="o">=</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">steppers</span><span class="o">.</span><span class="n">AB3Stepper</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">14400.0</span><span class="p">)</span>
+
+<span class="n">stepped_model</span> <span class="o">=</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">steppers</span><span class="o">.</span><span class="n">SteppedModel</span><span class="p">(</span>
+    <span class="n">param_model</span><span class="p">,</span> <span class="n">stepper</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can examine the final combined <code class="docutils literal notranslate"><span class="pre">stepped_model</span></code> object:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stepped_model</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>SteppedModel(
+  model=ParameterizedModel(
+    model=QGModel(
+      nx=64,
+      ny=64,
+      L=1000000.0,
+      W=1000000.0,
+      rek=5.787e-07,
+      filterfac=23.6,
+      f=None,
+      g=9.81,
+      beta=1.5e-11,
+      rd=15000.0,
+      delta=0.25,
+      H1=500,
+      U1=0.025,
+      U2=0.0,
+      precision=&lt;Precision.DOUBLE: 2&gt;,
+    ),
+    param_func=jax.tree_util.Partial(&lt;function pyqg_jax.parameterizations.smagorinsky.param_func&gt;, constant=0.08),
+    init_param_aux_func=jax.tree_util.Partial(&lt;function pyqg_jax.parameterizations.smagorinsky.init_param_aux_func&gt;),
+  ),
+  stepper=AB3Stepper(dt=14400.0),
+)
+</pre></div>
+</div>
+</div>
+</div>
+<p>This description is quite long, but it shows all available attributes
+and how the several components have been nested. If you are unsure of
+how objects have been combined and need information on how they are
+nested, printing the objects can provide some guidance.</p>
+</section>
+<section id="initializing-states">
+<h2>Initializing States<a class="headerlink" href="#initializing-states" title="Link to this heading"></a></h2>
+<p>We can initialize a state directly from the stepped model. Its printed
+representation also includes abbreviated information on the shape and
+data type of its contents. Consult the documentation on
+<a class="reference internal" href="reference.state.html#pyqg_jax.state.PseudoSpectralState" title="pyqg_jax.state.PseudoSpectralState"><code class="xref py py-class docutils literal notranslate"><span class="pre">PseudoSpectralState</span></code></a> for
+information on additional attributes and properties.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">init_state</span> <span class="o">=</span> <span class="n">stepped_model</span><span class="o">.</span><span class="n">create_initial_state</span><span class="p">(</span>
+    <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">init_state</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AB3State(
+  t=f32[],
+  tc=u32[],
+  state=ParameterizedModelState(
+    model_state=PseudoSpectralState(qh=c128[2,64,33]),
+    param_aux=NoStepValue(value=None),
+  ),
+)
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can plot the initial conditions. Note that these initial states do
+not resemble the states after several warmup time steps. See below for
+a sample of a more typical state produced after several time steps.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">inner_state</span> <span class="o">=</span> <span class="n">init_state</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">model_state</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;constrained&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">layer</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axs</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">inner_state</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span>
+    <span class="n">vmax</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Layer </span><span class="si">{</span><span class="n">layer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmo</span><span class="o">.</span><span class="n">balance</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="n">vmax</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/c77ab5a81a947341d0b0e47b2572ddd383d95ade00798dc91d1b6c3e383a26c3.png" src="_images/c77ab5a81a947341d0b0e47b2572ddd383d95ade00798dc91d1b6c3e383a26c3.png" />
+</div>
+</div>
+<p>This state can now be stepped forward in time to produce a trajectory.
+Generating the initial condition uses a <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.random.key.html#jax.random.key" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.random.key()</span></code></a> for
+random number generation.</p>
+<section id="wrapping-an-external-array">
+<h3>Wrapping an External Array<a class="headerlink" href="#wrapping-an-external-array" title="Link to this heading"></a></h3>
+<p>In more advanced use cases you might need to initialize a
+<code class="docutils literal notranslate"><span class="pre">PseudoSpectralState</span></code> from a raw array. The best way to do this is to
+obtain a state from the <code class="docutils literal notranslate"><span class="pre">base_model</span></code> and <em>replace</em> its contents:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Stand in for an externally-computed value (perhaps from a file)</span>
+<span class="n">new_q</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">64</span> <span class="o">*</span> <span class="mi">64</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">))</span>
+<span class="c1"># Create a state and perform the replacement</span>
+<span class="n">dummy_state</span> <span class="o">=</span> <span class="n">base_model</span><span class="o">.</span><span class="n">create_initial_state</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">base_state</span> <span class="o">=</span> <span class="n">dummy_state</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">new_q</span><span class="p">)</span>
+
+<span class="n">base_state</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>PseudoSpectralState(qh=c128[2,64,33])
+</pre></div>
+</div>
+</div>
+</div>
+<p>This produces a new state with the value we provided. However it is
+not wrapped in for use with the parameterization or the time stepper.
+We need to pass it up through both of these:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Skip this next line if you didn&#39;t use a parameterization</span>
+<span class="n">wrapped_in_param</span> <span class="o">=</span> <span class="n">param_model</span><span class="o">.</span><span class="n">initialize_param_state</span><span class="p">(</span><span class="n">base_state</span><span class="p">)</span>
+<span class="n">wrapped_in_stepper</span> <span class="o">=</span> <span class="n">stepped_model</span><span class="o">.</span><span class="n">initialize_stepper_state</span><span class="p">(</span><span class="n">wrapped_in_param</span><span class="p">)</span>
+
+<span class="n">wrapped_in_stepper</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AB3State(
+  t=f32[],
+  tc=u32[],
+  state=ParameterizedModelState(
+    model_state=PseudoSpectralState(qh=c128[2,64,33]),
+    param_aux=NoStepValue(value=None),
+  ),
+)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Notice how the state is now wrapped just like <code class="docutils literal notranslate"><span class="pre">init_state</span></code> above.
+Consult the documentation for <a class="reference internal" href="reference.parameterizations.html#pyqg_jax.parameterizations.ParameterizedModel.initialize_param_state" title="pyqg_jax.parameterizations.ParameterizedModel.initialize_param_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">initialize_param_state</span></code></a>
+<a class="reference internal" href="reference.steppers.html#pyqg_jax.steppers.SteppedModel.initialize_stepper_state" title="pyqg_jax.steppers.SteppedModel.initialize_stepper_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">initialize_stepper_state</span></code></a> for more
+information.</p>
+</section>
+</section>
+<section id="generate-full-trajectories">
+<h2>Generate Full Trajectories<a class="headerlink" href="#generate-full-trajectories" title="Link to this heading"></a></h2>
+<p>Now that we have our <code class="docutils literal notranslate"><span class="pre">stepped_model</span></code> and <code class="docutils literal notranslate"><span class="pre">init_state</span></code> we can generate
+a trajectory by stepping forward in time. The most natural way to do
+this is to perform the stepping using <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.lax.scan.html#jax.lax.scan" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.lax.scan()</span></code></a>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>For long trajectories with many steps you may wish to keep only a
+subset or skip a warmup phase. One solution is to use
+<a class="reference external" href="https://powerpax.readthedocs.io/en/latest/reference.html#powerpax.sliced_scan" title="(in powerpax v0.2.2.dev)"><code class="xref py py-func docutils literal notranslate"><span class="pre">powerpax.sliced_scan()</span></code></a> and set <em>start</em> and <em>step</em> to subsample
+the trajectory.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;num_steps&quot;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">roll_out_state</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">loop_fn</span><span class="p">(</span><span class="n">carry</span><span class="p">,</span> <span class="n">_x</span><span class="p">):</span>
+        <span class="n">current_state</span> <span class="o">=</span> <span class="n">carry</span>
+        <span class="n">next_state</span> <span class="o">=</span> <span class="n">stepped_model</span><span class="o">.</span><span class="n">step_model</span><span class="p">(</span><span class="n">current_state</span><span class="p">)</span>
+        <span class="c1"># Note: we output the current state for ys</span>
+        <span class="c1"># This includes the starting step in the trajectory</span>
+        <span class="k">return</span> <span class="n">next_state</span><span class="p">,</span> <span class="n">current_state</span>
+
+    <span class="n">_final_carry</span><span class="p">,</span> <span class="n">traj_steps</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span>
+        <span class="n">loop_fn</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">num_steps</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">traj_steps</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Notice how we had to make <code class="docutils literal notranslate"><span class="pre">num_steps</span></code> a compile time constant since
+this affects the shape of the result. We use <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.jit.html#jax.jit" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.jit()</span></code></a> here for
+the best performance.</p>
+<p>With this we can roll out our trajectory for several steps:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">traj</span> <span class="o">=</span> <span class="n">roll_out_state</span><span class="p">(</span><span class="n">init_state</span><span class="p">,</span> <span class="n">num_steps</span><span class="o">=</span><span class="mi">7500</span><span class="p">)</span>
+
+<span class="n">traj</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AB3State(
+  t=f32[7500],
+  tc=u32[7500],
+  state=ParameterizedModelState(
+    model_state=PseudoSpectralState(qh=c128[7500,2,64,33]),
+    param_aux=NoStepValue(value=None),
+  ),
+)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Notice how all the attributes have a leading dimension of <code class="docutils literal notranslate"><span class="pre">7500</span></code>. This
+is the time dimension for each array. These are stored in
+<a class="reference external" href="https://en.wikipedia.org/wiki/AoS_and_SoA">struct-of-arrays</a> format.</p>
+<p>To slice into these, the simplest approach is to use
+<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.tree.map.html#jax.tree.map" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.tree.map()</span></code></a> to apply a slice to each element.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">leaf</span><span class="p">:</span> <span class="n">leaf</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">:],</span> <span class="n">traj</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AB3State(
+  t=f32[5],
+  tc=u32[5],
+  state=ParameterizedModelState(
+    model_state=PseudoSpectralState(qh=c128[5,2,64,33]),
+    param_aux=NoStepValue(value=None),
+  ),
+)
+</pre></div>
+</div>
+</div>
+</div>
+<p>or equivalently we can use <a class="reference external" href="https://docs.python.org/3/library/operator.html#operator.itemgetter" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">operator.itemgetter()</span></code></a> and
+<a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">slice</span></code></a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="kc">None</span><span class="p">)),</span> <span class="n">traj</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AB3State(
+  t=f32[5],
+  tc=u32[5],
+  state=ParameterizedModelState(
+    model_state=PseudoSpectralState(qh=c128[5,2,64,33]),
+    param_aux=NoStepValue(value=None),
+  ),
+)
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can use this approach to visualize the final state:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">final_state</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">traj</span><span class="p">)</span>
+<span class="n">final_q</span> <span class="o">=</span> <span class="n">final_state</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">model_state</span><span class="o">.</span><span class="n">q</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;constrained&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">layer</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axs</span><span class="p">):</span>
+    <span class="c1"># final_q is now a plain JAX array, we can slice it directly</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">final_q</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span>
+    <span class="n">vmax</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Layer </span><span class="si">{</span><span class="n">layer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmo</span><span class="o">.</span><span class="n">balance</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="n">vmax</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/4a99e561225d7d864b749addd17a3c839717b833b4a815f40d3655b25717e544.png" src="_images/4a99e561225d7d864b749addd17a3c839717b833b4a815f40d3655b25717e544.png" />
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="examples.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="examples.batchstep.html" class="btn btn-neutral float-right" title="Batches of Trajectories" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Karl Otness.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

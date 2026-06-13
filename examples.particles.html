@@ -1,0 +1,333 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lagrangian Particles (Drifters) &mdash; pyqg-jax 0.9.0.dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/pyqg-jax-fix-theme.css?v=ead5a064" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5b4e8bf0"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Variational Data Assimilation from SSH" href="examples.dataassim.html" />
+    <link rel="prev" title="Layered Baroclinic Turbulence" href="examples.layered.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyqg-jax
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="examples.basicstep.html">Basic Time Stepping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.batchstep.html">Batches of Trajectories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.coarsen.html">Coarsening States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.implparam.html">Implementing a Parameterization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.onlinetrain.html">Online Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.diagnostics.html">Diagnostics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.sqg.html">Surface Quasi-Geostrophic (SQG) Vortex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.barotropic.html">Barotropic Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.callies.html">Two-Eady Mixed-Layer Instability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.layered.html">Layered Baroclinic Turbulence</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Lagrangian Particles (Drifters)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#construct-the-fluid-model-and-the-particle-stepper">Construct the Fluid Model and the Particle Stepper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spin-up-the-flow">Spin Up the Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#seed-the-particles">Seed the Particles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#co-step-the-fluid-and-the-particles">Co-Step the Fluid and the Particles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plot-the-trajectories">Plot the Trajectories</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples.dataassim.html">Variational Data Assimilation from SSH</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyqg-jax</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="examples.html">Examples</a></li>
+      <li class="breadcrumb-item active">Lagrangian Particles (Drifters)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/examples.particles.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="lagrangian-particles-drifters">
+<h1>Lagrangian Particles (Drifters)<a class="headerlink" href="#lagrangian-particles-drifters" title="Link to this heading"></a></h1>
+<p>This example seeds a cloud of passive Lagrangian particles (“drifters”)
+into a turbulent flow and advects them with the model velocity, using
+<a class="reference internal" href="reference.particles.html#pyqg_jax.particles.GriddedParticleStepper" title="pyqg_jax.particles.GriddedParticleStepper"><code class="xref py py-class docutils literal notranslate"><span class="pre">GriddedParticleStepper</span></code></a>. Because the
+particle advection is written in pure JAX, the fluid model and the
+particles can be stepped together inside a single
+<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.lax.scan.html#jax.lax.scan" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.lax.scan()</span></code></a>, and the whole thing runs on a GPU.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
+<span class="n">jax</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s2">&quot;jax_enable_x64&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyqg_jax</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyqg_jax.particles</span><span class="w"> </span><span class="kn">import</span> <span class="n">GriddedParticleStepper</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="construct-the-fluid-model-and-the-particle-stepper">
+<h2>Construct the Fluid Model and the Particle Stepper<a class="headerlink" href="#construct-the-fluid-model-and-the-particle-stepper" title="Link to this heading"></a></h2>
+<p>We reuse the three-layer baroclinic turbulence setup from the
+<a class="reference internal" href="examples.layered.html"><span class="doc">layered model example</span></a> for the flow, and pair
+it with a particle stepper on the same domain.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DT</span> <span class="o">=</span> <span class="mf">7200.0</span>  <span class="c1"># 2 hour time step</span>
+<span class="n">L</span> <span class="o">=</span> <span class="mf">1000e3</span>
+<span class="n">NX</span> <span class="o">=</span> <span class="mi">96</span>
+
+<span class="n">fluid</span> <span class="o">=</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">steppers</span><span class="o">.</span><span class="n">SteppedModel</span><span class="p">(</span>
+    <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">layered_model</span><span class="o">.</span><span class="n">LayeredModel</span><span class="p">(</span>
+        <span class="n">nx</span><span class="o">=</span><span class="n">NX</span><span class="p">,</span>
+        <span class="n">nz</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span>
+        <span class="n">f</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+        <span class="n">beta</span><span class="o">=</span><span class="mf">1.5e-11</span><span class="p">,</span>
+        <span class="n">rek</span><span class="o">=</span><span class="mf">5.787e-7</span><span class="p">,</span>
+        <span class="n">U</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+        <span class="n">H</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">500.0</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mf">2500.0</span><span class="p">]),</span>
+        <span class="n">rho</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1025.0</span><span class="p">,</span> <span class="mf">1025.5</span><span class="p">,</span> <span class="mf">1026.5</span><span class="p">]),</span>
+        <span class="n">precision</span><span class="o">=</span><span class="n">pyqg_jax</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">Precision</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">steppers</span><span class="o">.</span><span class="n">AB3Stepper</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="n">DT</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">particles</span> <span class="o">=</span> <span class="n">GriddedParticleStepper</span><span class="p">(</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="spin-up-the-flow">
+<h2>Spin Up the Flow<a class="headerlink" href="#spin-up-the-flow" title="Link to this heading"></a></h2>
+<p>We first integrate the fluid alone until it reaches a turbulent,
+eddying state before releasing the drifters.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;num_steps&quot;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">spin_up</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">):</span>
+    <span class="n">final</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">c</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="p">(</span><span class="n">fluid</span><span class="o">.</span><span class="n">step_model</span><span class="p">(</span><span class="n">c</span><span class="p">),</span> <span class="kc">None</span><span class="p">),</span> <span class="n">state</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">num_steps</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">final</span>
+
+
+<span class="n">fluid_state</span> <span class="o">=</span> <span class="n">fluid</span><span class="o">.</span><span class="n">create_initial_state</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">fluid_state</span> <span class="o">=</span> <span class="n">spin_up</span><span class="p">(</span><span class="n">fluid_state</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mf">2.5</span> <span class="o">*</span> <span class="mi">365</span> <span class="o">*</span> <span class="mi">86400</span> <span class="o">/</span> <span class="n">DT</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="seed-the-particles">
+<h2>Seed the Particles<a class="headerlink" href="#seed-the-particles" title="Link to this heading"></a></h2>
+<p>We release the drifters on a regular grid covering the domain. The
+positions are ordinary arrays, so any layout works.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">seed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.05</span> <span class="o">*</span> <span class="n">L</span><span class="p">,</span> <span class="mf">0.95</span> <span class="o">*</span> <span class="n">L</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+<span class="n">px</span><span class="p">,</span> <span class="n">py</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
+<span class="n">particle_state</span> <span class="o">=</span> <span class="n">particles</span><span class="o">.</span><span class="n">initialize_state</span><span class="p">(</span>
+    <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">px</span><span class="o">.</span><span class="n">ravel</span><span class="p">()),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">py</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="co-step-the-fluid-and-the-particles">
+<h2>Co-Step the Fluid and the Particles<a class="headerlink" href="#co-step-the-fluid-and-the-particles" title="Link to this heading"></a></h2>
+<p>At each step we read the upper-layer velocity before and after the
+fluid update (the particle stepper uses a two-time-level Runge-Kutta
+scheme), advance the particles, and record their positions. The fluid
+state and the particle state are carried together through a single
+scan.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">surface_velocity</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="n">full</span> <span class="o">=</span> <span class="n">fluid</span><span class="o">.</span><span class="n">get_full_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">full</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">full</span><span class="o">.</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="nd">@functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;num_steps&quot;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">co_step</span><span class="p">(</span><span class="n">fluid_state</span><span class="p">,</span> <span class="n">particle_state</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">loop_fn</span><span class="p">(</span><span class="n">carry</span><span class="p">,</span> <span class="n">_x</span><span class="p">):</span>
+        <span class="n">fluid_state</span><span class="p">,</span> <span class="n">particle_state</span> <span class="o">=</span> <span class="n">carry</span>
+        <span class="n">u0</span><span class="p">,</span> <span class="n">v0</span> <span class="o">=</span> <span class="n">surface_velocity</span><span class="p">(</span><span class="n">fluid_state</span><span class="p">)</span>
+        <span class="n">next_fluid</span> <span class="o">=</span> <span class="n">fluid</span><span class="o">.</span><span class="n">step_model</span><span class="p">(</span><span class="n">fluid_state</span><span class="p">)</span>
+        <span class="n">u1</span><span class="p">,</span> <span class="n">v1</span> <span class="o">=</span> <span class="n">surface_velocity</span><span class="p">(</span><span class="n">next_fluid</span><span class="p">)</span>
+        <span class="n">next_particles</span> <span class="o">=</span> <span class="n">particles</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">particle_state</span><span class="p">,</span> <span class="n">u0</span><span class="p">,</span> <span class="n">v0</span><span class="p">,</span> <span class="n">u1</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">DT</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">next_fluid</span><span class="p">,</span> <span class="n">next_particles</span><span class="p">),</span> <span class="p">(</span><span class="n">next_particles</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">next_particles</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+    <span class="p">(</span><span class="n">fluid_state</span><span class="p">,</span> <span class="n">particle_state</span><span class="p">),</span> <span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span>
+        <span class="n">loop_fn</span><span class="p">,</span> <span class="p">(</span><span class="n">fluid_state</span><span class="p">,</span> <span class="n">particle_state</span><span class="p">),</span> <span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">num_steps</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">fluid_state</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_days</span> <span class="o">=</span> <span class="mi">120</span>
+<span class="n">fluid_state</span><span class="p">,</span> <span class="n">traj_x</span><span class="p">,</span> <span class="n">traj_y</span> <span class="o">=</span> <span class="n">co_step</span><span class="p">(</span>
+    <span class="n">fluid_state</span><span class="p">,</span> <span class="n">particle_state</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n_days</span> <span class="o">*</span> <span class="mi">86400</span> <span class="o">/</span> <span class="n">DT</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="plot-the-trajectories">
+<h2>Plot the Trajectories<a class="headerlink" href="#plot-the-trajectories" title="Link to this heading"></a></h2>
+<p>We draw each drifter’s path over the final upper-layer relative
+vorticity. The drifters loop around coherent vortices and are stirred
+out along the filaments between them.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">fluid</span><span class="o">.</span><span class="n">model</span>
+<span class="n">vort</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+    <span class="n">jnp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">irfftn</span><span class="p">(</span>
+        <span class="o">-</span><span class="n">model</span><span class="o">.</span><span class="n">wv2</span> <span class="o">*</span> <span class="n">fluid</span><span class="o">.</span><span class="n">get_full_state</span><span class="p">(</span><span class="n">fluid_state</span><span class="p">)</span><span class="o">.</span><span class="n">ph</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">s</span><span class="o">=</span><span class="p">(</span><span class="n">NX</span><span class="p">,</span> <span class="n">NX</span><span class="p">),</span>
+        <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">km</span> <span class="o">=</span> <span class="mf">1e-3</span>
+<span class="n">Lk</span> <span class="o">=</span> <span class="n">L</span> <span class="o">*</span> <span class="n">km</span>
+<span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">traj_x</span><span class="p">)</span> <span class="o">*</span> <span class="n">km</span>
+<span class="n">ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">traj_y</span><span class="p">)</span> <span class="o">*</span> <span class="n">km</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">),</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;constrained&quot;</span><span class="p">)</span>
+<span class="n">amp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">vort</span><span class="p">),</span> <span class="mi">99</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+    <span class="n">vort</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;RdBu_r&quot;</span><span class="p">,</span>
+    <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span>
+    <span class="n">extent</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Lk</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Lk</span><span class="p">),</span>
+    <span class="n">vmin</span><span class="o">=-</span><span class="n">amp</span><span class="p">,</span>
+    <span class="n">vmax</span><span class="o">=</span><span class="n">amp</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.65</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">xs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">xs</span><span class="p">[:,</span> <span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">ys</span><span class="p">[:,</span> <span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="c1"># break the line where a trajectory wraps across a periodic boundary</span>
+    <span class="n">breaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">Lk</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">Lk</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">x</span><span class="p">[</span><span class="n">breaks</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">y</span><span class="p">[</span><span class="n">breaks</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">xs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">ys</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;lime&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;final position&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Lk</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Lk</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x [km]&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;y [km]&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fe33c1412d0&gt;
+</pre></div>
+</div>
+<img alt="_images/14e7d68708707fe073b5761d0750fdbe658af99be57a643d8aff3bb85fdc5399.png" src="_images/14e7d68708707fe073b5761d0750fdbe658af99be57a643d8aff3bb85fdc5399.png" />
+</div>
+</div>
+<p>The same pattern—carrying the particle state alongside the model state
+through <code class="docutils literal notranslate"><span class="pre">jax.lax.scan</span></code>—works for any of the models, and the particle
+advection is differentiable, so trajectories can be used directly in
+gradient-based objectives.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="examples.layered.html" class="btn btn-neutral float-left" title="Layered Baroclinic Turbulence" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="examples.dataassim.html" class="btn btn-neutral float-right" title="Variational Data Assimilation from SSH" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Karl Otness.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
