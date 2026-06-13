@@ -28,6 +28,9 @@ v0.9.0 (Unreleased)
   PyQG's gridded particle stepping and usable inside
   :func:`jax.lax.scan` alongside a model (see the associated
   :doc:`example <examples.particles>`)
+* Add a quasigeostrophic vertical-velocity diagnostic
+  :func:`~pyqg_jax.diagnostics.vertical_velocity` (the omega-equation
+  ``w`` at layer interfaces, for layered models)
 * Add enstrophy spectrum calculation
   :func:`~pyqg_jax.diagnostics.ens_spec_vals`
 * Improve some error messages (include additional details)

@@ -20,6 +20,7 @@ __all__ = [
     "ens_spec_vals",
     "ispec_grid",
     "calc_ispec",
+    "vertical_velocity",
 ]
 
 
@@ -246,6 +247,100 @@ def ens_spec_vals(full_state, grid):
     qh = _getattr_shape_check(full_state, "qh", grid)
     M = _grid_shape_check(grid, "nx") * _grid_shape_check(grid, "ny")
     return jnp.abs(qh) ** 2 / M**2
+
+
+def vertical_velocity(model, full_state):
+    r"""Diagnose the quasigeostrophic vertical velocity at layer interfaces.
+
+    In quasigeostrophy the vertical velocity does not appear in the
+    leading-order dynamics; it is the next-order diagnostic given by the
+    QG omega balance. This function computes it from the vortex-stretching
+    (vorticity) form of the omega equation,
+
+    .. math::
+
+       f_0 \frac{\partial w}{\partial z} = -\frac{D_g}{Dt}(\mathsf{S}\psi),
+
+    where :math:`\mathsf{S}\psi` is the vortex stretching (the part of the
+    potential vorticity that is not relative vorticity) and :math:`D_g/Dt`
+    is the material derivative following the full geostrophic flow
+    (eddy plus background). Discretized over layers with a rigid lid and
+    flat bottom (:math:`w = 0` at the top and bottom boundaries) this is
+    integrated vertically to give the vertical velocity at each interior
+    interface.
+
+    This formulation uses the model's own stretching operator, so the
+    depth-integrated balance closes to roundoff and the recovered
+    :math:`w` vanishes at the bottom boundary (no spurious net vertical
+    mass flux). It is the route ``(a)`` quantity for estimating
+    submesoscale vertical velocity. It is implemented for layered models
+    that expose a stretching matrix (:class:`~pyqg_jax.layered_model.LayeredModel`).
+
+    .. versionadded:: 0.9.0
+
+    Parameters
+    ----------
+    model
+        The model that produced `full_state`. It must expose the
+        stretching matrix as ``S`` (shape ``(nz, nz)``), the background
+        velocity ``Ubg``, the Coriolis parameter ``f``, and the spectral
+        wavenumber grids ``k`` and ``l`` (as
+        :class:`~pyqg_jax.layered_model.LayeredModel` does).
+
+    full_state : FullPseudoSpectralState
+        The expanded state, for example from
+        :meth:`~pyqg_jax.layered_model.LayeredModel.get_full_state`.
+        This function operates on a single time step; use
+        :func:`jax.vmap` for a trajectory.
+
+    Returns
+    -------
+    jax.Array
+        The vertical velocity at each of the ``nz - 1`` interior
+        interfaces, in real space, with shape :pycode:`(nz - 1, ny, nx)`.
+    """
+    S = getattr(model, "S", None)
+    if S is None:
+        raise TypeError(
+            "vertical_velocity requires a layered model exposing a stretching"
+            " matrix as `S` (e.g. LayeredModel)"
+        )
+    grid = model.get_grid()
+    ny, nx = grid.ny, grid.nx
+    ph = full_state.ph.astype(jnp.complex128)
+    # streamfunction tendency: invert the model's (advective) PV tendency.
+    # The inversion is linear, so this is the streamfunction's d/dt.
+    dph = model.get_full_state(model.get_updates(full_state.state)).ph.astype(
+        jnp.complex128
+    )
+    S = jnp.asarray(S, dtype=jnp.float64)
+    f0 = jnp.float64(model.f)
+    Hi = jnp.asarray(grid.Hi, dtype=jnp.float64)
+    Ubg = jnp.asarray(model.Ubg, dtype=jnp.float64)
+    ik = jnp.expand_dims(1j * model.k, 0)
+    il = jnp.expand_dims(1j * model.l, 0)
+
+    def irfft(field_h):
+        return jnp.fft.irfftn(field_h, axes=(-2, -1), s=(ny, nx))
+
+    # vortex stretching (spectral) and its tendency, via the stretching matrix
+    str_h = jnp.einsum("ij,jlk->ilk", S, ph)
+    dstr_h = jnp.einsum("ij,jlk->ilk", S, dph)
+    s_ubg = jnp.expand_dims(S @ Ubg, (-1, -2))  # background stretching gradient term
+    u = full_state.u  # eddy velocities
+    v = full_state.v
+    str_x = irfft(ik * str_h)
+    str_y = irfft(il * str_h)
+    dstr = irfft(dstr_h)
+    # material derivative of the (total) stretching following the full flow:
+    #   D_g(str)/Dt = d_t str + (u + Ubg) str_x + v str_y - v (S Ubg)
+    d_str_dt = (
+        dstr + (u + jnp.expand_dims(Ubg, (-1, -2))) * str_x + v * str_y - v * s_ubg
+    )
+    # f0 dw/dz = -D_g(str)/Dt; integrate from the top (w = 0 at top & bottom)
+    contrib = jnp.expand_dims(Hi, (-1, -2)) * (-d_str_dt) / f0
+    w = -jnp.cumsum(contrib, axis=0)[:-1]  # interior interfaces; last (bottom) ~ 0
+    return w.astype(model.precision.dtype_real)
 
 
 def ispec_grid(grid):

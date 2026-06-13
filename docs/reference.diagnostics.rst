@@ -13,6 +13,13 @@ snapshot.
 
 .. autofunction:: cfl
 
+Field Diagnostics
+-----------------
+
+These diagnostics produce a real-space field for a single snapshot.
+
+.. autofunction:: vertical_velocity
+
 Spectral Diagnostics
 --------------------
 
