@@ -28,6 +28,14 @@ LayeredModel (nz=3) 256²         10.9          8.8      0.27          ~40×
 LayeredModel (nz=3) 512²         56.5         35.0      0.79          ~71×
 ============================ ============= ========= ========= =================
 
+.. figure:: _static/perf_single.png
+   :width: 100%
+   :alt: Per-step cost on a log scale for mainline PyQG, pyqg-jax on CPU,
+         and pyqg-jax on a V100S GPU.
+
+   Per-step cost (double precision, log scale). The GPU is roughly 40-75×
+   faster than the mainline Cython kernel.
+
 On CPU, JAX is roughly on par with the Cython kernel; essentially all
 of the speedup comes from the GPU. At small grids (e.g. 128²) the GPU
 is latency-bound and the advantage shrinks -- batching (below) is what
@@ -48,6 +56,15 @@ i.e. roughly two orders of magnitude faster per member than the
 mainline CPU kernel. A 32-member, one-year ensemble at 256² runs in a
 few minutes on a single GPU. Hundreds of members fit in the memory of
 a 32 GB card at 512².
+
+.. figure:: _static/perf_ensemble.png
+   :width: 100%
+   :alt: Per-member time per step as a function of vmap ensemble size,
+         compared with the mainline single-run cost.
+
+   Ensemble throughput. Batching with :func:`jax.vmap` drives the per-member
+   cost down (most strongly in single precision), reaching ~150× faster per
+   member than a single mainline CPU run (dashed line).
 
 Reproducing these numbers
 -------------------------
