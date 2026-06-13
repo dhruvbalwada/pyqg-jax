@@ -13,3 +13,4 @@ API Reference
    reference.steppers
    reference.particles
    reference.diagnostics
+   reference.xarray_output

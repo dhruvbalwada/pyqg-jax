@@ -46,6 +46,7 @@ test = [
   "pyqg[] @ git+https://github.com/karlotness/pyqg.git@57d1cf7d830e308ae59332f8efb3d9854786c9fc",
   "pytest>=9",
   "numpy",
+  "xarray",
 ]
 
 [tool.flit.sdist]

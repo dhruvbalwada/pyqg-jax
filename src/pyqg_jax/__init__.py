@@ -39,6 +39,7 @@ __all__ = [
     "particles",
     "parameterizations",
     "diagnostics",
+    "xarray_output",
 ]
 
 
@@ -53,4 +54,5 @@ from . import (
     particles,
     parameterizations,
     diagnostics,
+    xarray_output,
 )

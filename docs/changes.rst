@@ -22,6 +22,10 @@ v0.9.0 (Unreleased)
   Runge-Kutta time stepper with a larger stability region than
   :class:`~pyqg_jax.steppers.AB3Stepper` (matching the scheme used by
   some reference implementations)
+* Add :mod:`pyqg_jax.xarray_output` with
+  :func:`~pyqg_jax.xarray_output.state_to_dataset` to package a model
+  state into a labeled :class:`xarray.Dataset` (optional `xarray`
+  dependency)
 * Add :mod:`pyqg_jax.particles` module for Lagrangian particle
   advection with gridded velocities
   (:class:`~pyqg_jax.particles.GriddedParticleStepper`), matching
