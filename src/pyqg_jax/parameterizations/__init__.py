@@ -17,10 +17,11 @@ __all__ = [
     "smagorinsky",
     "zannabolton2020",
     "backscatterbiharmonic",
+    "ringforcing",
     "noop",
 ]
 
 
 from ._parameterized_model import ParameterizedModelState, ParameterizedModel
 from ._defs import uv_parameterization, q_parameterization
-from . import smagorinsky, zannabolton2020, backscatterbiharmonic, noop
+from . import smagorinsky, zannabolton2020, backscatterbiharmonic, ringforcing, noop

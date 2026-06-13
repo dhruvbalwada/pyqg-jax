@@ -26,6 +26,9 @@ v0.9.0 (Unreleased)
   :func:`~pyqg_jax.xarray_output.state_to_dataset` to package a model
   state into a labeled :class:`xarray.Dataset` (optional `xarray`
   dependency)
+* Add the stochastic
+  :mod:`ring forcing <pyqg_jax.parameterizations.ringforcing>`
+  parameterization from PyQG
 * Add :mod:`pyqg_jax.particles` module for Lagrangian particle
   advection with gridded velocities
   (:class:`~pyqg_jax.particles.GriddedParticleStepper`), matching

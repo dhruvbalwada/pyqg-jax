@@ -12,6 +12,7 @@ Parameterizations
    reference.parameterizations.smagorinsky
    reference.parameterizations.zannabolton2020
    reference.parameterizations.backscatterbiharmonic
+   reference.parameterizations.ringforcing
    reference.parameterizations.noop
 
 
