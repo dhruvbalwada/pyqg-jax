@@ -3,6 +3,7 @@
 
 
 import abc
+import numpy as np
 import jax
 import jax.numpy as jnp
 from . import _kernel, _utils, state
@@ -99,6 +100,77 @@ class Model(_kernel.PseudoSpectralKernel):
         self, state: state.FullPseudoSpectralState
     ) -> state.FullPseudoSpectralState:
         return state
+
+    def stability_analysis(self):
+        r"""Linear stability analysis of the background state.
+
+        Solves, at every wavenumber, the eigenvalue problem for normal
+        modes :math:`\hat\theta \propto e^{-\mathrm{i}\omega t}` of the
+        linearized dynamics,
+
+        .. math::
+
+           k\,(\mathsf{U} + \mathsf{Q}_y\,\mathsf{a})\,\tilde\theta
+           = \omega\,\tilde\theta,
+
+        where :math:`\mathsf{U} = \mathrm{diag}(\mathtt{Ubg})`,
+        :math:`\mathsf{Q}_y = \mathrm{diag}(\mathtt{Qy})`, and
+        :math:`\mathsf{a}` is the model's inversion matrix
+        (:math:`\hat\psi = \mathsf{a}\,\hat q`). The growth rate at each
+        wavenumber is :math:`\mathrm{Im}(\omega)`.
+
+        .. versionadded:: 0.9.0
+
+        Returns
+        -------
+        omega : jax.Array
+            The eigenvalue with the largest growth rate (imaginary part)
+            at each wavenumber, shape :pycode:`(nl, nk)`. The growth rate
+            is :pycode:`omega.imag` and the phase speed is
+            :pycode:`omega.real / k`.
+
+        evec : jax.Array
+            The corresponding eigenvector (the vertical structure of the
+            most unstable mode) at each wavenumber, shape
+            :pycode:`(nz, nl, nk)`.
+
+        Note
+        ----
+        The eigenvalue problem is solved on the host with NumPy, so this
+        is a host-side diagnostic (not differentiable or jit-compatible).
+        It works regardless of the active JAX platform.
+        """
+        nz, nl, nk = self.nz, self.nl, self.nk
+        real_shape = self.get_grid().real_state_shape[-2:]
+        # inversion matrix a[i, j] (per wavenumber) from unit-basis columns
+        cols = []
+        for j in range(nz):
+            unit = (
+                jnp.zeros((nz, nl, nk), dtype=self.precision.dtype_complex)
+                .at[j]
+                .set(1.0)
+            )
+            col = self._apply_a_ph(
+                state.PseudoSpectralState(qh=unit, _q_shape=real_shape)
+            )
+            cols.append(col)
+        a = jnp.stack(cols, axis=1).real  # (nz, nz, nl, nk): a[i, j, l, k]
+        a = jnp.moveaxis(a, (0, 1), (-2, -1))  # (nl, nk, nz, nz)
+        ubg = self.Ubg.astype(a.dtype)
+        qy = self.Qy.astype(a.dtype)
+        eye = jnp.eye(nz, dtype=a.dtype)
+        # M = k * (diag(Ubg) + diag(Qy) @ a)
+        inner = jnp.expand_dims(ubg, -1) * eye + jnp.expand_dims(qy, -1) * a
+        kk = jnp.expand_dims(self.k, (-1, -2))  # (nl, nk, 1, 1)
+        # eigensolve on the host (jnp.linalg.eig is CPU-only); this is a
+        # host-side diagnostic, not part of the differentiable model.
+        mat = np.asarray(kk * inner)  # (nl, nk, nz, nz)
+        evals, evecs = np.linalg.eig(mat)  # (nl, nk, nz), (nl, nk, nz, nz)
+        imax = evals.imag.argmax(axis=-1)  # (nl, nk)
+        ii, jj = np.indices(imax.shape)
+        omega = evals[ii, jj, imax]  # (nl, nk)
+        evec = np.moveaxis(evecs[ii, jj, :, imax], -1, 0)  # (nz, nl, nk)
+        return jnp.asarray(omega), jnp.asarray(evec)
 
     @property
     def f2(self):

@@ -28,6 +28,8 @@ v0.9.0 (Unreleased)
   PyQG's gridded particle stepping and usable inside
   :func:`jax.lax.scan` alongside a model (see the associated
   :doc:`example <examples.particles>`)
+* Add a linear stability analysis method ``stability_analysis`` on the
+  base model (growth rates and modal structure of the background state)
 * Add a quasigeostrophic vertical-velocity diagnostic
   :func:`~pyqg_jax.diagnostics.vertical_velocity` (the omega-equation
   ``w`` at layer interfaces, for layered models)
