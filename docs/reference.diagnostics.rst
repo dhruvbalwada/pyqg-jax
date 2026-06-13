@@ -11,6 +11,8 @@ snapshot.
 
 .. autofunction:: total_ke
 
+.. autofunction:: total_ape
+
 .. autofunction:: cfl
 
 Field Diagnostics

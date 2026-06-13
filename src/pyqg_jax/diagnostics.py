@@ -15,6 +15,7 @@ from . import _spectral
 
 __all__ = [
     "total_ke",
+    "total_ape",
     "cfl",
     "ke_spec_vals",
     "ens_spec_vals",
@@ -109,6 +110,58 @@ def total_ke(full_state, grid):
     Hi = _grid_shape_check(grid, "Hi")
     h_weights = jnp.expand_dims(Hi / H, axis=(-1, -2))
     return jnp.mean(jnp.sum(ke * h_weights, axis=-3), axis=(-1, -2))
+
+
+def total_ape(full_state, grid, f, gpi):
+    r"""Compute the total available potential energy in a single snapshot.
+
+    For a layered model the available potential energy is stored in the
+    displacement of the interfaces between layers,
+
+    .. math::
+
+       \mathrm{APE} = \frac{1}{2H} \sum_k \frac{f_0^2}{g'_k}
+       \left\langle (\psi_k - \psi_{k+1})^2 \right\rangle,
+
+    where :math:`g'_k` is the reduced gravity at interface `k`,
+    :math:`\langle\cdot\rangle` is a horizontal average, and the
+    normalization (per total depth :math:`H`, with the factor of one
+    half) matches :func:`total_ke`, so :pycode:`total_ke + total_ape` is
+    the total energy per unit mass.
+
+    .. versionadded:: 0.9.0
+
+    Parameters
+    ----------
+    full_state : FullPseudoSpectralState
+        The state for which the APE is to be computed, for example from
+        :meth:`~pyqg_jax.layered_model.LayeredModel.get_full_state`.
+        This function operates on a single time step; use
+        :func:`jax.vmap` for a trajectory.
+
+    grid : Grid
+        Information on the spatial grid for `full_state`, for example
+        from :meth:`~pyqg_jax.layered_model.LayeredModel.get_grid`.
+
+    f : float
+        The Coriolis parameter :math:`f_0`.
+
+    gpi : array-like
+        The reduced gravities :math:`g'_k` at each of the ``nz - 1``
+        interfaces, for example from
+        :attr:`~pyqg_jax.layered_model.LayeredModel.gpi`.
+
+    Returns
+    -------
+    float
+        The total available potential energy for the provided snapshot.
+    """
+    p = _getattr_shape_check(full_state, "p", grid)
+    H = _grid_shape_check(grid, "H")
+    gpi = jnp.asarray(gpi)
+    dpsi = p[..., :-1, :, :] - p[..., 1:, :, :]
+    layer_ape = jnp.mean(dpsi**2, axis=(-1, -2)) / gpi
+    return (f**2 / (2 * H)) * jnp.sum(layer_ape, axis=-1)
 
 
 def cfl(full_state, grid, ubg, dt):

@@ -30,6 +30,9 @@ v0.9.0 (Unreleased)
   :doc:`example <examples.particles>`)
 * Add a linear stability analysis method ``stability_analysis`` on the
   base model (growth rates and modal structure of the background state)
+* Add total available potential energy diagnostic
+  :func:`~pyqg_jax.diagnostics.total_ape` (completing the energy
+  scalars alongside :func:`~pyqg_jax.diagnostics.total_ke`)
 * Add a quasigeostrophic vertical-velocity diagnostic
   :func:`~pyqg_jax.diagnostics.vertical_velocity` (the omega-equation
   ``w`` at layer interfaces, for layered models)
