@@ -20,3 +20,4 @@ complexity.
    examples.callies
    examples.layered
    examples.particles
+   examples.dataassim
