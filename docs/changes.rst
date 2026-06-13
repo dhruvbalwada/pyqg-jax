@@ -18,6 +18,10 @@ v0.9.0 (Unreleased)
   from PyQG, supporting an arbitrary number of layers with the PV
   inversion solved by a vectorized tridiagonal sweep (see the
   associated :doc:`example <examples.layered>`)
+* Add :class:`~pyqg_jax.steppers.RK4Stepper`, a fourth-order
+  Runge-Kutta time stepper with a larger stability region than
+  :class:`~pyqg_jax.steppers.AB3Stepper` (matching the scheme used by
+  some reference implementations)
 * Add :mod:`pyqg_jax.particles` module for Lagrangian particle
   advection with gridded velocities
   (:class:`~pyqg_jax.particles.GriddedParticleStepper`), matching

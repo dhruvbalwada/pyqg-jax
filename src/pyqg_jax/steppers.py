@@ -18,6 +18,7 @@ __all__ = [
     "SteppedModel",
     "AB3Stepper",
     "AB3State",
+    "RK4Stepper",
     "NoStepValue",
     "EulerStepper",
     "StepperState",
@@ -258,10 +259,19 @@ class SteppedModel:
         StepperState
             The updated wrapped state, a new object.
         """
-        new_stepper_state = self.stepper.apply_updates(
-            stepper_state,
-            self.model.get_updates(stepper_state.state),
-        )
+        # Multi-stage steppers (e.g. RK4) need to evaluate the model
+        # tendency at intermediate states, so they receive the model's
+        # update function rather than a single precomputed update.
+        if hasattr(self.stepper, "step_with_model"):
+            new_stepper_state = self.stepper.step_with_model(
+                stepper_state,
+                self.model.get_updates,
+            )
+        else:
+            new_stepper_state = self.stepper.apply_updates(
+                stepper_state,
+                self.model.get_updates(stepper_state.state),
+            )
         postprocessed_state = self.model.postprocess_state(new_stepper_state.state)
         return new_stepper_state.update(state=postprocessed_state)
 
@@ -324,6 +334,20 @@ def _map_state_remove_nostep(state):
 
     return jax.tree_util.tree_map(
         leaf_map, state, is_leaf=(lambda l: isinstance(l, NoStepValue))
+    )
+
+
+def _keep_first_nostep_map(func, first, *rest):
+    # Like _nostep_tree_map but for NoStepValue leaves keeps the value from
+    # `first` (rather than from an update). Used by multi-stage steppers so
+    # that shielded auxiliary values are held fixed across the stages.
+    def wrap(leaf, *updates):
+        if isinstance(leaf, NoStepValue):
+            return leaf
+        return func(leaf, *updates)
+
+    return jax.tree_util.tree_map(
+        wrap, first, *rest, is_leaf=(lambda l: isinstance(l, NoStepValue))
     )
 
 
@@ -501,6 +525,99 @@ class AB3Stepper(Stepper):
             tc=new_tc,
             _ablevel=new_ablevel,
             _updates=new_updates,
+        )
+
+
+@_utils.register_pytree_dataclass
+@dataclasses.dataclass(repr=False)
+class RK4Stepper(Stepper):
+    """Classic fourth-order Runge-Kutta stepper.
+
+    This is the time-stepping scheme used by some reference
+    implementations of these models (for example Callies et al. 2016).
+    Unlike :class:`AB3Stepper`, RK4 evaluates the model tendency four
+    times per step, but it has a substantially larger stability region,
+    which allows larger time steps for strongly nonlinear flows.
+
+    .. versionadded:: 0.9.0
+
+    Parameters
+    ----------
+    dt : float
+        Numerical time step
+
+    Attributes
+    ----------
+    dt : float
+        Numerical time step
+
+    Note
+    ----
+    Auxiliary values shielded with :class:`NoStepValue` (such as the
+    PRNG keys used by stochastic parameterizations) are held fixed
+    across the step. For stochastic parameterizations use
+    :class:`AB3Stepper`.
+    """
+
+    def step_with_model(self, stepper_state, get_updates):
+        """Advance `stepper_state` one step using `get_updates`.
+
+        Parameters
+        ----------
+        stepper_state : StepperState
+            The time-stepper wrapped state to be updated.
+
+        get_updates : callable
+            A function mapping an *unwrapped* model state to the
+            *unwrapped* time-stepping updates (the model tendency). This
+            is :meth:`get_updates
+            <pyqg_jax.qg_model.QGModel.get_updates>` from the model
+            being stepped.
+
+        Returns
+        -------
+        StepperState
+            The updated, wrapped state at the next time step.
+
+        Note
+        ----
+        This method does not apply post-processing to the updated
+        state. :class:`SteppedModel` handles that.
+        """
+        y = stepper_state.state
+        dt = self.dt
+
+        def stage(base, k, frac):
+            return _keep_first_nostep_map(
+                lambda v, u: v
+                + (jnp.astype(frac * dt, _utils.array_real_dtype(v)) * u),
+                base,
+                k,
+            )
+
+        k1 = get_updates(y)
+        k2 = get_updates(stage(y, k1, 0.5))
+        k3 = get_updates(stage(y, k2, 0.5))
+        k4 = get_updates(stage(y, k3, 1.0))
+
+        def combine(v, a, b, c, d):
+            dt6 = jnp.astype(dt / 6, _utils.array_real_dtype(v))
+            return v + (dt6 * (a + (2 * b) + (2 * c) + d))
+
+        new_state = _keep_first_nostep_map(combine, y, k1, k2, k3, k4)
+        new_t = stepper_state.t + jnp.float32(self.dt)
+        new_tc = stepper_state.tc + 1
+        return StepperState(
+            state=new_state,
+            t=new_t,
+            tc=new_tc,
+        )
+
+    def apply_updates(self, stepper_state, updates):
+        raise NotImplementedError(
+            "RK4Stepper evaluates the model tendency at intermediate stages and"
+            " cannot be driven with a single precomputed update; step it with"
+            " SteppedModel.step_model"
         )
 
 

@@ -18,10 +18,14 @@ These utilities add time-stepping to base models.
 Time Stepping Schemes
 ---------------------
 
-Implemented time-stepping schemes (currently only :class:`AB3Stepper`).
+Implemented time-stepping schemes.
 
 .. autoclass:: AB3Stepper
    :members: initialize_stepper_state, apply_updates
+   :inherited-members:
+
+.. autoclass:: RK4Stepper
+   :members: initialize_stepper_state, step_with_model
    :inherited-members:
 
 .. autoclass:: EulerStepper
