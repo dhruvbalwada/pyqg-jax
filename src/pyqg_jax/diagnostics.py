@@ -11,7 +11,7 @@ plot the results.
 """
 
 import jax.numpy as jnp
-from . import _spectral
+from . import _spectral, state as _state
 
 __all__ = [
     "total_ke",
@@ -22,6 +22,8 @@ __all__ = [
     "ispec_grid",
     "calc_ispec",
     "vertical_velocity",
+    "ke_flux_spec_vals",
+    "ape_flux_spec_vals",
 ]
 
 
@@ -394,6 +396,111 @@ def vertical_velocity(model, full_state):
     contrib = jnp.expand_dims(Hi, (-1, -2)) * (-d_str_dt) / f0
     w = -jnp.cumsum(contrib, axis=0)[:-1]  # interior interfaces; last (bottom) ~ 0
     return w.astype(model.precision.dtype_real)
+
+
+def ke_flux_spec_vals(model, full_state):
+    r"""Kinetic-energy spectral transfer (flux) values for a snapshot.
+
+    Returns the per-layer spectral kinetic-energy transfer by the
+    nonlinear advection of relative vorticity,
+
+    .. math::
+
+       \mathrm{Re}\!\left[\hat\psi^{*}\,
+       \widehat{\nabla\cdot(\mathbf{u}\,\nabla^2\psi)}\right] / M^2,
+
+    one of the terms in the spectral energy budget. As with the other
+    spectral diagnostics, average the result over any vmapped time
+    dimension and process it with :func:`calc_ispec`; for the total
+    (depth-integrated) flux, weight the per-layer isotropic spectra by
+    :pycode:`Hi / H` and sum over layers.
+
+    .. versionadded:: 0.9.0
+
+    Parameters
+    ----------
+    model
+        The model that produced `full_state` (used for the wavenumber
+        grids and the FFTs).
+
+    full_state : FullPseudoSpectralState
+        The expanded state, for example from
+        :meth:`~pyqg_jax.layered_model.LayeredModel.get_full_state`.
+        Operates on a single time step; use :func:`jax.vmap` for a
+        trajectory.
+
+    Returns
+    -------
+    jax.Array
+        The (signed) per-layer KE transfer values, shape
+        :pycode:`(nz, nl, nk)`.
+    """
+    grid = model.get_grid()
+    ph = full_state.ph
+    u = full_state.u
+    v = full_state.v
+    ik = jnp.expand_dims(1j * model.k, 0)
+    il = jnp.expand_dims(1j * model.l, 0)
+    M = grid.nx * grid.ny
+    xi = _state._generic_irfftn(-model.wv2 * ph, shape=grid.real_state_shape)
+    adv = ik * _state._generic_rfftn(u * xi) + il * _state._generic_rfftn(v * xi)
+    return (jnp.conj(ph) * adv).real / M**2
+
+
+def ape_flux_spec_vals(model, full_state):
+    r"""Available-potential-energy spectral transfer (flux) values.
+
+    Returns the per-layer spectral available-potential-energy transfer
+    by the nonlinear advection of the vortex stretching
+    :math:`\mathsf{S}\psi`,
+
+    .. math::
+
+       \mathrm{Re}\!\left[\hat\psi^{*}\,
+       \widehat{\nabla\cdot(\mathbf{u}\,\mathsf{S}\psi)}\right] / M^2,
+
+    the companion of :func:`ke_flux_spec_vals` in the spectral energy
+    budget. Process with :func:`calc_ispec` and combine across layers
+    with the :pycode:`Hi / H` weighting as for the KE flux.
+
+    Requires a model exposing a stretching matrix ``S``
+    (:class:`~pyqg_jax.layered_model.LayeredModel`).
+
+    .. versionadded:: 0.9.0
+
+    Parameters
+    ----------
+    model
+        The model that produced `full_state`. Must expose the stretching
+        matrix as ``S``.
+
+    full_state : FullPseudoSpectralState
+        The expanded state. Operates on a single time step; use
+        :func:`jax.vmap` for a trajectory.
+
+    Returns
+    -------
+    jax.Array
+        The (signed) per-layer APE transfer values, shape
+        :pycode:`(nz, nl, nk)`.
+    """
+    S = getattr(model, "S", None)
+    if S is None:
+        raise TypeError(
+            "ape_flux_spec_vals requires a layered model exposing a stretching"
+            " matrix as `S` (e.g. LayeredModel)"
+        )
+    grid = model.get_grid()
+    ph = full_state.ph
+    u = full_state.u
+    v = full_state.v
+    ik = jnp.expand_dims(1j * model.k, 0)
+    il = jnp.expand_dims(1j * model.l, 0)
+    M = grid.nx * grid.ny
+    sph = jnp.einsum("ij,jlk->ilk", jnp.asarray(S, dtype=ph.dtype), ph)
+    sp = _state._generic_irfftn(sph, shape=grid.real_state_shape)
+    adv = ik * _state._generic_rfftn(u * sp) + il * _state._generic_rfftn(v * sp)
+    return (jnp.conj(ph) * adv).real / M**2
 
 
 def ispec_grid(grid):

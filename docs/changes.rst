@@ -35,6 +35,9 @@ v0.9.0 (Unreleased)
   PyQG's gridded particle stepping and usable inside
   :func:`jax.lax.scan` alongside a model (see the associated
   :doc:`example <examples.particles>`)
+* Add spectral energy-transfer (flux) diagnostics
+  :func:`~pyqg_jax.diagnostics.ke_flux_spec_vals` and
+  :func:`~pyqg_jax.diagnostics.ape_flux_spec_vals`
 * Add a linear stability analysis method ``stability_analysis`` on the
   base model (growth rates and modal structure of the background state)
 * Add total available potential energy diagnostic

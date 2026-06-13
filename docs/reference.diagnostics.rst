@@ -33,6 +33,10 @@ dimension, and then further processed with :func:`calc_ispec`.
 
 .. autofunction:: ens_spec_vals
 
+.. autofunction:: ke_flux_spec_vals
+
+.. autofunction:: ape_flux_spec_vals
+
 Computing Spectra
 -----------------
 
