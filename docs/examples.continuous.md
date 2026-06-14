@@ -159,3 +159,87 @@ the analytic Eady solution — see
 for the linear dispersion relation. A general `N2` profile (for example
 surface-intensified stratification) can be passed instead of the
 uniform value used here.
+
+## Charney Instability
+
+The Eady problem has zero interior potential-vorticity gradient (the
+instability lives entirely on the two boundaries). Turning on $\beta$
+adds an interior PV gradient, and the surface buoyancy gradient then
+drives the **Charney** instability instead. Because the model resolves
+the vertical, we can read off the two textbook fingerprints that
+distinguish Charney from Eady: the most-unstable mode is
+*surface-trapped* (rather than the symmetric top/bottom edge waves
+above), and there is *no short-wave cutoff*.
+
+We compare two otherwise-identical configurations — one with
+$\beta = 0$ (Eady) and one with $\beta > 0$ (Charney) — using only the
+linear {meth}`~pyqg_jax.continuous_model.ContinuousQGModel.stability_analysis`,
+which needs no time stepping.
+
+```{code-cell} ipython3
+H_C = 4000.0
+N_C = 1e-3
+BETA = 1.5e-11
+SHEAR_C = -1.2e-6  # sign selects surface (vs. bottom) trapping
+
+
+def build(beta):
+    grid = pyqg_jax.continuous_model.ContinuousQGModel(
+        nx=64, nz=24, L=3e5, H=H_C, f=1e-4, beta=beta, N2=N_C**2,
+        precision=pyqg_jax.state.Precision.DOUBLE,
+    )
+    return pyqg_jax.continuous_model.ContinuousQGModel(
+        nx=64, nz=24, L=3e5, H=H_C, f=1e-4, beta=beta, N2=N_C**2,
+        U=SHEAR_C * grid.z, precision=pyqg_jax.state.Precision.DOUBLE,
+    )
+
+
+charney = build(BETA)
+eady = build(0.0)
+
+
+def growth_vs_k(m):
+    omega, evec = m.stability_analysis()
+    sigma = np.asarray(omega).imag[0]  # the l = 0 (zonal) row
+    k0 = np.asarray(m.k)[0]
+    mode = np.asarray(evec)[:, 0, :]  # (nz, nk) at l = 0
+    order = np.argsort(k0)
+    return k0[order], sigma[order], mode[:, order]
+
+
+kc, sc, evc = growth_vs_k(charney)
+ke_, se, _ = growth_vs_k(eady)
+```
+
+The left panel shows growth rate against wavenumber. Eady stabilizes
+once the wavelength drops below its deformation scale; Charney keeps
+growing into the short waves. The right panel shows the vertical
+structure of the most-unstable Charney mode — concentrated at the
+surface and decaying with depth.
+
+```{code-cell} ipython3
+km = 1e-3
+fig, axs = plt.subplots(1, 2, figsize=(9, 3.6), layout="constrained")
+
+axs[0].plot(kc * 1e3, sc * 86400, "C0-", label="Charney ($\\beta > 0$)")
+axs[0].plot(ke_ * 1e3, se * 86400, "C1--", label="Eady ($\\beta = 0$)")
+axs[0].set_xlabel("$k$ [cpm $\\times 10^{3}$]")
+axs[0].set_ylabel("growth rate [day$^{-1}$]")
+axs[0].set_title("growth rate vs. wavenumber")
+axs[0].legend()
+axs[0].grid(True, alpha=0.3)
+
+z = np.asarray(charney.z)
+peak = int(np.argmax(sc))
+mode = np.abs(evc[:, peak])
+mode = mode / mode.max()
+axs[1].plot(mode, z, "C0-")
+axs[1].set_xlabel("$|\\hat\\psi|$ (normalized)")
+axs[1].set_ylabel("z [m]")
+axs[1].set_title("most-unstable Charney mode")
+axs[1].grid(True, alpha=0.3)
+```
+
+The sign of the shear (relative to $\beta$) selects whether the mode
+traps at the surface or the bottom; flipping `SHEAR_C` to positive
+moves the trapping to the lower boundary.
