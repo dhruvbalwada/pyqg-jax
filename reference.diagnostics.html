@@ -1,0 +1,557 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diagnostics &mdash; pyqg-jax 0.9.0.dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/pyqg-jax-fix-theme.css?v=ead5a064" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5b4e8bf0"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="xarray Output" href="reference.xarray_output.html" />
+    <link rel="prev" title="Lagrangian Particles" href="reference.particles.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyqg-jax
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="reference.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="reference.state.html">States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.models.html">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.parameterizations.html">Parameterizations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.steppers.html">Time-Steppers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.particles.html">Lagrangian Particles</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Diagnostics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#scalar-diagnostics">Scalar Diagnostics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.diagnostics.total_ke"><code class="docutils literal notranslate"><span class="pre">total_ke()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.diagnostics.total_ape"><code class="docutils literal notranslate"><span class="pre">total_ape()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.diagnostics.cfl"><code class="docutils literal notranslate"><span class="pre">cfl()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#field-diagnostics">Field Diagnostics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.diagnostics.vertical_velocity"><code class="docutils literal notranslate"><span class="pre">vertical_velocity()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#spectral-diagnostics">Spectral Diagnostics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.diagnostics.ke_spec_vals"><code class="docutils literal notranslate"><span class="pre">ke_spec_vals()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.diagnostics.ens_spec_vals"><code class="docutils literal notranslate"><span class="pre">ens_spec_vals()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.diagnostics.ke_flux_spec_vals"><code class="docutils literal notranslate"><span class="pre">ke_flux_spec_vals()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.diagnostics.ape_flux_spec_vals"><code class="docutils literal notranslate"><span class="pre">ape_flux_spec_vals()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#computing-spectra">Computing Spectra</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.diagnostics.calc_ispec"><code class="docutils literal notranslate"><span class="pre">calc_ispec()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyqg_jax.diagnostics.ispec_grid"><code class="docutils literal notranslate"><span class="pre">ispec_grid()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reference.xarray_output.html">xarray Output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyqg-jax</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="reference.html">API Reference</a></li>
+      <li class="breadcrumb-item active">Diagnostics</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/reference.diagnostics.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyqg_jax.diagnostics">
+<span id="diagnostics"></span><h1>Diagnostics<a class="headerlink" href="#module-pyqg_jax.diagnostics" title="Link to this heading"></a></h1>
+<p>Functions for computing diagnostics of simulation states.</p>
+<p>The functions in this module can be used to compute diagnostic
+quantities such as kinetic energy or various spectra. See
+<a class="reference internal" href="examples.diagnostics.html"><span class="doc">Diagnostics</span></a> for examples of how to use them and how to
+plot the results.</p>
+<section id="scalar-diagnostics">
+<h2>Scalar Diagnostics<a class="headerlink" href="#scalar-diagnostics" title="Link to this heading"></a></h2>
+<p>These diagnostic functions produce a single scalar value for a single
+snapshot.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyqg_jax.diagnostics.total_ke">
+<span class="sig-prename descclassname"><span class="pre">pyqg_jax.diagnostics.</span></span><span class="sig-name descname"><span class="pre">total_ke</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/diagnostics.py#L78-L114"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.diagnostics.total_ke" title="Link to this definition"></a></dt>
+<dd><p>Compute the total kinetic energy in a single snapshot.</p>
+<p>The density in the KE calculation is taken such that the entire
+model grid space has a mass of one unit. To use a different
+density value, multiply the result of this calculation by the
+total mass of the full space.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.8.0.</span></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>full_state</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.FullPseudoSpectralState" title="pyqg_jax.state.FullPseudoSpectralState"><em>FullPseudoSpectralState</em></a>) – <p>The state for which the kinetic energy is to be computed. This
+argument should be retrieved from a model, for example from
+<a class="reference internal" href="reference.models.qg_model.html#pyqg_jax.qg_model.QGModel.get_full_state" title="pyqg_jax.qg_model.QGModel.get_full_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_full_state()</span></code></a>.</p>
+<p>This function only operates on a single time step. To apply it
+to a trajectory use <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.vmap.html#jax.vmap" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.vmap()</span></code></a>.</p>
+</p></li>
+<li><p><strong>grid</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.Grid" title="pyqg_jax.state.Grid"><em>Grid</em></a>) – Information on the spatial grid for <cite>full_state</cite>. This should
+be retrieved from a model, for example from
+<a class="reference internal" href="reference.models.qg_model.html#pyqg_jax.qg_model.QGModel.get_grid" title="pyqg_jax.qg_model.QGModel.get_grid"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_grid()</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The total kinetic energy for the provided snapshot.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyqg_jax.diagnostics.total_ape">
+<span class="sig-prename descclassname"><span class="pre">pyqg_jax.diagnostics.</span></span><span class="sig-name descname"><span class="pre">total_ape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpi</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/diagnostics.py#L117-L166"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.diagnostics.total_ape" title="Link to this definition"></a></dt>
+<dd><p>Compute the total available potential energy in a single snapshot.</p>
+<p>For a layered model the available potential energy is stored in the
+displacement of the interfaces between layers,</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{APE} = \frac{1}{2H} \sum_k \frac{f_0^2}{g'_k}
+\left\langle (\psi_k - \psi_{k+1})^2 \right\rangle,\]</div>
+<p>where <span class="math notranslate nohighlight">\(g'_k\)</span> is the reduced gravity at interface <cite>k</cite>,
+<span class="math notranslate nohighlight">\(\langle\cdot\rangle\)</span> is a horizontal average, and the
+normalization (per total depth <span class="math notranslate nohighlight">\(H\)</span>, with the factor of one
+half) matches <a class="reference internal" href="#pyqg_jax.diagnostics.total_ke" title="pyqg_jax.diagnostics.total_ke"><code class="xref py py-func docutils literal notranslate"><span class="pre">total_ke()</span></code></a>, so <code class="code highlight pycode python docutils literal highlight-python"><span class="n">total_ke</span> <span class="o">+</span> <span class="n">total_ape</span></code> is
+the total energy per unit mass.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.9.0.</span></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>full_state</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.FullPseudoSpectralState" title="pyqg_jax.state.FullPseudoSpectralState"><em>FullPseudoSpectralState</em></a>) – The state for which the APE is to be computed, for example from
+<a class="reference internal" href="reference.models.layered_model.html#pyqg_jax.layered_model.LayeredModel.get_full_state" title="pyqg_jax.layered_model.LayeredModel.get_full_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_full_state()</span></code></a>.
+This function operates on a single time step; use
+<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.vmap.html#jax.vmap" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.vmap()</span></code></a> for a trajectory.</p></li>
+<li><p><strong>grid</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.Grid" title="pyqg_jax.state.Grid"><em>Grid</em></a>) – Information on the spatial grid for <cite>full_state</cite>, for example
+from <a class="reference internal" href="reference.models.layered_model.html#pyqg_jax.layered_model.LayeredModel.get_grid" title="pyqg_jax.layered_model.LayeredModel.get_grid"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_grid()</span></code></a>.</p></li>
+<li><p><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The Coriolis parameter <span class="math notranslate nohighlight">\(f_0\)</span>.</p></li>
+<li><p><strong>gpi</strong> (<em>array-like</em>) – The reduced gravities <span class="math notranslate nohighlight">\(g'_k\)</span> at each of the <code class="docutils literal notranslate"><span class="pre">nz</span> <span class="pre">-</span> <span class="pre">1</span></code>
+interfaces, for example from
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">gpi</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The total available potential energy for the provided snapshot.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyqg_jax.diagnostics.cfl">
+<span class="sig-prename descclassname"><span class="pre">pyqg_jax.diagnostics.</span></span><span class="sig-name descname"><span class="pre">cfl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ubg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/diagnostics.py#L169-L219"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.diagnostics.cfl" title="Link to this definition"></a></dt>
+<dd><p>Calculate the CFL condition value for a single snapshot.</p>
+<p>This computes the <a class="reference external" href="https://en.wikipedia.org/wiki/Courant%E2%80%93Friedrichs%E2%80%93Lewy_condition">CFL</a>
+condition value at each grid point in a given state. To report the
+worst value across the full state, aggregate the values using
+<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.numpy.max.html#jax.numpy.max" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jnp.max</span></code></a>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.8.0.</span></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>full_state</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.FullPseudoSpectralState" title="pyqg_jax.state.FullPseudoSpectralState"><em>FullPseudoSpectralState</em></a>) – <p>The state for which the CFL condition is to be checked. This
+argument should be retrieved from a model, for example from
+<a class="reference internal" href="reference.models.qg_model.html#pyqg_jax.qg_model.QGModel.get_full_state" title="pyqg_jax.qg_model.QGModel.get_full_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_full_state()</span></code></a>.</p>
+<p>This function only operates on a single time step. To apply it
+to a trajectory use <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.vmap.html#jax.vmap" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.vmap()</span></code></a>.</p>
+</p></li>
+<li><p><strong>grid</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.Grid" title="pyqg_jax.state.Grid"><em>Grid</em></a>) – Information on the spatial grid for <cite>full_state</cite>. This should
+be retrieved from a model, for example from
+<a class="reference internal" href="reference.models.qg_model.html#pyqg_jax.qg_model.QGModel.get_grid" title="pyqg_jax.qg_model.QGModel.get_grid"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_grid()</span></code></a>.</p></li>
+<li><p><strong>ubg</strong> (<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)"><em>jax.Array</em></a>) – The model’s background velocity. Retrieve it from the same
+model as <cite>full_state</cite>, for example from
+<a class="reference internal" href="reference.models.qg_model.html#pyqg_jax.qg_model.QGModel.Ubg" title="pyqg_jax.qg_model.QGModel.Ubg"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Ubg</span></code></a>.</p></li>
+<li><p><strong>dt</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The time step size. This should be retrieved from the relevant
+time stepper, for example from
+<a class="reference internal" href="reference.steppers.html#pyqg_jax.steppers.AB3Stepper.dt" title="pyqg_jax.steppers.AB3Stepper.dt"><code class="xref py py-attr docutils literal notranslate"><span class="pre">dt</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The CFL condition value at each spatial grid location. These
+may optionally be aggregated with <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.numpy.max.html#jax.numpy.max" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jnp.max</span></code></a>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="field-diagnostics">
+<h2>Field Diagnostics<a class="headerlink" href="#field-diagnostics" title="Link to this heading"></a></h2>
+<p>These diagnostics produce a real-space field for a single snapshot.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyqg_jax.diagnostics.vertical_velocity">
+<span class="sig-prename descclassname"><span class="pre">pyqg_jax.diagnostics.</span></span><span class="sig-name descname"><span class="pre">vertical_velocity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_state</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/diagnostics.py#L307-L398"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.diagnostics.vertical_velocity" title="Link to this definition"></a></dt>
+<dd><p>Diagnose the quasigeostrophic vertical velocity at layer interfaces.</p>
+<p>In quasigeostrophy the vertical velocity does not appear in the
+leading-order dynamics; it is the next-order diagnostic given by the
+QG omega balance. This function computes it from the vortex-stretching
+(vorticity) form of the omega equation,</p>
+<div class="math notranslate nohighlight">
+\[f_0 \frac{\partial w}{\partial z} = -\frac{D_g}{Dt}(\mathsf{S}\psi),\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathsf{S}\psi\)</span> is the vortex stretching (the part of the
+potential vorticity that is not relative vorticity) and <span class="math notranslate nohighlight">\(D_g/Dt\)</span>
+is the material derivative following the full geostrophic flow
+(eddy plus background). Discretized over layers with a rigid lid and
+flat bottom (<span class="math notranslate nohighlight">\(w = 0\)</span> at the top and bottom boundaries) this is
+integrated vertically to give the vertical velocity at each interior
+interface.</p>
+<p>This formulation uses the model’s own stretching operator, so the
+depth-integrated balance closes to roundoff and the recovered
+<span class="math notranslate nohighlight">\(w\)</span> vanishes at the bottom boundary (no spurious net vertical
+mass flux). It is the route <code class="docutils literal notranslate"><span class="pre">(a)</span></code> quantity for estimating
+submesoscale vertical velocity. It is implemented for layered models
+that expose a stretching matrix (<a class="reference internal" href="reference.models.layered_model.html#pyqg_jax.layered_model.LayeredModel" title="pyqg_jax.layered_model.LayeredModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">LayeredModel</span></code></a>).</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.9.0.</span></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – The model that produced <cite>full_state</cite>. It must expose the
+stretching matrix as <code class="docutils literal notranslate"><span class="pre">S</span></code> (shape <code class="docutils literal notranslate"><span class="pre">(nz,</span> <span class="pre">nz)</span></code>), the background
+velocity <code class="docutils literal notranslate"><span class="pre">Ubg</span></code>, the Coriolis parameter <code class="docutils literal notranslate"><span class="pre">f</span></code>, and the spectral
+wavenumber grids <code class="docutils literal notranslate"><span class="pre">k</span></code> and <code class="docutils literal notranslate"><span class="pre">l</span></code> (as
+<a class="reference internal" href="reference.models.layered_model.html#pyqg_jax.layered_model.LayeredModel" title="pyqg_jax.layered_model.LayeredModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">LayeredModel</span></code></a> does).</p></li>
+<li><p><strong>full_state</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.FullPseudoSpectralState" title="pyqg_jax.state.FullPseudoSpectralState"><em>FullPseudoSpectralState</em></a>) – The expanded state, for example from
+<a class="reference internal" href="reference.models.layered_model.html#pyqg_jax.layered_model.LayeredModel.get_full_state" title="pyqg_jax.layered_model.LayeredModel.get_full_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_full_state()</span></code></a>.
+This function operates on a single time step; use
+<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.vmap.html#jax.vmap" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.vmap()</span></code></a> for a trajectory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The vertical velocity at each of the <code class="docutils literal notranslate"><span class="pre">nz</span> <span class="pre">-</span> <span class="pre">1</span></code> interior
+interfaces, in real space, with shape <code class="code highlight pycode python docutils literal highlight-python"><span class="p">(</span><span class="n">nz</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="spectral-diagnostics">
+<h2>Spectral Diagnostics<a class="headerlink" href="#spectral-diagnostics" title="Link to this heading"></a></h2>
+<p>The diagnostics in this section produce array diagnostics which should
+be <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.numpy.mean.html#jax.numpy.mean" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">averaged</span></code></a> across a trajectory’s time
+dimension, and then further processed with <a class="reference internal" href="#pyqg_jax.diagnostics.calc_ispec" title="pyqg_jax.diagnostics.calc_ispec"><code class="xref py py-func docutils literal notranslate"><span class="pre">calc_ispec()</span></code></a>.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyqg_jax.diagnostics.ke_spec_vals">
+<span class="sig-prename descclassname"><span class="pre">pyqg_jax.diagnostics.</span></span><span class="sig-name descname"><span class="pre">ke_spec_vals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/diagnostics.py#L222-L265"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.diagnostics.ke_spec_vals" title="Link to this definition"></a></dt>
+<dd><p>Calculate the kinetic energy spectrum values for a snapshot.</p>
+<p>The values produced by this function should be further processed
+by <a class="reference internal" href="#pyqg_jax.diagnostics.calc_ispec" title="pyqg_jax.diagnostics.calc_ispec"><code class="xref py py-func docutils literal notranslate"><span class="pre">calc_ispec()</span></code></a> to produce the kinetic energy spectrum.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.8.0.</span></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>full_state</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.FullPseudoSpectralState" title="pyqg_jax.state.FullPseudoSpectralState"><em>FullPseudoSpectralState</em></a>) – <p>The state for which the KE spectrum values should be computed.
+This argument should be retrieved from a model, for example
+from <a class="reference internal" href="reference.models.qg_model.html#pyqg_jax.qg_model.QGModel.get_full_state" title="pyqg_jax.qg_model.QGModel.get_full_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_full_state()</span></code></a>.</p>
+<p>This function only operates on a single time step. To apply it
+to a trajectory use <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.vmap.html#jax.vmap" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.vmap()</span></code></a>.</p>
+</p></li>
+<li><p><strong>grid</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.Grid" title="pyqg_jax.state.Grid"><em>Grid</em></a>) – Information on the spatial grid for <cite>full_state</cite>. This should
+be retrieved from a model, for example from
+<a class="reference internal" href="reference.models.qg_model.html#pyqg_jax.qg_model.QGModel.get_grid" title="pyqg_jax.qg_model.QGModel.get_grid"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_grid()</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The KE spectrum values for the provided time step.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The returned array should be treated as opaque. Values should only
+be averaged over any vmapped time dimensions, then passed to
+<a class="reference internal" href="#pyqg_jax.diagnostics.calc_ispec" title="pyqg_jax.diagnostics.calc_ispec"><code class="xref py py-func docutils literal notranslate"><span class="pre">calc_ispec()</span></code></a>.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyqg_jax.diagnostics.ens_spec_vals">
+<span class="sig-prename descclassname"><span class="pre">pyqg_jax.diagnostics.</span></span><span class="sig-name descname"><span class="pre">ens_spec_vals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/diagnostics.py#L268-L304"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.diagnostics.ens_spec_vals" title="Link to this definition"></a></dt>
+<dd><p>Calculate the enstrophy spectrum values for a snapshot.</p>
+<p>The values produced by this function should be further processed
+by <a class="reference internal" href="#pyqg_jax.diagnostics.calc_ispec" title="pyqg_jax.diagnostics.calc_ispec"><code class="xref py py-func docutils literal notranslate"><span class="pre">calc_ispec()</span></code></a> to produce the kinetic energy spectrum.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.9.0.</span></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>full_state</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.FullPseudoSpectralState" title="pyqg_jax.state.FullPseudoSpectralState"><em>FullPseudoSpectralState</em></a>) – <p>The state for which the enstropy spectrum values should be
+computed. This argument should be retrieved from a model, for
+example from <a class="reference internal" href="reference.models.qg_model.html#pyqg_jax.qg_model.QGModel.get_full_state" title="pyqg_jax.qg_model.QGModel.get_full_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_full_state()</span></code></a>.</p>
+<p>This function only operates on a single time step. To apply it
+to a trajectory use <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.vmap.html#jax.vmap" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.vmap()</span></code></a>.</p>
+</p></li>
+<li><p><strong>grid</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.Grid" title="pyqg_jax.state.Grid"><em>Grid</em></a>) – Information on the spatial grid for <cite>full_state</cite>. This should
+be retrieved from a model, for example from
+<a class="reference internal" href="reference.models.qg_model.html#pyqg_jax.qg_model.QGModel.get_grid" title="pyqg_jax.qg_model.QGModel.get_grid"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_grid()</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The enstropy spectrum values for the provided time step.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The returned array should be treated as opaque. Values should only
+be averaged over any vmapped time dimensions, then passed to
+<a class="reference internal" href="#pyqg_jax.diagnostics.calc_ispec" title="pyqg_jax.diagnostics.calc_ispec"><code class="xref py py-func docutils literal notranslate"><span class="pre">calc_ispec()</span></code></a>.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyqg_jax.diagnostics.ke_flux_spec_vals">
+<span class="sig-prename descclassname"><span class="pre">pyqg_jax.diagnostics.</span></span><span class="sig-name descname"><span class="pre">ke_flux_spec_vals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_state</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/diagnostics.py#L401-L447"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.diagnostics.ke_flux_spec_vals" title="Link to this definition"></a></dt>
+<dd><p>Kinetic-energy spectral transfer (flux) values for a snapshot.</p>
+<p>Returns the per-layer spectral kinetic-energy transfer by the
+nonlinear advection of relative vorticity,</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{Re}\!\left[\hat\psi^{*}\,
+\widehat{\nabla\cdot(\mathbf{u}\,\nabla^2\psi)}\right] / M^2,\]</div>
+<p>one of the terms in the spectral energy budget. As with the other
+spectral diagnostics, average the result over any vmapped time
+dimension and process it with <a class="reference internal" href="#pyqg_jax.diagnostics.calc_ispec" title="pyqg_jax.diagnostics.calc_ispec"><code class="xref py py-func docutils literal notranslate"><span class="pre">calc_ispec()</span></code></a>; for the total
+(depth-integrated) flux, weight the per-layer isotropic spectra by
+<code class="code highlight pycode python docutils literal highlight-python"><span class="n">Hi</span> <span class="o">/</span> <span class="n">H</span></code> and sum over layers.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.9.0.</span></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – The model that produced <cite>full_state</cite> (used for the wavenumber
+grids and the FFTs).</p></li>
+<li><p><strong>full_state</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.FullPseudoSpectralState" title="pyqg_jax.state.FullPseudoSpectralState"><em>FullPseudoSpectralState</em></a>) – The expanded state, for example from
+<a class="reference internal" href="reference.models.layered_model.html#pyqg_jax.layered_model.LayeredModel.get_full_state" title="pyqg_jax.layered_model.LayeredModel.get_full_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_full_state()</span></code></a>.
+Operates on a single time step; use <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.vmap.html#jax.vmap" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.vmap()</span></code></a> for a
+trajectory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The (signed) per-layer KE transfer values, shape
+<code class="code highlight pycode python docutils literal highlight-python"><span class="p">(</span><span class="n">nz</span><span class="p">,</span> <span class="n">nl</span><span class="p">,</span> <span class="n">nk</span><span class="p">)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyqg_jax.diagnostics.ape_flux_spec_vals">
+<span class="sig-prename descclassname"><span class="pre">pyqg_jax.diagnostics.</span></span><span class="sig-name descname"><span class="pre">ape_flux_spec_vals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_state</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/diagnostics.py#L450-L503"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.diagnostics.ape_flux_spec_vals" title="Link to this definition"></a></dt>
+<dd><p>Available-potential-energy spectral transfer (flux) values.</p>
+<p>Returns the per-layer spectral available-potential-energy transfer
+by the nonlinear advection of the vortex stretching
+<span class="math notranslate nohighlight">\(\mathsf{S}\psi\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{Re}\!\left[\hat\psi^{*}\,
+\widehat{\nabla\cdot(\mathbf{u}\,\mathsf{S}\psi)}\right] / M^2,\]</div>
+<p>the companion of <a class="reference internal" href="#pyqg_jax.diagnostics.ke_flux_spec_vals" title="pyqg_jax.diagnostics.ke_flux_spec_vals"><code class="xref py py-func docutils literal notranslate"><span class="pre">ke_flux_spec_vals()</span></code></a> in the spectral energy
+budget. Process with <a class="reference internal" href="#pyqg_jax.diagnostics.calc_ispec" title="pyqg_jax.diagnostics.calc_ispec"><code class="xref py py-func docutils literal notranslate"><span class="pre">calc_ispec()</span></code></a> and combine across layers
+with the <code class="code highlight pycode python docutils literal highlight-python"><span class="n">Hi</span> <span class="o">/</span> <span class="n">H</span></code> weighting as for the KE flux.</p>
+<p>Requires a model exposing a stretching matrix <code class="docutils literal notranslate"><span class="pre">S</span></code>
+(<a class="reference internal" href="reference.models.layered_model.html#pyqg_jax.layered_model.LayeredModel" title="pyqg_jax.layered_model.LayeredModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">LayeredModel</span></code></a>).</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.9.0.</span></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – The model that produced <cite>full_state</cite>. Must expose the stretching
+matrix as <code class="docutils literal notranslate"><span class="pre">S</span></code>.</p></li>
+<li><p><strong>full_state</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.FullPseudoSpectralState" title="pyqg_jax.state.FullPseudoSpectralState"><em>FullPseudoSpectralState</em></a>) – The expanded state. Operates on a single time step; use
+<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.vmap.html#jax.vmap" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.vmap()</span></code></a> for a trajectory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The (signed) per-layer APE transfer values, shape
+<code class="code highlight pycode python docutils literal highlight-python"><span class="p">(</span><span class="n">nz</span><span class="p">,</span> <span class="n">nl</span><span class="p">,</span> <span class="n">nk</span><span class="p">)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="computing-spectra">
+<h2>Computing Spectra<a class="headerlink" href="#computing-spectra" title="Link to this heading"></a></h2>
+<p>These functions can be used to process the averaged values or a
+spectral diagnostic into an isotropic spectrum.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyqg_jax.diagnostics.calc_ispec">
+<span class="sig-prename descclassname"><span class="pre">pyqg_jax.diagnostics.</span></span><span class="sig-name descname"><span class="pre">calc_ispec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec_vals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/diagnostics.py#L540-L575"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.diagnostics.calc_ispec" title="Link to this definition"></a></dt>
+<dd><p>Compute the isotropic spectrum from the given values.</p>
+<p>The array <cite>spec_vals</cite> should have been computed by one of the
+spectral diagnostics functions–for example <a class="reference internal" href="#pyqg_jax.diagnostics.ke_spec_vals" title="pyqg_jax.diagnostics.ke_spec_vals"><code class="xref py py-func docutils literal notranslate"><span class="pre">ke_spec_vals()</span></code></a>.</p>
+<p>To correctly plot or interpret the spectrum computed by this
+function, use the result of <a class="reference internal" href="#pyqg_jax.diagnostics.ispec_grid" title="pyqg_jax.diagnostics.ispec_grid"><code class="xref py py-func docutils literal notranslate"><span class="pre">ispec_grid()</span></code></a>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.8.0.</span></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec_vals</strong> (<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)"><em>jax.Array</em></a>) – The input values which should be processed into an isotropic
+spectrum. These values should be a squared modulus of the
+Fourier coefficients.</p></li>
+<li><p><strong>grid</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.Grid" title="pyqg_jax.state.Grid"><em>Grid</em></a>) – The spatial grid over which the base values were defined. This
+should be retrieved from a model, for example from
+<a class="reference internal" href="reference.models.qg_model.html#pyqg_jax.qg_model.QGModel.get_grid" title="pyqg_jax.qg_model.QGModel.get_grid"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_grid()</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A one-dimensional array providing the isotropic spectrum of
+<cite>spec_vals</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.Array.html#jax.Array" title="(in JAX)">jax.Array</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyqg_jax.diagnostics.ispec_grid">
+<span class="sig-prename descclassname"><span class="pre">pyqg_jax.diagnostics.</span></span><span class="sig-name descname"><span class="pre">ispec_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/diagnostics.py#L506-L537"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.diagnostics.ispec_grid" title="Link to this definition"></a></dt>
+<dd><p>Information on the spacing of values in an isotropic spectrum.</p>
+<p>This function produces two results: <cite>iso_k</cite> and <cite>keep</cite>. The values
+<cite>iso_k</cite> are the isotropic wavenumbers for each entry in the result
+of <cite>calc_ispec</cite>. The result <cite>keep</cite> is an integer which should be
+used to slice the result of <cite>calc_ispec</cite>. Only the first <cite>keep</cite>
+entries should be interpreted.</p>
+<p>The values computed by this function are useful when plotting the
+result of <a class="reference internal" href="#pyqg_jax.diagnostics.calc_ispec" title="pyqg_jax.diagnostics.calc_ispec"><code class="xref py py-func docutils literal notranslate"><span class="pre">calc_ispec()</span></code></a>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.8.0.</span></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>grid</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.Grid" title="pyqg_jax.state.Grid"><em>Grid</em></a>) – The spatial grid over which the base values were defined. This
+should be retrieved from a model, for example from
+<a class="reference internal" href="reference.models.qg_model.html#pyqg_jax.qg_model.QGModel.get_grid" title="pyqg_jax.qg_model.QGModel.get_grid"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_grid()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>iso_k</strong> (<em>jax.Array</em>) – The isotropic wavenumbers for each spectrum entry.</p></li>
+<li><p><strong>keep</strong> (<em>int</em>) – An integer indicating how many of the first spectrum entries
+should be interpreted or plotted.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="reference.particles.html" class="btn btn-neutral float-left" title="Lagrangian Particles" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="reference.xarray_output.html" class="btn btn-neutral float-right" title="xarray Output" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Karl Otness.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

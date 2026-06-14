@@ -1,0 +1,167 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xarray Output &mdash; pyqg-jax 0.9.0.dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/pyqg-jax-fix-theme.css?v=ead5a064" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5b4e8bf0"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Performance" href="performance.html" />
+    <link rel="prev" title="Diagnostics" href="reference.diagnostics.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyqg-jax
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="reference.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="reference.state.html">States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.models.html">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.parameterizations.html">Parameterizations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.steppers.html">Time-Steppers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.particles.html">Lagrangian Particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.diagnostics.html">Diagnostics</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">xarray Output</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyqg_jax.xarray_output.state_to_dataset"><code class="docutils literal notranslate"><span class="pre">state_to_dataset()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyqg-jax</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="reference.html">API Reference</a></li>
+      <li class="breadcrumb-item active">xarray Output</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/reference.xarray_output.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyqg_jax.xarray_output">
+<span id="xarray-output"></span><h1>xarray Output<a class="headerlink" href="#module-pyqg_jax.xarray_output" title="Link to this heading"></a></h1>
+<p>Convert model states into labeled <code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.Dataset</span></code> objects.</p>
+<p>This module provides <a class="reference internal" href="#pyqg_jax.xarray_output.state_to_dataset" title="pyqg_jax.xarray_output.state_to_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">state_to_dataset()</span></code></a>, which packages the
+fields of a model state together with spatial and spectral coordinates
+into an <code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.Dataset</span></code> for analysis and serialization.</p>
+<p>This module requires the optional dependency <a class="reference external" href="https://docs.xarray.dev/">xarray</a>.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyqg_jax.xarray_output.state_to_dataset">
+<span class="sig-prename descclassname"><span class="pre">pyqg_jax.xarray_output.</span></span><span class="sig-name descname"><span class="pre">state_to_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/karlotness/pyqg-jax/blob/master/src/pyqg_jax/xarray_output.py#L33-L110"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyqg_jax.xarray_output.state_to_dataset" title="Link to this definition"></a></dt>
+<dd><p>Package a model state into an <code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.Dataset</span></code>.</p>
+<p>Real-space fields are given dimensions <code class="code highlight pycode python docutils literal highlight-python"><span class="p">(</span><span class="s2">&quot;lev&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">)</span></code>
+and spectral fields <code class="code highlight pycode python docutils literal highlight-python"><span class="p">(</span><span class="s2">&quot;lev&quot;</span><span class="p">,</span> <span class="s2">&quot;l&quot;</span><span class="p">,</span> <span class="s2">&quot;k&quot;</span><span class="p">)</span></code>, with matching
+coordinates derived from the model grid. Whichever of the fields
+<code class="docutils literal notranslate"><span class="pre">q</span></code>, <code class="docutils literal notranslate"><span class="pre">qh</span></code>, <code class="docutils literal notranslate"><span class="pre">u</span></code>, <code class="docutils literal notranslate"><span class="pre">v</span></code>, <code class="docutils literal notranslate"><span class="pre">p</span></code>, <code class="docutils literal notranslate"><span class="pre">ph</span></code> are present on <cite>state</cite>
+are included (so both a <a class="reference internal" href="reference.state.html#pyqg_jax.state.PseudoSpectralState" title="pyqg_jax.state.PseudoSpectralState"><code class="xref py py-class docutils literal notranslate"><span class="pre">PseudoSpectralState</span></code></a>
+and a <a class="reference internal" href="reference.state.html#pyqg_jax.state.FullPseudoSpectralState" title="pyqg_jax.state.FullPseudoSpectralState"><code class="xref py py-class docutils literal notranslate"><span class="pre">FullPseudoSpectralState</span></code></a> are
+accepted).</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.9.0.</span></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<a class="reference internal" href="reference.state.html#pyqg_jax.state.PseudoSpectralState" title="pyqg_jax.state.PseudoSpectralState"><em>PseudoSpectralState</em></a><em> or </em><a class="reference internal" href="reference.state.html#pyqg_jax.state.FullPseudoSpectralState" title="pyqg_jax.state.FullPseudoSpectralState"><em>FullPseudoSpectralState</em></a>) – The state to convert. This function operates on a single time
+step; to build a dataset for a trajectory, convert snapshots
+and combine them (for example with <code class="xref py py-func docutils literal notranslate"><span class="pre">xarray.concat()</span></code>).</p></li>
+<li><p><strong>model</strong> – The model that produced <cite>state</cite>, used for the grid coordinates
+and model parameters (stored as dataset attributes).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The state fields with labeled spatial/spectral coordinates.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>xarray.Dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="reference.diagnostics.html" class="btn btn-neutral float-left" title="Diagnostics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="performance.html" class="btn btn-neutral float-right" title="Performance" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Karl Otness.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

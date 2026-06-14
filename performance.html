@@ -1,0 +1,241 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Performance &mdash; pyqg-jax 0.9.0.dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/pyqg-jax-fix-theme.css?v=ead5a064" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5b4e8bf0"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Changelog" href="changes.html" />
+    <link rel="prev" title="xarray Output" href="reference.xarray_output.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyqg-jax
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">API Reference</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Performance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#single-simulation">Single simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ensembles-with-vmap">Ensembles with <code class="docutils literal notranslate"><span class="pre">vmap</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reproducing-these-numbers">Reproducing these numbers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyqg-jax</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Performance</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/performance.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="performance">
+<h1>Performance<a class="headerlink" href="#performance" title="Link to this heading"></a></h1>
+<p>Because the models in this package are written in JAX, the same code
+runs on CPU or GPU and can be batched with <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.vmap.html#jax.vmap" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.vmap()</span></code></a>. For the
+quasigeostrophic models the per-step cost is dominated by FFTs, which
+map very well onto a GPU.</p>
+<p>The numbers below were measured on this fork’s development machine
+(2× Tesla V100S, JAX 0.10.1, CUDA 12) with the timed call wrapped in
+<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.jit.html#jax.jit" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.jit()</span></code></a> and <code class="docutils literal notranslate"><span class="pre">block_until_ready</span></code>, excluding compilation. They
+are illustrative only and will vary with hardware, grid size, and JAX
+version, but the qualitative picture is robust.</p>
+<section id="single-simulation">
+<h2>Single simulation<a class="headerlink" href="#single-simulation" title="Link to this heading"></a></h2>
+<p>Time per step (milliseconds), double precision, comparing mainline
+<a class="reference external" href="https://pyqg.readthedocs.io">PyQG</a> (Cython, CPU) with this package
+on CPU and on one V100S GPU:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Configuration</p></th>
+<th class="head"><p>mainline CPU</p></th>
+<th class="head"><p>JAX CPU</p></th>
+<th class="head"><p>JAX GPU</p></th>
+<th class="head"><p>GPU vs mainline</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CalliesTwoEady 256²</p></td>
+<td><p>10.9</p></td>
+<td><p>7.8</p></td>
+<td><p>0.26</p></td>
+<td><p>~42×</p></td>
+</tr>
+<tr class="row-odd"><td><p>CalliesTwoEady 512²</p></td>
+<td><p>54.7</p></td>
+<td><p>46.8</p></td>
+<td><p>0.73</p></td>
+<td><p>~75×</p></td>
+</tr>
+<tr class="row-even"><td><p>LayeredModel (nz=3) 256²</p></td>
+<td><p>10.9</p></td>
+<td><p>8.8</p></td>
+<td><p>0.27</p></td>
+<td><p>~40×</p></td>
+</tr>
+<tr class="row-odd"><td><p>LayeredModel (nz=3) 512²</p></td>
+<td><p>56.5</p></td>
+<td><p>35.0</p></td>
+<td><p>0.79</p></td>
+<td><p>~71×</p></td>
+</tr>
+</tbody>
+</table>
+<figure class="align-default" id="id1">
+<a class="reference internal image-reference" href="_images/perf_single.png"><img alt="Per-step cost on a log scale for mainline PyQG, pyqg-jax on CPU, and pyqg-jax on a V100S GPU." src="_images/perf_single.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Per-step cost (double precision, log scale). The GPU is roughly 40-75×
+faster than the mainline Cython kernel.</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>On CPU, JAX is roughly on par with the Cython kernel; essentially all
+of the speedup comes from the GPU. At small grids (e.g. 128²) the GPU
+is latency-bound and the advantage shrinks – batching (below) is what
+recovers throughput there.</p>
+</section>
+<section id="ensembles-with-vmap">
+<h2>Ensembles with <code class="docutils literal notranslate"><span class="pre">vmap</span></code><a class="headerlink" href="#ensembles-with-vmap" title="Link to this heading"></a></h2>
+<p>The largest gains come from running many simulations at once. Mapping
+the stepped model over a batch of initial states with <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.vmap.html#jax.vmap" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.vmap()</span></code></a>
+amortizes kernel-launch overhead across the ensemble. For
+CalliesTwoEady at 256² on one V100S:</p>
+<ul class="simple">
+<li><p>double precision, batch of 32: <strong>0.16 ms/step per member</strong></p></li>
+<li><p>single precision, batch of 32: <strong>0.072 ms/step per member</strong></p></li>
+</ul>
+<p>i.e. roughly two orders of magnitude faster per member than the
+mainline CPU kernel. A 32-member, one-year ensemble at 256² runs in a
+few minutes on a single GPU. Hundreds of members fit in the memory of
+a 32 GB card at 512².</p>
+<figure class="align-default" id="id2">
+<a class="reference internal image-reference" href="_images/perf_ensemble.png"><img alt="Per-member time per step as a function of vmap ensemble size, compared with the mainline single-run cost." src="_images/perf_ensemble.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Ensemble throughput. Batching with <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.vmap.html#jax.vmap" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.vmap()</span></code></a> drives the per-member
+cost down (most strongly in single precision), reaching ~150× faster per
+member than a single mainline CPU run (dashed line).</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="reproducing-these-numbers">
+<h2>Reproducing these numbers<a class="headerlink" href="#reproducing-these-numbers" title="Link to this heading"></a></h2>
+<p>Enable 64-bit precision (see <a class="reference internal" href="install.html"><span class="doc">Installation</span></a>) and select the platform
+with the <code class="docutils literal notranslate"><span class="pre">JAX_PLATFORMS</span></code> environment variable (<code class="docutils literal notranslate"><span class="pre">cpu</span></code> or <code class="docutils literal notranslate"><span class="pre">cuda</span></code>).
+A minimal single-model timing loop:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">functools</span><span class="o">,</span><span class="w"> </span><span class="nn">time</span><span class="o">,</span><span class="w"> </span><span class="nn">jax</span>
+<span class="n">jax</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s2">&quot;jax_enable_x64&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyqg_jax</span>
+
+<span class="n">stepped</span> <span class="o">=</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">steppers</span><span class="o">.</span><span class="n">SteppedModel</span><span class="p">(</span>
+    <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">layered_model</span><span class="o">.</span><span class="n">LayeredModel</span><span class="p">(</span>
+        <span class="n">nx</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">nz</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+        <span class="n">precision</span><span class="o">=</span><span class="n">pyqg_jax</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">Precision</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">steppers</span><span class="o">.</span><span class="n">AB3Stepper</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">3600.0</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">stepped</span><span class="o">.</span><span class="n">create_initial_state</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+<span class="nd">@functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">roll</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">c</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="p">(</span><span class="n">stepped</span><span class="o">.</span><span class="n">step_model</span><span class="p">(</span><span class="n">c</span><span class="p">),</span> <span class="kc">None</span><span class="p">),</span> <span class="n">s</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">n</span>
+    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">state</span> <span class="o">=</span> <span class="n">roll</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>            <span class="c1"># compile + warm up</span>
+<span class="n">state</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">qh</span><span class="o">.</span><span class="n">block_until_ready</span><span class="p">()</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">roll</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">state</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">qh</span><span class="o">.</span><span class="n">block_until_ready</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">((</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">,</span> <span class="s2">&quot;ms/step&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="reference.xarray_output.html" class="btn btn-neutral float-left" title="xarray Output" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="changes.html" class="btn btn-neutral float-right" title="Changelog" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Karl Otness.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
