@@ -22,7 +22,8 @@ v0.9.0 (Unreleased)
   continuous-stratification model with a general ``N²(z)`` profile
   discretized by Chebyshev collocation in the vertical (interior PV
   plus surface/bottom buoyancy; vertical boundary-value inversion per
-  horizontal wavenumber)
+  horizontal wavenumber; see the associated :doc:`example
+  <examples.continuous>`)
 * Add :class:`~pyqg_jax.steppers.RK4Stepper`, a fourth-order
   Runge-Kutta time stepper with a larger stability region than
   :class:`~pyqg_jax.steppers.AB3Stepper` (matching the scheme used by
