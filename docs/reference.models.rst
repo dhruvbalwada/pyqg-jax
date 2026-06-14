@@ -12,3 +12,4 @@ This package currently implements a subset of the models from PyQG.
    reference.models.sqg_model
    reference.models.callies_model
    reference.models.layered_model
+   reference.models.continuous_model
