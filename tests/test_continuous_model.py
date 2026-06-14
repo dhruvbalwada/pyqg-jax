@@ -102,6 +102,59 @@ def test_stability_reproduces_eady():
     assert 1.2 < mu < 2.1  # Eady peak near mu ~ 1.6
 
 
+def test_charney_surface_trapped_no_cutoff():
+    # with beta (interior PV gradient) the surface buoyancy gradient gives
+    # the Charney instability: a surface-trapped mode and no short-wave cutoff
+    f = 1e-4
+    nbv = 1e-3
+    beta = 1.5e-11
+    depth = 4000.0
+    shear = -1.2e-6  # sign selecting surface trapping
+    grid = ContinuousQGModel(
+        nx=64,
+        nz=24,
+        L=3e5,
+        H=depth,
+        f=f,
+        beta=beta,
+        N2=nbv**2,
+        precision=pyqg_jax.state.Precision.DOUBLE,
+    )
+    model = ContinuousQGModel(
+        nx=64,
+        nz=24,
+        L=3e5,
+        H=depth,
+        f=f,
+        beta=beta,
+        N2=nbv**2,
+        U=shear * grid.z,
+        precision=pyqg_jax.state.Precision.DOUBLE,
+    )
+    omega, evec = model.stability_analysis()
+    sigma = np.asarray(omega).imag
+    ll = np.asarray(model.l)
+    kk = np.asarray(model.k)
+    mask = ll == 0
+    sig0 = sigma[mask]
+    k0 = kk[mask]
+    peak = np.argmax(sig0)
+    assert sig0[peak] > 0  # unstable
+
+    # most-unstable mode is surface-trapped (decays away from z = 0)
+    z = np.asarray(model.z)
+    ev = np.abs(np.asarray(evec)[:, 0, np.argmax(sig0)])
+    ev = ev / ev.max()
+    surf = ev[np.argmin(np.abs(z))]
+    mid = ev[np.argmin(np.abs(z + depth / 2))]
+    assert surf > 5 * mid
+
+    # no short-wave cutoff: short waves remain unstable (Eady would not)
+    wl_km = 2 * np.pi / np.where(k0 > 0, k0, np.inf) / 1e3
+    short = (wl_km < 25) & (k0 > 0)
+    assert np.any(sig0[short] > 1e-10)
+
+
 def _integrate(model, dt, nsteps, amp=1e-9, seed=0):
     sm = pyqg_jax.steppers.SteppedModel(model, pyqg_jax.steppers.AB3Stepper(dt=dt))
     key = jax.random.key(seed)
