@@ -21,4 +21,5 @@ complexity.
    examples.layered
    examples.particles
    examples.continuous
+   examples.qgplus1
    examples.dataassim

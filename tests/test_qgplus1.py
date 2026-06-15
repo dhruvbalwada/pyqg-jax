@@ -385,6 +385,20 @@ def test_develops_cyclonic_skewness():
 
 
 @requires_x64
+def test_reaches_bounded_equilibrium():
+    # the Eady-forced run saturates into a statistical equilibrium (the
+    # spectral filter dissipates at small scales) rather than blowing up
+    model = _qgp1_model(nx=24, nz=12, shear=8e-4)
+    state = _rollout(model, 1e-6, int(8.0 * 86400 / 150), 150.0, seed=1).state
+    q = np.asarray(state.q)
+    assert np.all(np.isfinite(q))
+    ph = model._apply_a_ph(state)
+    zeta = np.asarray(jnp.fft.irfftn(-model.wv2 * ph[0], s=(model.ny, model.nx))) / F0
+    ro = zeta.std()
+    assert 0.05 < ro < 3.0  # developed turbulence, but bounded (no runaway)
+
+
+@requires_x64
 def test_dynamics_grad_jit_vmap():
     model = _qgp1_model(nx=24, nz=12, shear=5e-4)
     dt = 200.0

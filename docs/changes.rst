@@ -24,6 +24,14 @@ v0.9.0 (Unreleased)
   plus surface/bottom buoyancy; vertical boundary-value inversion per
   horizontal wavenumber; see the associated :doc:`example
   <examples.continuous>`)
+* Add :class:`~pyqg_jax.qgplus1_model.QGPlus1Model`, a
+  next-order-in-Rossby (QG+1) balanced model (after Dù, Smith & Bühler
+  2024) built on the continuous-stratification engine: the leading-order
+  inversion plus three further Poisson problems give the first-order
+  ageostrophic corrections, a self-consistent vertical velocity
+  (:meth:`~pyqg_jax.qgplus1_model.QGPlus1Model.vertical_velocity`), and
+  the cyclone/anticyclone asymmetry absent from quasigeostrophy (see the
+  associated :doc:`example <examples.qgplus1>`)
 * Add :class:`~pyqg_jax.steppers.RK4Stepper`, a fourth-order
   Runge-Kutta time stepper with a larger stability region than
   :class:`~pyqg_jax.steppers.AB3Stepper` (matching the scheme used by
