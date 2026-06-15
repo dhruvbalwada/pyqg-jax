@@ -1,0 +1,390 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Next-Order (QG+1) Submesoscale Dynamics &mdash; pyqg-jax 0.9.0.dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/pyqg-jax-fix-theme.css?v=ead5a064" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5b4e8bf0"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Variational Data Assimilation from SSH" href="examples.dataassim.html" />
+    <link rel="prev" title="Continuous-Stratification Baroclinic Instability" href="examples.continuous.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyqg-jax
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="examples.basicstep.html">Basic Time Stepping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.batchstep.html">Batches of Trajectories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.coarsen.html">Coarsening States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.implparam.html">Implementing a Parameterization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.onlinetrain.html">Online Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.diagnostics.html">Diagnostics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.sqg.html">Surface Quasi-Geostrophic (SQG) Vortex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.barotropic.html">Barotropic Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.callies.html">Two-Eady Mixed-Layer Instability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.layered.html">Layered Baroclinic Turbulence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.particles.html">Lagrangian Particles (Drifters)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.continuous.html">Continuous-Stratification Baroclinic Instability</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Next-Order (QG+1) Submesoscale Dynamics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#construct-and-run">Construct and Run</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-next-order-fields">The Next-Order Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vertical-velocity-structure">Vertical Velocity Structure</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples.dataassim.html">Variational Data Assimilation from SSH</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyqg-jax</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="examples.html">Examples</a></li>
+      <li class="breadcrumb-item active">Next-Order (QG+1) Submesoscale Dynamics</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/examples.qgplus1.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="next-order-qg-1-submesoscale-dynamics">
+<h1>Next-Order (QG+1) Submesoscale Dynamics<a class="headerlink" href="#next-order-qg-1-submesoscale-dynamics" title="Link to this heading"></a></h1>
+<p>This example runs the <a class="reference internal" href="reference.models.qgplus1_model.html#pyqg_jax.qgplus1_model.QGPlus1Model" title="pyqg_jax.qgplus1_model.QGPlus1Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">QGPlus1Model</span></code></a>, a
+next-order-in-Rossby balanced model (Dù, Smith &amp; Bühler 2024). Ordinary
+quasigeostrophy is the leading-order balance; QG+1 carries the
+asymptotic expansion one order further in the Rossby number, which adds
+the ageostrophic motions responsible for submesoscale physics that QG
+<em>cannot</em> represent: a self-consistent vertical velocity, frontogenesis,
+and the <strong>cyclone/anticyclone asymmetry</strong> (long cyclonic vorticity
+tails) seen in the upper ocean.</p>
+<p>The model is built on the same continuous Chebyshev vertical engine as
+<a class="reference internal" href="reference.models.continuous_model.html#pyqg_jax.continuous_model.ContinuousQGModel" title="pyqg_jax.continuous_model.ContinuousQGModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContinuousQGModel</span></code></a>; the leading-order
+inversion is identical, and three further Poisson problems (sharing the
+same operator) give the first-order corrections.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
+<span class="n">jax</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s2">&quot;jax_enable_x64&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyqg_jax</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="construct-and-run">
+<h2>Construct and Run<a class="headerlink" href="#construct-and-run" title="Link to this heading"></a></h2>
+<p>We use the <strong>Eady</strong> mean state (uniform <span class="math notranslate nohighlight">\(N^2\)</span>, uniform shear
+<span class="math notranslate nohighlight">\(U = \Lambda z\)</span>), which drives a baroclinic instability that saturates
+into submesoscale turbulence. The construction matches
+<a class="reference internal" href="reference.models.continuous_model.html#pyqg_jax.continuous_model.ContinuousQGModel" title="pyqg_jax.continuous_model.ContinuousQGModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContinuousQGModel</span></code></a> — we build once to
+read the vertical grid, then set the background <span class="math notranslate nohighlight">\(U(z)\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DT</span> <span class="o">=</span> <span class="mf">150.0</span>
+<span class="n">T_MAX</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">*</span> <span class="mf">86400.0</span>  <span class="c1"># 5 days</span>
+<span class="n">H</span> <span class="o">=</span> <span class="mf">1000.0</span>
+<span class="n">N_BV</span> <span class="o">=</span> <span class="mf">1e-3</span>
+<span class="n">SHEAR</span> <span class="o">=</span> <span class="mf">8e-4</span>
+
+<span class="n">base</span> <span class="o">=</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">qgplus1_model</span><span class="o">.</span><span class="n">QGPlus1Model</span><span class="p">(</span>
+    <span class="n">nx</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">nz</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mf">4e5</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="n">H</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">N2</span><span class="o">=</span><span class="n">N_BV</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">precision</span><span class="o">=</span><span class="n">pyqg_jax</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">Precision</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">stepped_model</span> <span class="o">=</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">steppers</span><span class="o">.</span><span class="n">SteppedModel</span><span class="p">(</span>
+    <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">qgplus1_model</span><span class="o">.</span><span class="n">QGPlus1Model</span><span class="p">(</span>
+        <span class="n">nx</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">nz</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mf">4e5</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="n">H</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">N2</span><span class="o">=</span><span class="n">N_BV</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">U</span><span class="o">=</span><span class="n">SHEAR</span> <span class="o">*</span> <span class="n">base</span><span class="o">.</span><span class="n">z</span><span class="p">,</span>
+        <span class="n">precision</span><span class="o">=</span><span class="n">pyqg_jax</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">Precision</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">steppers</span><span class="o">.</span><span class="n">AB3Stepper</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="n">DT</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">stepped_model</span><span class="o">.</span><span class="n">model</span>
+<span class="n">stepped_model</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>SteppedModel(
+  model=QGPlus1Model(
+    nx=64,
+    ny=64,
+    nz=16,
+    L=400000.0,
+    W=400000.0,
+    H=1000.0,
+    f=0.0001,
+    g=9.81,
+    beta=0.0,
+    N2=f64[16],
+    U=f64[16],
+    rek=0.0,
+    filterfac=23.6,
+    precision=&lt;Precision.DOUBLE: 2&gt;,
+  ),
+  stepper=AB3Stepper(dt=150.0),
+)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The prognostic state and time-stepping are the same as the leading-order
+model — QG+1 only changes the <em>tendency</em>, advecting the potential
+vorticity by the full next-order velocity (including the vertical
+advection <span class="math notranslate nohighlight">\(w\,\partial_z q\)</span>). Like the continuous model, the clustered
+Chebyshev grid is stiff and needs a small time step.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">q0</span> <span class="o">=</span> <span class="mf">1e-7</span> <span class="o">*</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">nz</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">nx</span><span class="p">))</span>
+<span class="n">q0</span> <span class="o">=</span> <span class="n">q0</span> <span class="o">-</span> <span class="n">q0</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">init_state</span> <span class="o">=</span> <span class="n">stepped_model</span><span class="o">.</span><span class="n">initialize_stepper_state</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">create_initial_state</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">q0</span><span class="p">)</span>
+<span class="p">)</span>
+
+
+<span class="nd">@functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;num_steps&quot;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">roll_out</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">):</span>
+    <span class="n">final</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">c</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="p">(</span><span class="n">stepped_model</span><span class="o">.</span><span class="n">step_model</span><span class="p">(</span><span class="n">c</span><span class="p">),</span> <span class="kc">None</span><span class="p">),</span> <span class="n">state</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">num_steps</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">final</span>
+
+
+<span class="n">final_state</span> <span class="o">=</span> <span class="n">roll_out</span><span class="p">(</span><span class="n">init_state</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">T_MAX</span> <span class="o">/</span> <span class="n">DT</span><span class="p">))</span><span class="o">.</span><span class="n">state</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-next-order-fields">
+<h2>The Next-Order Fields<a class="headerlink" href="#the-next-order-fields" title="Link to this heading"></a></h2>
+<p>The <a class="reference internal" href="reference.models.qgplus1_model.html#pyqg_jax.qgplus1_model.QGPlus1Model.next_order" title="pyqg_jax.qgplus1_model.QGPlus1Model.next_order"><code class="xref py py-meth docutils literal notranslate"><span class="pre">next_order()</span></code></a> method
+returns the first-order corrections and the reconstructed velocities; the
+vertical velocity has its own convenience method
+<a class="reference internal" href="reference.models.qgplus1_model.html#pyqg_jax.qgplus1_model.QGPlus1Model.vertical_velocity" title="pyqg_jax.qgplus1_model.QGPlus1Model.vertical_velocity"><code class="xref py py-meth docutils literal notranslate"><span class="pre">vertical_velocity()</span></code></a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">f</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">next_order</span><span class="p">(</span><span class="n">final_state</span><span class="p">)</span>
+
+<span class="c1"># next-order surface relative vorticity zeta = v_x - u_y</span>
+<span class="n">zeta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+    <span class="n">jnp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">irfftn</span><span class="p">(</span>
+        <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">model</span><span class="o">.</span><span class="n">k</span> <span class="o">*</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;vh&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">model</span><span class="o">.</span><span class="n">l</span> <span class="o">*</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;uh&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">s</span><span class="o">=</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">nx</span><span class="p">),</span>
+    <span class="p">)</span>
+<span class="p">)</span> <span class="o">/</span> <span class="n">f</span>
+
+<span class="c1"># vertical velocity (zero at the rigid lid/floor; shown at mid-depth)</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">vertical_velocity</span><span class="p">(</span><span class="n">final_state</span><span class="p">))</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+<span class="n">midlev</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">z</span> <span class="o">+</span> <span class="n">H</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)))</span>
+
+<span class="c1"># leading-order (QG) vorticity for comparison</span>
+<span class="n">ph</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">_apply_a_ph</span><span class="p">(</span><span class="n">final_state</span><span class="p">)</span>
+<span class="n">zeta_qg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+    <span class="n">jnp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">irfftn</span><span class="p">(</span><span class="o">-</span><span class="n">model</span><span class="o">.</span><span class="n">wv2</span> <span class="o">*</span> <span class="n">ph</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">nx</span><span class="p">))</span>
+<span class="p">)</span> <span class="o">/</span> <span class="n">f</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">skew</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">a</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="n">a</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">**</span> <span class="mi">3</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The left panel is the surface vorticity <span class="math notranslate nohighlight">\(\zeta/f\)</span>: note the asymmetry —
+intense, thin <strong>cyclonic</strong> filaments (positive, red) against broader, weaker
+anticyclones, the hallmark of submesoscale turbulence that QG’s symmetry
+forbids. The middle panel is the next-order vertical velocity at
+mid-depth (m day<span class="math notranslate nohighlight">\(^{-1}\)</span>), collocated with the fronts. The right panel is
+the vorticity PDF: QG+1 develops a long positive (cyclonic) tail, while
+leading-order QG stays nearly symmetric.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">km</span> <span class="o">=</span> <span class="mf">1e-3</span>
+<span class="n">L</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">L</span>
+<span class="n">day</span> <span class="o">=</span> <span class="mf">86400.0</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mf">3.7</span><span class="p">),</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;constrained&quot;</span><span class="p">)</span>
+
+<span class="n">amp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">zeta</span><span class="p">),</span> <span class="mi">99</span><span class="p">))</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+    <span class="n">zeta</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;RdBu_r&quot;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="n">amp</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">amp</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span>
+    <span class="n">extent</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">L</span> <span class="o">*</span> <span class="n">km</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">L</span> <span class="o">*</span> <span class="n">km</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;surface $</span><span class="se">\\</span><span class="s2">zeta/f$ (QG+1)&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x [km]&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;y [km]&quot;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="n">wm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="n">midlev</span><span class="p">]</span> <span class="o">*</span> <span class="n">day</span><span class="p">),</span> <span class="mi">99</span><span class="p">))</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+    <span class="n">w</span><span class="p">[</span><span class="n">midlev</span><span class="p">]</span> <span class="o">*</span> <span class="n">day</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;PuOr&quot;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="n">wm</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">wm</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span>
+    <span class="n">extent</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">L</span> <span class="o">*</span> <span class="n">km</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">L</span> <span class="o">*</span> <span class="n">km</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;vertical velocity at z=</span><span class="si">{</span><span class="n">z</span><span class="p">[</span><span class="n">midlev</span><span class="p">]</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> m&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x [km]&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;y [km]&quot;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;w [m day$^{-1}$]&quot;</span><span class="p">)</span>
+
+<span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">80</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
+    <span class="n">zeta</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C3&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;QG+1 (skew </span><span class="si">{</span><span class="n">skew</span><span class="p">(</span><span class="n">zeta</span><span class="p">)</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
+    <span class="n">zeta_qg</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C0&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;QG (skew </span><span class="si">{</span><span class="n">skew</span><span class="p">(</span><span class="n">zeta_qg</span><span class="p">)</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;vorticity PDF&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">zeta/f$&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;density&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f4b78354150&gt;
+</pre></div>
+</div>
+<img alt="_images/576becd883a200a63c4de88dd99e2379e6059f1f2a4a301e33c635a049b57f61.png" src="_images/576becd883a200a63c4de88dd99e2379e6059f1f2a4a301e33c635a049b57f61.png" />
+</div>
+</div>
+<p>The positive skewness of the QG+1 distribution is the quantitative
+signature of the cyclone/anticyclone asymmetry. It arises because the
+first-order corrections are driven by <em>quadratic</em> products of the
+leading-order field, so changing the sign of the flow does <strong>not</strong> change
+the sign of the corrections — the symmetry that makes QG statistics
+artificially symmetric is broken at next order.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The next-order quadratic source terms are evaluated on the grid and
+controlled by the standard spectral filter rather than full 3/2
+dealiasing, so the finest scales of the correction fields carry some
+grid-scale noise at this modest resolution. The robust, converged result
+is the <em>statistic</em> (the cyclonically skewed PDF); sharper instantaneous
+fields come from higher resolution.</p>
+</div>
+</section>
+<section id="vertical-velocity-structure">
+<h2>Vertical Velocity Structure<a class="headerlink" href="#vertical-velocity-structure" title="Link to this heading"></a></h2>
+<p>The vertical velocity vanishes at the rigid lid and floor and is
+strongest in the interior, concentrated at the fronts.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">),</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;constrained&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">w</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">)))</span> <span class="o">*</span> <span class="n">day</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="s2">&quot;k-&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;rms $w$ [m day$^{-1}$]&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;z [m]&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;vertical velocity profile&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/4e013b2a32280aa978efcac7f1686b21024dfcefcab44945d2f84b9b3609b683.png" src="_images/4e013b2a32280aa978efcac7f1686b21024dfcefcab44945d2f84b9b3609b683.png" />
+</div>
+</div>
+<p>This <code class="docutils literal notranslate"><span class="pre">w</span></code> is the same quantity targeted by surface-observation methods for
+estimating submesoscale vertical transport. Because the whole model is
+written in JAX it is differentiable and <code class="docutils literal notranslate"><span class="pre">vmap</span></code>/<code class="docutils literal notranslate"><span class="pre">jit</span></code>-compatible, so it
+can be embedded directly in data-assimilation or sensitivity workflows.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="examples.continuous.html" class="btn btn-neutral float-left" title="Continuous-Stratification Baroclinic Instability" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="examples.dataassim.html" class="btn btn-neutral float-right" title="Variational Data Assimilation from SSH" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Karl Otness.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

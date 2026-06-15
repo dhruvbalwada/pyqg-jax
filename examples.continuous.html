@@ -23,7 +23,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Variational Data Assimilation from SSH" href="examples.dataassim.html" />
+    <link rel="next" title="Next-Order (QG+1) Submesoscale Dynamics" href="examples.qgplus1.html" />
     <link rel="prev" title="Lagrangian Particles (Drifters)" href="examples.particles.html" /> 
 </head>
 
@@ -65,8 +65,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#construct-the-model">Construct the Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#run-from-a-small-perturbation">Run From a Small Perturbation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#vertical-structure">Vertical Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#charney-instability">Charney Instability</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="examples.qgplus1.html">Next-Order (QG+1) Submesoscale Dynamics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="examples.dataassim.html">Variational Data Assimilation from SSH</a></li>
 </ul>
 </li>
@@ -285,6 +287,96 @@ for the linear dispersion relation. A general <code class="docutils literal notr
 surface-intensified stratification) can be passed instead of the
 uniform value used here.</p>
 </section>
+<section id="charney-instability">
+<h2>Charney Instability<a class="headerlink" href="#charney-instability" title="Link to this heading"></a></h2>
+<p>The Eady problem has zero interior potential-vorticity gradient (the
+instability lives entirely on the two boundaries). Turning on <span class="math notranslate nohighlight">\(\beta\)</span>
+adds an interior PV gradient, and the surface buoyancy gradient then
+drives the <strong>Charney</strong> instability instead. Because the model resolves
+the vertical, we can read off the two textbook fingerprints that
+distinguish Charney from Eady: the most-unstable mode is
+<em>surface-trapped</em> (rather than the symmetric top/bottom edge waves
+above), and there is <em>no short-wave cutoff</em>.</p>
+<p>We compare two otherwise-identical configurations — one with
+<span class="math notranslate nohighlight">\(\beta = 0\)</span> (Eady) and one with <span class="math notranslate nohighlight">\(\beta &gt; 0\)</span> (Charney) — using only the
+linear <a class="reference internal" href="reference.models.continuous_model.html#pyqg_jax.continuous_model.ContinuousQGModel.stability_analysis" title="pyqg_jax.continuous_model.ContinuousQGModel.stability_analysis"><code class="xref py py-meth docutils literal notranslate"><span class="pre">stability_analysis()</span></code></a>,
+which needs no time stepping.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">H_C</span> <span class="o">=</span> <span class="mf">4000.0</span>
+<span class="n">N_C</span> <span class="o">=</span> <span class="mf">1e-3</span>
+<span class="n">BETA</span> <span class="o">=</span> <span class="mf">1.5e-11</span>
+<span class="n">SHEAR_C</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.2e-6</span>  <span class="c1"># sign selects surface (vs. bottom) trapping</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="n">beta</span><span class="p">):</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">continuous_model</span><span class="o">.</span><span class="n">ContinuousQGModel</span><span class="p">(</span>
+        <span class="n">nx</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">nz</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mf">3e5</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="n">H_C</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">,</span> <span class="n">N2</span><span class="o">=</span><span class="n">N_C</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">precision</span><span class="o">=</span><span class="n">pyqg_jax</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">Precision</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">pyqg_jax</span><span class="o">.</span><span class="n">continuous_model</span><span class="o">.</span><span class="n">ContinuousQGModel</span><span class="p">(</span>
+        <span class="n">nx</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">nz</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mf">3e5</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="n">H_C</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">,</span> <span class="n">N2</span><span class="o">=</span><span class="n">N_C</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">U</span><span class="o">=</span><span class="n">SHEAR_C</span> <span class="o">*</span> <span class="n">grid</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="n">pyqg_jax</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">Precision</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="n">charney</span> <span class="o">=</span> <span class="n">build</span><span class="p">(</span><span class="n">BETA</span><span class="p">)</span>
+<span class="n">eady</span> <span class="o">=</span> <span class="n">build</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">growth_vs_k</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+    <span class="n">omega</span><span class="p">,</span> <span class="n">evec</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">stability_analysis</span><span class="p">()</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">omega</span><span class="p">)</span><span class="o">.</span><span class="n">imag</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># the l = 0 (zonal) row</span>
+    <span class="n">k0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">k</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">mode</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">evec</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># (nz, nk) at l = 0</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">k0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">k0</span><span class="p">[</span><span class="n">order</span><span class="p">],</span> <span class="n">sigma</span><span class="p">[</span><span class="n">order</span><span class="p">],</span> <span class="n">mode</span><span class="p">[:,</span> <span class="n">order</span><span class="p">]</span>
+
+
+<span class="n">kc</span><span class="p">,</span> <span class="n">sc</span><span class="p">,</span> <span class="n">evc</span> <span class="o">=</span> <span class="n">growth_vs_k</span><span class="p">(</span><span class="n">charney</span><span class="p">)</span>
+<span class="n">ke_</span><span class="p">,</span> <span class="n">se</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">growth_vs_k</span><span class="p">(</span><span class="n">eady</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The left panel shows growth rate against wavenumber. Eady stabilizes
+once the wavelength drops below its deformation scale; Charney keeps
+growing into the short waves. The right panel shows the vertical
+structure of the most-unstable Charney mode — concentrated at the
+surface and decaying with depth.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">km</span> <span class="o">=</span> <span class="mf">1e-3</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mf">3.6</span><span class="p">),</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;constrained&quot;</span><span class="p">)</span>
+
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kc</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">,</span> <span class="n">sc</span> <span class="o">*</span> <span class="mi">86400</span><span class="p">,</span> <span class="s2">&quot;C0-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Charney ($</span><span class="se">\\</span><span class="s2">beta &gt; 0$)&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ke_</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">,</span> <span class="n">se</span> <span class="o">*</span> <span class="mi">86400</span><span class="p">,</span> <span class="s2">&quot;C1--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Eady ($</span><span class="se">\\</span><span class="s2">beta = 0$)&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$k$ [cpm $</span><span class="se">\\</span><span class="s2">times 10^</span><span class="si">{3}</span><span class="s2">$]&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;growth rate [day$^{-1}$]&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;growth rate vs. wavenumber&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">charney</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+<span class="n">peak</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">sc</span><span class="p">))</span>
+<span class="n">mode</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">evc</span><span class="p">[:,</span> <span class="n">peak</span><span class="p">])</span>
+<span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span> <span class="o">/</span> <span class="n">mode</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="s2">&quot;C0-&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$|</span><span class="se">\\</span><span class="s2">hat</span><span class="se">\\</span><span class="s2">psi|$ (normalized)&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;z [m]&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;most-unstable Charney mode&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/1e182ca323546d410a4338068718b7ced08913d206fa28e77ccdff3cf5f9ebdd.png" src="_images/1e182ca323546d410a4338068718b7ced08913d206fa28e77ccdff3cf5f9ebdd.png" />
+</div>
+</div>
+<p>The sign of the shear (relative to <span class="math notranslate nohighlight">\(\beta\)</span>) selects whether the mode
+traps at the surface or the bottom; flipping <code class="docutils literal notranslate"><span class="pre">SHEAR_C</span></code> to positive
+moves the trapping to the lower boundary.</p>
+</section>
 </section>
 
 
@@ -292,7 +384,7 @@ uniform value used here.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="examples.particles.html" class="btn btn-neutral float-left" title="Lagrangian Particles (Drifters)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="examples.dataassim.html" class="btn btn-neutral float-right" title="Variational Data Assimilation from SSH" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="examples.qgplus1.html" class="btn btn-neutral float-right" title="Next-Order (QG+1) Submesoscale Dynamics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

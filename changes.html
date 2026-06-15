@@ -113,6 +113,14 @@ continuous-stratification model with a general <code class="docutils literal not
 discretized by Chebyshev collocation in the vertical (interior PV
 plus surface/bottom buoyancy; vertical boundary-value inversion per
 horizontal wavenumber; see the associated <a class="reference internal" href="examples.continuous.html"><span class="doc">example</span></a>)</p></li>
+<li><p>Add <a class="reference internal" href="reference.models.qgplus1_model.html#pyqg_jax.qgplus1_model.QGPlus1Model" title="pyqg_jax.qgplus1_model.QGPlus1Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">QGPlus1Model</span></code></a>, a
+next-order-in-Rossby (QG+1) balanced model (after Dù, Smith &amp; Bühler
+2024) built on the continuous-stratification engine: the leading-order
+inversion plus three further Poisson problems give the first-order
+ageostrophic corrections, a self-consistent vertical velocity
+(<a class="reference internal" href="reference.models.qgplus1_model.html#pyqg_jax.qgplus1_model.QGPlus1Model.vertical_velocity" title="pyqg_jax.qgplus1_model.QGPlus1Model.vertical_velocity"><code class="xref py py-meth docutils literal notranslate"><span class="pre">vertical_velocity()</span></code></a>), and
+the cyclone/anticyclone asymmetry absent from quasigeostrophy (see the
+associated <a class="reference internal" href="examples.qgplus1.html"><span class="doc">example</span></a>)</p></li>
 <li><p>Add <a class="reference internal" href="reference.steppers.html#pyqg_jax.steppers.RK4Stepper" title="pyqg_jax.steppers.RK4Stepper"><code class="xref py py-class docutils literal notranslate"><span class="pre">RK4Stepper</span></code></a>, a fourth-order
 Runge-Kutta time stepper with a larger stability region than
 <a class="reference internal" href="reference.steppers.html#pyqg_jax.steppers.AB3Stepper" title="pyqg_jax.steppers.AB3Stepper"><code class="xref py py-class docutils literal notranslate"><span class="pre">AB3Stepper</span></code></a> (matching the scheme used by
