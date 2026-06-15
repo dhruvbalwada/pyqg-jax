@@ -29,6 +29,7 @@ do so as well.
 
    install
    examples
+   equations
    reference
    performance
    changes

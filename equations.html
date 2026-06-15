@@ -1,0 +1,425 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Equations &mdash; pyqg-jax 0.9.0.dev documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+      <link rel="stylesheet" type="text/css" href="_static/css/pyqg-jax-fix-theme.css?v=ead5a064" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5b4e8bf0"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="reference.html" />
+    <link rel="prev" title="Variational Data Assimilation from SSH" href="examples.dataassim.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyqg-jax
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Equations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#common-pseudospectral-framework">Common pseudospectral framework</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#two-layer-qg-model">Two-layer QG model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#layered-qg-model">Layered QG model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#equivalent-barotropic-model">Equivalent barotropic model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#surface-qg-model">Surface QG model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#two-eady-mixed-layer-model">Two-Eady mixed-layer model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#continuous-stratification-model">Continuous-stratification model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#next-order-qg-1-model">Next-order (QG+1) model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#time-stepping">Time stepping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dissipation">Dissipation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#linear-stability-analysis">Linear stability analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyqg-jax</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Equations</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/equations.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="equations">
+<h1>Equations<a class="headerlink" href="#equations" title="Link to this heading"></a></h1>
+<p>This page collects the governing equations of the models implemented in
+<code class="docutils literal notranslate"><span class="pre">pyqg-jax</span></code>. The equations describe what the code actually computes; the
+notation matches the model classes in the <a class="reference internal" href="reference.html"><span class="doc">reference</span></a>.
+For the original PyQG formulation see the
+<a class="reference external" href="https://pyqg.readthedocs.io/en/latest/equations.html">PyQG equations page</a>.</p>
+<section id="common-pseudospectral-framework">
+<h2>Common pseudospectral framework<a class="headerlink" href="#common-pseudospectral-framework" title="Link to this heading"></a></h2>
+<p>Every model evolves a <strong>potential vorticity</strong> (PV) field <span class="math notranslate nohighlight">\(q\)</span> that is
+discretized in the horizontal on a doubly periodic grid and represented
+by its two-dimensional Fourier transform <span class="math notranslate nohighlight">\(\hat q(k, l)\)</span>. Vertical
+structure differs between models (layers, sheets, or a continuous
+coordinate); writing the vertical index/argument as <span class="math notranslate nohighlight">\(i\)</span>, the prognostic
+equation is the same flux-form advection in every case,</p>
+<div class="math notranslate nohighlight">
+\[
+\partial_t q_i + J(\psi_i, q_i) + U_i\,\partial_x q_i
+  + Q_{y,i}\,\partial_x \psi_i = \mathcal{D}_i,
+\qquad J(a,b) = a_x b_y - a_y b_x ,
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\psi\)</span> is the streamfunction, <span class="math notranslate nohighlight">\(U_i\)</span> is the background zonal flow,
+<span class="math notranslate nohighlight">\(Q_{y,i}\)</span> is the background PV gradient, and <span class="math notranslate nohighlight">\(\mathcal{D}_i\)</span> collects
+dissipation and forcing. The nonlinear advection is evaluated in
+physical space and transformed back (a pseudospectral step); in spectral
+form the tendency computed by the kernel is</p>
+<div class="math notranslate nohighlight">
+\[
+\partial_t \hat q_i = -\,\mathrm{i}k\,\widehat{(U_i + u_i)\,q_i}
+  - \mathrm{i}l\,\widehat{v_i\,q_i}
+  - \mathrm{i}k\,Q_{y,i}\,\hat\psi_i .
+\]</div>
+<p>The flow is non-divergent, so the velocities follow from the
+streamfunction,</p>
+<div class="math notranslate nohighlight">
+\[
+u = -\partial_y \psi, \quad v = \partial_x \psi
+\qquad\Longleftrightarrow\qquad
+\hat u = -\mathrm{i}l\,\hat\psi, \quad \hat v = \mathrm{i}k\,\hat\psi .
+\]</div>
+<p>What distinguishes each model is the <strong>inversion</strong> relating <span class="math notranslate nohighlight">\(\hat\psi\)</span> to
+<span class="math notranslate nohighlight">\(\hat q\)</span>. In every model it is linear and diagonal in horizontal
+wavenumber,</p>
+<div class="math notranslate nohighlight">
+\[
+\hat\psi_i(k,l) = \mathsf{a}_{ij}(k,l)\,\hat q_j(k,l) ,
+\]</div>
+<p>for a model-specific matrix/operator <span class="math notranslate nohighlight">\(\mathsf{a}\)</span> (the inverse of the PV
+operator). Writing <span class="math notranslate nohighlight">\(\kappa^2 = k^2 + l^2\)</span> for the horizontal wavenumber
+magnitude, the sections below give the PV operator, <span class="math notranslate nohighlight">\(\mathsf{a}\)</span>, <span class="math notranslate nohighlight">\(U_i\)</span>,
+and <span class="math notranslate nohighlight">\(Q_{y,i}\)</span> for each model.</p>
+</section>
+<section id="two-layer-qg-model">
+<h2>Two-layer QG model<a class="headerlink" href="#two-layer-qg-model" title="Link to this heading"></a></h2>
+<p><a class="reference internal" href="reference.models.qg_model.html#pyqg_jax.qg_model.QGModel" title="pyqg_jax.qg_model.QGModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">QGModel</span></code></a> has two layers with potential
+vorticity</p>
+<div class="math notranslate nohighlight">
+\[
+q_1 = \nabla^2\psi_1 + F_1(\psi_2 - \psi_1), \qquad
+q_2 = \nabla^2\psi_2 + F_2(\psi_1 - \psi_2),
+\]</div>
+<p>with the stretching coefficients</p>
+<div class="math notranslate nohighlight">
+\[
+F_1 = \frac{f_0^2}{g'H_1}, \qquad
+F_2 = \frac{f_0^2}{g'H_2} = \delta\,F_1, \qquad
+\delta = \frac{H_1}{H_2},
+\]</div>
+<p>and reduced gravity <span class="math notranslate nohighlight">\(g' = g\,\Delta\rho/\rho_0\)</span>. In Fourier space the
+inversion is the closed-form inverse of the <span class="math notranslate nohighlight">\(2\times 2\)</span> system</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{pmatrix}\hat\psi_1\\\hat\psi_2\end{pmatrix}
+= -\frac{1}{\det}
+\begin{pmatrix} \kappa^2 + F_2 &amp; F_1 \\ F_2 &amp; \kappa^2 + F_1 \end{pmatrix}
+\begin{pmatrix}\hat q_1\\\hat q_2\end{pmatrix},
+\qquad
+\det = \kappa^2\,(\kappa^2 + F_1 + F_2),
+\end{split}\]</div>
+<p>with the mean mode (<span class="math notranslate nohighlight">\(\kappa = 0\)</span>) set to zero. The background PV
+gradients are</p>
+<div class="math notranslate nohighlight">
+\[
+Q_{y,1} = \beta + F_1(U_1 - U_2), \qquad
+Q_{y,2} = \beta - F_2(U_1 - U_2).
+\]</div>
+<p>Bottom drag <span class="math notranslate nohighlight">\(r_{ek}\nabla^2\psi_2\)</span> is applied to the lower layer.</p>
+</section>
+<section id="layered-qg-model">
+<h2>Layered QG model<a class="headerlink" href="#layered-qg-model" title="Link to this heading"></a></h2>
+<p><a class="reference internal" href="reference.models.layered_model.html#pyqg_jax.layered_model.LayeredModel" title="pyqg_jax.layered_model.LayeredModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">LayeredModel</span></code></a> generalizes this to <span class="math notranslate nohighlight">\(n_z\)</span>
+layers. Stacking the layers into a vector, the PV is</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{q} = \nabla^2\boldsymbol{\psi} + \mathsf{S}\,\boldsymbol{\psi},
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathsf{S}\)</span> is the tridiagonal <strong>stretching matrix</strong> built from
+the layer thicknesses <span class="math notranslate nohighlight">\(H_i\)</span> and reduced gravities <span class="math notranslate nohighlight">\(g'_i\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+\mathsf{S}_{i,i-1} = \frac{f_0^2}{g'_{i-1} H_i}, \quad
+\mathsf{S}_{i,i+1} = \frac{f_0^2}{g'_{i} H_i}, \quad
+\mathsf{S}_{i,i} = -(\mathsf{S}_{i,i-1} + \mathsf{S}_{i,i+1}),
+\]</div>
+<p>(for <span class="math notranslate nohighlight">\(n_z = 2\)</span> this reduces to the two-layer <span class="math notranslate nohighlight">\(F_1, F_2\)</span> above). The
+inversion solves, at each wavenumber, the linear system</p>
+<div class="math notranslate nohighlight">
+\[
+(\mathsf{S} - \kappa^2 \mathsf{I})\,\hat{\boldsymbol{\psi}} = \hat{\mathbf{q}},
+\]</div>
+<p>by a vectorized tridiagonal (Thomas) sweep for <span class="math notranslate nohighlight">\(n_z \ge 3\)</span> and the
+closed-form <span class="math notranslate nohighlight">\(2\times 2\)</span> inverse for <span class="math notranslate nohighlight">\(n_z = 2\)</span>. The background PV gradient
+is</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{Q}_y = \beta - \mathsf{S}\,\mathbf{U}.
+\]</div>
+</section>
+<section id="equivalent-barotropic-model">
+<h2>Equivalent barotropic model<a class="headerlink" href="#equivalent-barotropic-model" title="Link to this heading"></a></h2>
+<p><a class="reference internal" href="reference.models.bt_model.html#pyqg_jax.bt_model.BTModel" title="pyqg_jax.bt_model.BTModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">BTModel</span></code></a> is a single layer with PV</p>
+<div class="math notranslate nohighlight">
+\[
+q = \nabla^2\psi - k_d^2\,\psi,
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(k_d\)</span> is the (optional) deformation wavenumber. The inversion is</p>
+<div class="math notranslate nohighlight">
+\[
+\hat\psi = -\frac{\hat q}{\kappa^2 + k_d^2},
+\]</div>
+<p>with <span class="math notranslate nohighlight">\(Q_y = \beta\)</span> and <span class="math notranslate nohighlight">\(U\)</span> the (optional) background flow. Setting
+<span class="math notranslate nohighlight">\(k_d = 0\)</span> gives the ordinary two-dimensional barotropic vorticity
+equation.</p>
+</section>
+<section id="surface-qg-model">
+<h2>Surface QG model<a class="headerlink" href="#surface-qg-model" title="Link to this heading"></a></h2>
+<p><a class="reference internal" href="reference.models.sqg_model.html#pyqg_jax.sqg_model.SQGModel" title="pyqg_jax.sqg_model.SQGModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SQGModel</span></code></a> evolves surface buoyancy with zero
+interior PV. The prognostic field is the surface buoyancy <span class="math notranslate nohighlight">\(b\)</span>, and the
+inversion is the SQG Green’s function for a semi-infinite lower domain,</p>
+<div class="math notranslate nohighlight">
+\[
+\hat\psi = \frac{f_0}{N}\,\frac{1}{\kappa}\,\hat q ,
+\]</div>
+<p>i.e. <span class="math notranslate nohighlight">\(\hat q = (N/f_0)\,\kappa\,\hat\psi\)</span>, the surface buoyancy
+<span class="math notranslate nohighlight">\(b = f_0\,\partial_z\psi\)</span> evaluated with the exponential decay
+<span class="math notranslate nohighlight">\(\psi \propto e^{N\kappa z / f_0}\)</span> into the interior.</p>
+</section>
+<section id="two-eady-mixed-layer-model">
+<h2>Two-Eady mixed-layer model<a class="headerlink" href="#two-eady-mixed-layer-model" title="Link to this heading"></a></h2>
+<p><a class="reference internal" href="reference.models.callies_model.html#pyqg_jax.callies_model.CalliesTwoEady" title="pyqg_jax.callies_model.CalliesTwoEady"><code class="xref py py-class docutils literal notranslate"><span class="pre">CalliesTwoEady</span></code></a> is the two-Eady
+mixed-layer-instability model of Callies et al. (2016). It carries three
+active buoyancy “sheets” — the surface, the mixed-layer base, and the
+thermocline — each with its own stratification (<span class="math notranslate nohighlight">\(N_m\)</span> in the mixed layer
+of depth <span class="math notranslate nohighlight">\(H_m\)</span>, <span class="math notranslate nohighlight">\(N_t\)</span> in the thermocline of depth <span class="math notranslate nohighlight">\(H_t\)</span>) and shear
+(<span class="math notranslate nohighlight">\(\Sigma_m, \Sigma_t\)</span>). The inversion is the closed-form inverse
+(adjugate over determinant) of a symmetric tridiagonal <span class="math notranslate nohighlight">\(3\times 3\)</span>
+operator <span class="math notranslate nohighlight">\(\mathsf{L}(\kappa)\)</span> assembled from <span class="math notranslate nohighlight">\(\coth\)</span>/<span class="math notranslate nohighlight">\(\operatorname{csch}\)</span>
+of <span class="math notranslate nohighlight">\(N\kappa H/f_0\)</span> for each layer, evaluated with decaying exponentials
+only to keep it well-conditioned. The background PV gradient is carried
+entirely by the three sheets,</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{Q}_y = \left(
+\frac{f_0^2\,\Sigma_m}{N_m^2},\;
+-f_0^2\!\left(\frac{\Sigma_m}{N_m^2} - \frac{\Sigma_t}{N_t^2}\right),\;
+-\frac{f_0^2\,\Sigma_t}{N_t^2}
+\right),
+\]</div>
+<p>with background flow <span class="math notranslate nohighlight">\(U = (u_1, u_1, u_2)\)</span>,
+<span class="math notranslate nohighlight">\(u_1 = -\Sigma_m H_m\)</span>, <span class="math notranslate nohighlight">\(u_2 = u_1 - \Sigma_t H_t\)</span>. See the
+<a class="reference internal" href="examples.callies.html"><span class="doc">example</span></a> for the reproduction of the paper’s
+linear and nonlinear results.</p>
+</section>
+<section id="continuous-stratification-model">
+<h2>Continuous-stratification model<a class="headerlink" href="#continuous-stratification-model" title="Link to this heading"></a></h2>
+<p><a class="reference internal" href="reference.models.continuous_model.html#pyqg_jax.continuous_model.ContinuousQGModel" title="pyqg_jax.continuous_model.ContinuousQGModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContinuousQGModel</span></code></a> resolves a
+continuous vertical coordinate <span class="math notranslate nohighlight">\(z \in [-H, 0]\)</span> with a general
+stratification <span class="math notranslate nohighlight">\(N^2(z)\)</span>, discretized by Chebyshev collocation. The
+prognostic field holds the interior PV at the interior collocation points
+and the surface/bottom buoyancy at the boundary points. The inversion
+solves, at each horizontal wavenumber, the vertical boundary-value
+problem</p>
+<div class="math notranslate nohighlight">
+\[
+\left[\partial_z\!\left(\frac{f_0^2}{N^2}\,\partial_z\right)
+  - \kappa^2\right]\hat\psi = \hat q
+\quad(\text{interior}), \qquad
+f_0\,\partial_z\hat\psi = \hat b \quad(\text{at } z = 0, -H),
+\]</div>
+<p>with two Neumann (buoyancy) boundary conditions. The background PV
+gradient is the continuous analogue of the layered expression,</p>
+<div class="math notranslate nohighlight">
+\[
+Q_y = \beta - \partial_z\!\left(\frac{f_0^2}{N^2}\,\partial_z\right) U
+\quad(\text{interior}), \qquad
+Q_y = -f_0\,\partial_z U \quad(\text{at the boundaries}),
+\]</div>
+<p>the boundary value being the thermal-wind surface buoyancy gradient. See
+the <a class="reference internal" href="examples.continuous.html"><span class="doc">example</span></a>.</p>
+</section>
+<section id="next-order-qg-1-model">
+<h2>Next-order (QG+1) model<a class="headerlink" href="#next-order-qg-1-model" title="Link to this heading"></a></h2>
+<p><a class="reference internal" href="reference.models.qgplus1_model.html#pyqg_jax.qgplus1_model.QGPlus1Model" title="pyqg_jax.qgplus1_model.QGPlus1Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">QGPlus1Model</span></code></a> carries the asymptotic
+expansion one order further in the Rossby number <span class="math notranslate nohighlight">\(\varepsilon = U/(f_0 L)\)</span>
+(Dù, Smith &amp; Bühler 2024). The prognostic variables and the leading-order
+inversion for <span class="math notranslate nohighlight">\(\Phi^0\)</span> are exactly those of the continuous model above.
+Three further Poisson problems, sharing the elliptic operator
+<span class="math notranslate nohighlight">\(\mathcal{L} = N^2\nabla^2 + f_0^2\partial_{zz}\)</span>, give the first-order
+corrections. For the Eady mean state (<span class="math notranslate nohighlight">\(U = \Lambda z\)</span>),</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{L}(\Phi^1) = -f_0\!\left(
+  -\frac{f_0^2}{N^2}(\Phi^0_{zz})^2 - |\nabla\Phi^0_z|^2
+  + 2\Lambda\,\Phi^0_{yz}\right),
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{L}(F^1) = 2 f_0\!\left(J(\Phi^0_z, \Phi^0_x) + \Lambda\,\Phi^0_{xx}\right),
+\qquad
+\mathcal{L}(G^1) = 2 f_0\!\left(J(\Phi^0_z, \Phi^0_y) + \Lambda\,\Phi^0_{xy}\right),
+\]</div>
+<p>with homogeneous Neumann conditions for <span class="math notranslate nohighlight">\(\Phi^1\)</span> and homogeneous
+Dirichlet conditions for <span class="math notranslate nohighlight">\(F^1, G^1\)</span>. The velocities and buoyancy are then
+reconstructed to first order,</p>
+<div class="math notranslate nohighlight">
+\[
+u = -\Phi^0_y - (\Phi^1_y + F^1_z), \qquad
+v = \Phi^0_x + (\Phi^1_x - G^1_z),
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+w = F^1_x + G^1_y, \qquad
+b = f_0\Phi^0_z + f_0\Phi^1_z + \frac{N^2}{f_0}\!\left(G^1_x - F^1_y\right).
+\]</div>
+<p>The vertical velocity <span class="math notranslate nohighlight">\(w\)</span> is the self-consistent next-order field
+(equivalent to the QG omega equation); the prognostic PV is advected by
+the full three-dimensional next-order velocity, including the vertical
+advection <span class="math notranslate nohighlight">\(w\,\partial_z q\)</span>. Because the source terms are <em>quadratic</em> in
+<span class="math notranslate nohighlight">\(\Phi^0\)</span>, the model breaks the sign symmetry of QG and develops the
+cyclone/anticyclone asymmetry of the submesoscale. See the
+<a class="reference internal" href="examples.qgplus1.html"><span class="doc">example</span></a>.</p>
+</section>
+<section id="time-stepping">
+<h2>Time stepping<a class="headerlink" href="#time-stepping" title="Link to this heading"></a></h2>
+<p>The state is advanced with a third-order Adams-Bashforth scheme
+(<a class="reference internal" href="reference.steppers.html#pyqg_jax.steppers.AB3Stepper" title="pyqg_jax.steppers.AB3Stepper"><code class="xref py py-class docutils literal notranslate"><span class="pre">AB3Stepper</span></code></a>), bootstrapped with a forward
+Euler step followed by a second-order Adams-Bashforth step,</p>
+<div class="math notranslate nohighlight">
+\[
+\hat q^{n+1} = \hat q^{n} + \Delta t\left(
+  a_1\,\partial_t\hat q^{\,n} + a_2\,\partial_t\hat q^{\,n-1}
+  + a_3\,\partial_t\hat q^{\,n-2}\right),
+\]</div>
+<p>with <span class="math notranslate nohighlight">\((a_1, a_2, a_3) = (23/12, -16/12, 5/12)\)</span>. A fourth-order
+Runge-Kutta scheme (<a class="reference internal" href="reference.steppers.html#pyqg_jax.steppers.RK4Stepper" title="pyqg_jax.steppers.RK4Stepper"><code class="xref py py-class docutils literal notranslate"><span class="pre">RK4Stepper</span></code></a>) with a larger
+stability region is also available, as is a forward Euler stepper. The
+steppers are generic over the model state and compose with
+<a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.jit.html#jax.jit" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.jit()</span></code></a>, <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.vmap.html#jax.vmap" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.vmap()</span></code></a>, and <a class="reference external" href="https://docs.jax.dev/en/latest/_autosummary/jax.grad.html#jax.grad" title="(in JAX)"><code class="xref py py-func docutils literal notranslate"><span class="pre">jax.grad()</span></code></a>.</p>
+</section>
+<section id="dissipation">
+<h2>Dissipation<a class="headerlink" href="#dissipation" title="Link to this heading"></a></h2>
+<p>Small-scale enstrophy is removed by a spectral exponential filter applied
+once per step (in <code class="docutils literal notranslate"><span class="pre">postprocess_state</span></code>),</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\hat q \mapsto \Theta(k, l)\,\hat q, \qquad
+\Theta =
+\begin{cases}
+1 &amp; |\mathbf{k}_\Delta| \le k_c, \\[4pt]
+\exp\!\big(-c\,(|\mathbf{k}_\Delta| - k_c)^4\big) &amp; |\mathbf{k}_\Delta| &gt; k_c,
+\end{cases}
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(|\mathbf{k}_\Delta| = \sqrt{(k\,\Delta x)^2 + (l\,\Delta y)^2}\)</span>,
+<span class="math notranslate nohighlight">\(k_c = 0.65\pi\)</span>, and <span class="math notranslate nohighlight">\(c\)</span> is the filter amplitude (<code class="docutils literal notranslate"><span class="pre">filterfac</span></code>).
+Optional linear bottom drag <span class="math notranslate nohighlight">\(r_{ek}\)</span> acts on the lowest layer.</p>
+</section>
+<section id="linear-stability-analysis">
+<h2>Linear stability analysis<a class="headerlink" href="#linear-stability-analysis" title="Link to this heading"></a></h2>
+<p>The base models provide a
+<a class="reference internal" href="reference.models.qg_model.html#pyqg_jax.qg_model.QGModel.stability_analysis" title="pyqg_jax.qg_model.QGModel.stability_analysis"><code class="xref py py-meth docutils literal notranslate"><span class="pre">stability_analysis()</span></code></a> method that
+linearizes the dynamics about the background state. At each wavenumber it
+solves the eigenvalue problem for normal modes
+<span class="math notranslate nohighlight">\(\hat\theta \propto e^{-\mathrm{i}\omega t}\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+k\,\big(\mathsf{U} + \mathsf{Q}_y\,\mathsf{a}\big)\,\tilde\theta
+  = \omega\,\tilde\theta,
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathsf{U} = \operatorname{diag}(U_i)\)</span>,
+<span class="math notranslate nohighlight">\(\mathsf{Q}_y = \operatorname{diag}(Q_{y,i})\)</span>, and <span class="math notranslate nohighlight">\(\mathsf{a}\)</span> is the
+model’s inversion matrix. The growth rate is <span class="math notranslate nohighlight">\(\operatorname{Im}(\omega)\)</span>
+and the phase speed is <span class="math notranslate nohighlight">\(\operatorname{Re}(\omega)/k\)</span>. This recovers, for
+example, the analytic Eady and Charney dispersion relations for the
+continuous model (see its <a class="reference internal" href="examples.continuous.html"><span class="doc">example</span></a>).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="examples.dataassim.html" class="btn btn-neutral float-left" title="Variational Data Assimilation from SSH" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="reference.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Karl Otness.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
