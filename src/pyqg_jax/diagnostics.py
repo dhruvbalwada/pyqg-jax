@@ -254,7 +254,7 @@ def ke_spec_vals(full_state, grid):
     :func:`calc_ispec`.
     """
     ph = _getattr_shape_check(full_state, "ph", grid)
-    M = _grid_shape_check(grid, "nx") * _grid_shape_check(grid, "ny")
+    M = float(_grid_shape_check(grid, "nx") * _grid_shape_check(grid, "ny"))
     abs_ph = jnp.abs(ph)
     kappa = grid.get_kappa(abs_ph.dtype)
     if kappa.shape != grid.spectral_state_shape[1:]:
@@ -300,7 +300,7 @@ def ens_spec_vals(full_state, grid):
     :func:`calc_ispec`.
     """
     qh = _getattr_shape_check(full_state, "qh", grid)
-    M = _grid_shape_check(grid, "nx") * _grid_shape_check(grid, "ny")
+    M = float(_grid_shape_check(grid, "nx") * _grid_shape_check(grid, "ny"))
     return jnp.abs(qh) ** 2 / M**2
 
 
@@ -441,7 +441,7 @@ def ke_flux_spec_vals(model, full_state):
     v = full_state.v
     ik = jnp.expand_dims(1j * model.k, 0)
     il = jnp.expand_dims(1j * model.l, 0)
-    M = grid.nx * grid.ny
+    M = float(grid.nx * grid.ny)
     xi = _state._generic_irfftn(-model.wv2 * ph, shape=grid.real_state_shape)
     adv = ik * _state._generic_rfftn(u * xi) + il * _state._generic_rfftn(v * xi)
     return (jnp.conj(ph) * adv).real / M**2
@@ -496,7 +496,7 @@ def ape_flux_spec_vals(model, full_state):
     v = full_state.v
     ik = jnp.expand_dims(1j * model.k, 0)
     il = jnp.expand_dims(1j * model.l, 0)
-    M = grid.nx * grid.ny
+    M = float(grid.nx * grid.ny)
     sph = jnp.einsum("ij,jlk->ilk", jnp.asarray(S, dtype=ph.dtype), ph)
     sp = _state._generic_irfftn(sph, shape=grid.real_state_shape)
     adv = ik * _state._generic_rfftn(u * sp) + il * _state._generic_rfftn(v * sp)
