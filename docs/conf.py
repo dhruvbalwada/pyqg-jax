@@ -9,8 +9,8 @@ import pyqg_jax
 
 # Project information
 project = "pyqg-jax"
-copyright = "2023 Karl Otness"
-author = "Karl Otness"
+copyright = "2023 Karl Otness; 2024-2026 Dhruv Balwada"
+author = "Karl Otness; Dhruv Balwada"
 version = pyqg_jax.__version__
 release = version
 
